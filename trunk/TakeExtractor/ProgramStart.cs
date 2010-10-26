@@ -103,6 +103,26 @@ using System.Windows.Forms;
 //  Like the Mech robots have.
 //  Type = List
 
+// Pass parameters to the processor
+// http://forums.create.msdn.com/forums/p/64081/392300.aspx#392300
+/*
+Re: How do I add parameters to the ModelProcessor in ContentBuilder? Reply Quote  
+ if (processor == "ModelProcessor")   
+{   
+     buildItem.SetMetadata("ProcessorParameters_TextureFormat", "Color");   
+}  
+
+Heres a snippit from an old project of mine. 
+
+To find out the names of the pieces of metadata, set a parameter on a piece of content as you want it. Right click on the content project in the solution explorer, then choose unload. Right click again, chooses edit. Find the piece of content in the file, and you should see entries like 
+
+<ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>  
+for all peramiters set to non standard values. Thats what you need to feed MSBuild.
+
+Remember to reload the content project afterewards :) 
+ 
+ */
+
 //-----------------------------------------------------------------------------
 
 #region Source Control

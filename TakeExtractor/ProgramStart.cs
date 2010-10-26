@@ -16,9 +16,11 @@
 // To extract files for use in my game this tool uses a config file.
 //
 // File format for Take Conversion config files (.takes)
+//  (Most things are case sensitive)
 //
 // Source file
-// RigName|Armature Rig Prefix
+// X|Y|Z
+// RigType|Armature Rig Prefix
 // HeadBones|Neck|Head
 // ArmBones|L-Upper|L-Hand|R-Hand|...
 // type|SourceTakeName|OutputTakeName
@@ -30,22 +32,27 @@
 //  The full name and relative path to the file to extract animations from.
 //  At the moment only FBX files are supported.
 //
-// RigName identifies different armature configurations: Human, Alien, LocalHuman etc.
+// X|Y|Z
+//  Rotation to apply to the model while loading
+//  e.g. 90|0|180 or 0|0|0
+//
+// RigType identifies different armature configurations: Human, Alien, LocalHuman etc.
 //  In conjunction with the type it is used to extract different bones in to
 //  the output take file
+//  e.g. RigType|alien or RigType|human
 //
 // HeadBones and ArmBones: 
 //  The list of bones used in that animation part.
+//  e.g. ArmBones|L-Collar|L-UpperArm|L-Forearm|L-Hand|R-Collar|R-UpperArm|R-Forearm|R-Hand|R-Aim
 //
 // Type is the name of the full or part animation and can be: clip, head or arms
 //  Clip = Full animation
 //  Head = Bones used to move the head to look round
 //  Arms = Bones used to move the arms to aim a weapon (this does not usually include the fingers)
-//
 // SourceTakeName = the name of the animation take in the source file
-//
 // OutputTakeName = the name used in game to reference the take.
 //      This does not include the rig armature name.
+// e.g. Arms|Snipe|AimRifle or Clip|Patrol2|Patrol
 //
 //-----------------------------------------------------------------------------
 // The output clip format is simply the Keyframes saved from the SkinningData

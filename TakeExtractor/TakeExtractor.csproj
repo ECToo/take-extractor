@@ -74,13 +74,9 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnimatedModelProcessor.cs" />
-    <Compile Include="AnimationClip.cs" />
-    <Compile Include="AnimationPart.cs" />
     <Compile Include="ContentBuilder.cs" />
     <Compile Include="ErrorLogger.cs" />
     <Compile Include="GlobalSettings.cs" />
-    <Compile Include="Keyframe.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -91,6 +87,12 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="GraphicsDeviceService.cs" />
+    <Compile Include="Models\AnimatedModelProcessor.cs" />
+    <Compile Include="Models\AnimationClip.cs" />
+    <Compile Include="Models\AnimationPart.cs" />
+    <Compile Include="Models\Keyframe.cs" />
+    <Compile Include="Models\ReplaceBones.cs" />
+    <Compile Include="Models\SkinningData.cs" />
     <Compile Include="ModelViewerControl.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -98,7 +100,6 @@
     <Compile Include="ParseTakes.cs" />
     <Compile Include="ProgramStart.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SkinningData.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -122,7 +123,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="ReplaceBones.cs" />
     <Compile Include="ServiceContainer.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -142,9 +142,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

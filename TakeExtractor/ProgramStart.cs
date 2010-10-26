@@ -100,8 +100,11 @@ using System.Windows.Forms;
 
 #region Source Control
 //-----------------------------------------------------------------------------
-// Working URLs
+// GoogleCode project home
 //  http://code.google.com/p/take-extractor/
+// SVN working URLs
+//  Upload https://take-extractor.googlecode.com/svn/trunk/
+//  Download http://take-extractor.googlecode.com/svn/trunk/
 // Prefer to use the GUI client
 //        http://tortoisesvn.tigris.org/
 // My settings subversion

@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 #endregion
 
-namespace Extractor
+namespace TakeAssets
 {
     /// <summary>
     /// Combines all the data needed to render and animate a skinned object.

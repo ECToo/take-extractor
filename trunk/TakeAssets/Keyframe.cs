@@ -12,7 +12,7 @@ using System;
 using Microsoft.Xna.Framework;
 #endregion
 
-namespace Extractor
+namespace TakeAssets
 {
     // Describes the position of a single bone at a single point in time.
     public class Keyframe

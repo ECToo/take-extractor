@@ -53,6 +53,8 @@ namespace Extractor
             // file path, eg. "c:/MyProject/bin/MyPipelineExtension.dll".
         };
 
+        public List<string> CustomAssemblyPaths = new List<string>();  
+
 
         // MSBuild objects used to dynamically build content.
         Project buildProject;
@@ -100,6 +102,8 @@ namespace Extractor
         /// </summary>
         public ContentBuilder()
         {
+            CustomAssemblyPaths.Add(AppDomain.CurrentDomain.BaseDirectory + "TakePipeline.dll");  
+
             CreateTempDirectory();
             CreateBuildProject();
         }
@@ -171,6 +175,11 @@ namespace Extractor
             foreach (string pipelineAssembly in pipelineAssemblies)
             {
                 buildProject.AddItem("Reference", pipelineAssembly);
+            }
+
+            foreach (string customAssembly in CustomAssemblyPaths)
+            {
+                buildProject.AddItem("Reference", customAssembly);
             }
 
             // Hook up our custom error logger.

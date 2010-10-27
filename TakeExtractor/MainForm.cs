@@ -103,7 +103,7 @@ namespace Extractor
         /// <summary>
         /// Loads a new 3D model file into the ModelViewerControl.
         /// </summary>
-        private void LoadModel(string fileName)
+        public void LoadModel(string fileName)
         {
             Cursor = Cursors.WaitCursor;
 
@@ -114,6 +114,40 @@ namespace Extractor
             // Tell the ContentBuilder what to build.
             contentBuilder.Clear();
             contentBuilder.Add(fileName, "Model", null, "ModelProcessor");
+
+            // Build this new model data.
+            string buildError = contentBuilder.Build();
+
+            if (string.IsNullOrEmpty(buildError))
+            {
+                // If the build succeeded, use the ContentManager to
+                // load the temporary .xnb file that we just created.
+                modelViewerControl.Model = contentManager.Load<Model>("Model");
+            }
+            else
+            {
+                // If the build failed, display an error message.
+                MessageBox.Show(buildError, "Error");
+            }
+
+            Cursor = Cursors.Arrow;
+        }
+
+        /// <summary>
+        /// Loads a new 3D model file into the ModelViewerControl.
+        /// </summary>
+        public void LoadAnimatedModel(string fileName, string rotateXdeg, string rotateYdeg, string rotateZdeg)
+        {
+            Cursor = Cursors.WaitCursor;
+
+            // Unload any existing model.
+            modelViewerControl.Model = null;
+            contentManager.Unload();
+
+            // Tell the ContentBuilder what to build.
+            contentBuilder.Clear();
+            contentBuilder.AddAnimated(fileName, "Model", rotateXdeg, rotateYdeg, rotateZdeg);
+            //contentBuilder.AddModel(fileName, "Model", rotateXdeg, rotateYdeg, rotateZdeg);
 
             // Build this new model data.
             string buildError = contentBuilder.Build();

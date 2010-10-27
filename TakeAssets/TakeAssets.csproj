@@ -94,7 +94,6 @@
   <ItemGroup>
     <Compile Include="AnimationClip.cs" />
     <Compile Include="AnimationPart.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="Keyframe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReplaceBones.cs" />

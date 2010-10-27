@@ -96,6 +96,7 @@
     <Compile Include="ModelViewerControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ParseData.cs" />
     <Compile Include="ParseFBX.cs" />
     <Compile Include="ParseTakes.cs" />
     <Compile Include="ProgramStart.cs" />

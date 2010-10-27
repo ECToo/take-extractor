@@ -27,7 +27,7 @@ using Microsoft.Build.Framework;
 namespace Extractor
 {
     /// <summary>
-    /// Custom processor extends the builtin framework ModelProcessor class,
+    /// Custom processor extends the built in framework ModelProcessor class,
     /// adding animation support.
     /// </summary>
     [ContentProcessor]

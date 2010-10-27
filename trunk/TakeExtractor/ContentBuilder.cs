@@ -189,6 +189,44 @@ namespace Extractor
         /// </summary>
         public void Add(string filename, string name, string importer, string processor)
         {
+            Add(filename, name, importer, processor, "", "", "", "", "", "");
+        }
+
+        // The names of the Processor Parameters can be found in the *.contentproj file
+        // The file has to have been built and the setting changed from the default.
+        // Default settings do not show up in the file.
+        // Use a text editor to view the *.contentproj file
+
+        /*
+  <ItemGroup>
+    <Compile Include="Characters\Dude.fbx">
+      <Name>Dude</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>AnimatedModelProcessor</Processor>
+      <ProcessorParameters_DegreesX>90</ProcessorParameters_DegreesX>
+      <ProcessorParameters_DegreesY>0</ProcessorParameters_DegreesY>
+      <ProcessorParameters_DegreesZ>180</ProcessorParameters_DegreesZ>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Characters\Dude.fbx">
+      <Name>Dude</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <ProcessorParameters_RotationX>90</ProcessorParameters_RotationX>
+      <ProcessorParameters_RotationZ>180</ProcessorParameters_RotationZ>
+      <ProcessorParameters_RotationY>90</ProcessorParameters_RotationY>
+    </Compile>
+  </ItemGroup>
+         * */
+
+        /// <summary>
+        /// Add a new content file and set some processor parameters
+        /// Syntax: ProcessorParameters_ParamName
+        /// </summary>
+        public void Add(string filename, string name, string importer, string processor,
+            string param1, string val1, string param2, string val2, string param3, string val3)
+        {
             ProjectItem item = buildProject.AddItem("Compile", filename)[0];
 
             item.SetMetadataValue("Link", Path.GetFileName(filename));
@@ -200,9 +238,41 @@ namespace Extractor
             if (!string.IsNullOrEmpty(processor))
                 item.SetMetadataValue("Processor", processor);
 
+            if (!string.IsNullOrEmpty(param1) && !string.IsNullOrEmpty(val1))
+                item.SetMetadataValue(param1, val1);
+
+            if (!string.IsNullOrEmpty(param2) && !string.IsNullOrEmpty(val2))
+                item.SetMetadataValue(param2, val2);
+
+            if (!string.IsNullOrEmpty(param3) && !string.IsNullOrEmpty(val3))
+                item.SetMetadataValue(param3, val3);
+
             projectItems.Add(item);
         }
 
+        /// <summary>
+        /// Add a model using the AnimatedModelProcessor with rotation
+        /// </summary>
+        public void AddAnimated(string filename, string name,
+            string rotateDegX, string rotateDegY, string rotateDegZ)
+        {
+            Add(filename, name, null, "AnimatedModelProcessor",
+                "ProcessorParameters_DegreesX", rotateDegX,
+                "ProcessorParameters_DegreesY", rotateDegY,
+                "ProcessorParameters_DegreesZ", rotateDegZ);
+        }
+
+        /// <summary>
+        /// Add a model using the ModelProcessor with rotation
+        /// </summary>
+        public void AddModel(string filename, string name,
+            string rotateDegX, string rotateDegY, string rotateDegZ)
+        {
+            Add(filename, name, null, "ModelProcessor",
+                "ProcessorParameters_RotationX", rotateDegX,
+                "ProcessorParameters_RotationY", rotateDegY,
+                "ProcessorParameters_RotationZ", rotateDegZ);
+        }
 
         /// <summary>
         /// Removes all content files from the MSBuild project.

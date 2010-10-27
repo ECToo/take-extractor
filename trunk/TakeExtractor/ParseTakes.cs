@@ -82,6 +82,17 @@ namespace Extractor
             ParseFBX fbx = new ParseFBX(form);
             fbx.LoadAsText(fileFullPathToModel);
 
+            // For storing the split lines
+            string[] items = new string[3] { "", "", "" };
+
+            // Load the model as a model
+            if (source.Count > 1)
+            {
+                items = ParseData.SplitItemByDivision(source[1]);
+            }
+
+            form.LoadAnimatedModel(fileFullPathToModel, items[0], items[1], items[2]);
+
         }
 
         private bool ValidateModelFile(string modelRelativeFile, string takeFullFile)

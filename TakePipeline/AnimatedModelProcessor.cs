@@ -18,13 +18,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Microsoft.Xna.Framework.Content.Pipeline.Processors;
-using Microsoft.Build.Construction;
-using Microsoft.Build.Evaluation;
-using Microsoft.Build.Execution;
-using Microsoft.Build.Framework;
+using TakeAssets;
 #endregion
 
-namespace Extractor
+namespace TakePipeline
 {
     /// <summary>
     /// Custom processor extends the built in framework ModelProcessor class,

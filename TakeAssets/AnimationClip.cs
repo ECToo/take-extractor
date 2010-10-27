@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 #endregion
 
-namespace Extractor
+namespace TakeAssets
 {
     // An animation clip is the runtime equivalent of the
     // Microsoft.Xna.Framework.Content.Pipeline.Graphics.AnimationContent type.

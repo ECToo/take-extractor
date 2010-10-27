@@ -87,12 +87,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="GraphicsDeviceService.cs" />
-    <Compile Include="Models\AnimatedModelProcessor.cs" />
-    <Compile Include="Models\AnimationClip.cs" />
-    <Compile Include="Models\AnimationPart.cs" />
-    <Compile Include="Models\Keyframe.cs" />
-    <Compile Include="Models\ReplaceBones.cs" />
-    <Compile Include="Models\SkinningData.cs" />
     <Compile Include="ModelViewerControl.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -143,7 +137,15 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TakeAssets\TakeAssets.csproj">
+      <Project>{F6EF9CA1-00BD-4EEC-9715-18AA3B295E66}</Project>
+      <Name>TakeAssets</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

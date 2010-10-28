@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 using TInput = System.String;
 using TOutput = System.String;
 
-namespace TakePipeline
+namespace AssetPipeline
 {
     /// <summary>
     /// This class will be instantiated by the XNA Framework Content Pipeline
@@ -24,7 +24,7 @@ namespace TakePipeline
     /// TODO: change the ContentProcessor attribute to specify the correct
     /// display name for this processor.
     /// </summary>
-    [ContentProcessor(DisplayName = "TakePipeline.ContentProcessor1")]
+    [ContentProcessor(DisplayName = "AssetPipeline.ContentProcessor1")]
     public class ContentProcessor1 : ContentProcessor<TInput, TOutput>
     {
         public override TOutput Process(TInput input, ContentProcessorContext context)

@@ -16,7 +16,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 #endregion
 
-namespace TakeAssets
+namespace AssetData
 {
     // Have a guess what this is
     public class ReplaceBones

@@ -102,7 +102,8 @@ namespace Extractor
         /// </summary>
         public ContentBuilder()
         {
-            CustomAssemblyPaths.Add(AppDomain.CurrentDomain.BaseDirectory + "TakePipeline.dll");  
+            //CustomAssemblyPaths.Add(AppDomain.CurrentDomain.BaseDirectory + "TakePipeline.dll");
+            CustomAssemblyPaths.Add(Path.Combine("D:/storage/TakeExtractor/take-extractor/AssetPipeline/bin/x86/Debug/","AssetPipeline.dll"));  
 
             CreateTempDirectory();
             CreateBuildProject();

@@ -160,7 +160,8 @@ namespace Extractor
             }
             else
             {
-                // If the build failed, display an error message.
+                // If the build failed, display an error message and log it
+                AddMessageLine(buildError);
                 MessageBox.Show(buildError, "Error");
             }
 

@@ -14,7 +14,7 @@ using System;
 using System.Collections.Generic;
 #endregion
 
-namespace TakeAssets
+namespace AssetData
 {
     // Holds replacement frames for some bones to merge in to animation clips.
     // These parts are manually edited from an AnimationClip file by removing unwanted bones

@@ -137,11 +137,10 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\TakeAssets\TakeAssets.csproj">
-      <Project>{F6EF9CA1-00BD-4EEC-9715-18AA3B295E66}</Project>
-      <Name>TakeAssets</Name>
+    <ProjectReference Include="..\AssetData\AssetData.csproj">
+      <Project>{1B08C8EA-A15D-4148-A9A9-5C5D7E8E502E}</Project>
+      <Name>AssetData</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

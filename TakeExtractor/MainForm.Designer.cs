@@ -34,6 +34,8 @@ namespace Extractor
             this.openTakesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.SaveBoneMapMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.messageBox = new System.Windows.Forms.TextBox();
             this.modelViewerControl = new Extractor.ModelViewerControl();
             this.menuStrip1.SuspendLayout();
@@ -57,6 +59,8 @@ namespace Extractor
             this.openModelToolStripMenuItem,
             this.openTakesToolStripMenuItem,
             this.toolStripSeparator1,
+            this.SaveBoneMapMenu,
+            this.toolStripSeparator2,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlText;
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -96,6 +100,18 @@ namespace Extractor
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitMenuClicked);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(149, 6);
+            // 
+            // SaveBoneMapMenu
+            // 
+            this.SaveBoneMapMenu.Name = "SaveBoneMapMenu";
+            this.SaveBoneMapMenu.Size = new System.Drawing.Size(152, 22);
+            this.SaveBoneMapMenu.Text = "Save BoneMap";
+            this.SaveBoneMapMenu.Click += new System.EventHandler(this.SaveBoneMapMenuClicked);
             // 
             // messageBox
             // 
@@ -150,6 +166,8 @@ namespace Extractor
         private System.Windows.Forms.ToolStripMenuItem openTakesToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.TextBox messageBox;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem SaveBoneMapMenu;
 
     }
 }

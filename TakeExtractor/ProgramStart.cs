@@ -90,9 +90,9 @@ using System.Windows.Forms;
 //-----------------------------------------------------------------------------
 // TODO:
 //-----------------------------------------------------------------------------
-// - Change the ContentBuilder so it does not use a hard coded path to the pipeline DLL
-// - Save separate FBX files with just one take in each
 // - Save a bone map (index to bone name)
+//      Separate menu option
+// - Save separate FBX files with just one take in each
 // - Save the takes in to the format used by my game
 
 // - Extract individual takes from a model that has one very long take.

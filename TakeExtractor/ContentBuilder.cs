@@ -111,10 +111,21 @@ namespace Extractor
         /// </summary>
         public ContentBuilder()
         {
-            // TODO:
-            // Calculate the path relative to the current build and have Debug and Release
-            //CustomAssemblyPaths.Add(AppDomain.CurrentDomain.BaseDirectory + "TakePipeline.dll");
-            CustomAssemblyPaths.Add(Path.Combine("D:/storage/TakeExtractor/take-extractor/AssetPipeline/bin/x86/Debug/","AssetPipeline.dll"));  
+            // Calculate the path relative to the current build to get the library project location
+#if DEBUG
+            string binaryFolder = "bin/x86/Debug";
+#else
+            string binaryFolder = "bin/x86/Release";
+#endif
+            string relativeFolders = "../../../../";
+            //string assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string assemblyLocation = AppDomain.CurrentDomain.BaseDirectory;
+            string relativeBasePath = Path.Combine(assemblyLocation, relativeFolders);
+            string defaultBaseFolder = Path.GetFullPath(relativeBasePath);
+
+            string library = Path.Combine(defaultBaseFolder, "AssetPipeline", binaryFolder, "AssetPipeline.dll");
+            CustomAssemblyPaths.Add(library);
+            //CustomAssemblyPaths.Add("D:/storage/TakeExtractor/take-extractor/AssetPipeline/bin/x86/Debug/AssetPipeline.dll");  
 
             CreateTempDirectory();
             CreateBuildProject();

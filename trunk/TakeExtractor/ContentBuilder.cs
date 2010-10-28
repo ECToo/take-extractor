@@ -51,6 +51,15 @@ namespace Extractor
             //
             // If the extension DLL is not in the GAC, you should refer to it by
             // file path, eg. "c:/MyProject/bin/MyPipelineExtension.dll".
+
+            // More on adding custom processors:
+            // Use a full path to the DLL containing the processors:
+            // http://forums.create.msdn.com/forums/p/15566/91933.aspx
+            // Example code for the content processor:
+            // http://forums.create.msdn.com/forums/t/16725.aspx
+            // And very tricky stuff from Shawn Hargreaves:
+            // http://blogs.msdn.com/b/shawnhar/archive/2007/06/06/wildcard-content-using-msbuild.aspx
+
         };
 
         public List<string> CustomAssemblyPaths = new List<string>();  
@@ -102,6 +111,8 @@ namespace Extractor
         /// </summary>
         public ContentBuilder()
         {
+            // TODO:
+            // Calculate the path relative to the current build and have Debug and Release
             //CustomAssemblyPaths.Add(AppDomain.CurrentDomain.BaseDirectory + "TakePipeline.dll");
             CustomAssemblyPaths.Add(Path.Combine("D:/storage/TakeExtractor/take-extractor/AssetPipeline/bin/x86/Debug/","AssetPipeline.dll"));  
 
@@ -201,6 +212,17 @@ namespace Extractor
         {
             Add(filename, name, importer, processor, "", "", "", "", "", "");
         }
+
+        /*
+        Re: How do I add parameters to the ModelProcessor in ContentBuilder? Reply Quote  
+        // Pass parameters to the processor
+        // http://forums.create.msdn.com/forums/p/64081/392300.aspx#392300
+
+        if (processor == "ModelProcessor")   
+        {   
+             projectItem.SetMetadata("ProcessorParameters_TextureFormat", "Color");   
+        }  
+         */
 
         // The names of the Processor Parameters can be found in the *.contentproj file
         // The file has to have been built and the setting changed from the default.

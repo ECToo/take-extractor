@@ -28,6 +28,8 @@ namespace Extractor
             if (eventSource != null)
             {
                 eventSource.ErrorRaised += ErrorRaised;
+                eventSource.WarningRaised += WarningRaised;
+                //eventSource.MessageRaised += MessageRaised;
             }
         }
 
@@ -48,7 +50,6 @@ namespace Extractor
             errors.Add(e.Message);
         }
 
-
         /// <summary>
         /// Gets a list of all the errors that have been logged.
         /// </summary>
@@ -59,6 +60,36 @@ namespace Extractor
 
         List<string> errors = new List<string>();
 
+        public void ClearErrors()
+        {
+            errors.Clear();
+            warnings.Clear();
+        }
+
+        /// <summary>
+        /// Handles error notification warnings by storing the error message string.
+        /// </summary>
+        void WarningRaised(object sender, BuildWarningEventArgs e)
+        {
+            warnings.Add("Warning: " + e.Message);
+        }
+
+        /*
+        void MessageRaised(object sender, BuildMessageEventArgs e)
+        {
+            warnings.Add("Message: " + e.Message);
+        }
+         * */
+
+        /// <summary>
+        /// Gets a list of all the errors that have been logged.
+        /// </summary>
+        public List<string> Warnings
+        {
+            get { return warnings; }
+        }
+
+        List<string> warnings = new List<string>();
 
         #region ILogger Members
 
@@ -84,7 +115,7 @@ namespace Extractor
             set { verbosity = value; }
         }
 
-        LoggerVerbosity verbosity = LoggerVerbosity.Normal;
+        LoggerVerbosity verbosity = LoggerVerbosity.Detailed; //.Normal;
 
 
         #endregion

@@ -211,6 +211,77 @@ namespace Extractor
             return result;
         }
 
+        // == Save FBX
+
+        public void SaveIndividualFBXtakes()
+        {
+            if (component.Count < 3 || source.Count < 1)
+            {
+                form.AddMessageLine("No takes found in the file!");
+                return;
+            }
+
+            List<string> header = new List<string>();
+            List<string> footer = new List<string>();
+            List<int> takeNumbers = new List<int>();
+            for (int c = 0; c < component.Count; c++)
+            {
+                if (component[c].Position == element.Header)
+                {
+                    header.AddRange(GetLines(component[c].Start, component[c].Count));
+                }
+                else if (component[c].Position == element.Footer)
+                {
+                    footer.AddRange(GetLines(component[c].Start, component[c].Count));
+                }
+                else if (component[c].Position == element.Take)
+                {
+                    takeNumbers.Add(c);
+                }
+            }
+
+            List<string> result = new List<string>();
+            List<string> theTake = new List<string>();
+            string fileName = "";
+            // Loop through each take
+            for (int t = 0; t < takeNumbers.Count; t++)
+            {
+                result.Clear();
+                theTake.Clear();
+                // Create the new FBX contents
+                result.AddRange(header);
+                result.AddRange(GetLines(component[takeNumbers[t]].Start, component[takeNumbers[t]].Count));
+                result.AddRange(footer);
+                // Work out the file name
+                fileName = Path.Combine(pathToSaveFolder, fileNameWithoutExtension);
+                fileName += "-" + component[takeNumbers[t]].Name + fileExtension;
+                // Output
+                SaveTheFile(fileName, result);
+            }
+        }
+
+        private void SaveTheFile(string fullFilePath, List<string> data)
+        {
+            if (data.Count < 1 || string.IsNullOrEmpty(fullFilePath))
+            {
+                return;
+            }
+
+            form.AddMessageLine("Saving: " + fullFilePath);
+            File.WriteAllLines(fullFilePath, data);
+
+        }
+
+        private List<string> GetLines(int from, int count)
+        {
+            if (from + count > source.Count)
+            {
+                return null;
+            }
+            return source.GetRange(from, count);
+        }
+
+
 
     }
 }

@@ -90,8 +90,6 @@ using System.Windows.Forms;
 //-----------------------------------------------------------------------------
 // TODO:
 //-----------------------------------------------------------------------------
-// - Save a bone map (index to bone name)
-//      Separate menu option
 // - Save separate FBX files with just one take in each
 // - Save the takes in to the format used by my game
 

@@ -147,10 +147,16 @@ namespace Extractor
 
             // Tell the ContentBuilder what to build.
             contentBuilder.Clear();
-            contentBuilder.Add(fileName, "Model", null, "ModelProcessor");
+            //contentBuilder.Add(fileName, "Model", null, "ModelProcessor");
+            contentBuilder.AddAnimated(fileName, "Model", "0", "0", "0");
 
-            // Build this new model data.
+            // Build this new model data and record the errors and warning
             string buildError = contentBuilder.Build();
+            string buildWarnings = contentBuilder.Warnings();
+            if (!string.IsNullOrEmpty(buildWarnings))
+            {
+                AddMessageLine(buildWarnings);
+            }
 
             if (string.IsNullOrEmpty(buildError))
             {

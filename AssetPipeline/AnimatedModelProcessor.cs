@@ -117,7 +117,11 @@ namespace AssetPipeline
             BoneContent skeleton = MeshHelper.FindSkeleton(input);
 
             if (skeleton == null)
-                throw new InvalidContentException("Input skeleton not found.");
+            {
+                // this is a normal model not an animated one
+                return base.Process(input, context);
+                //throw new InvalidContentException("Input skeleton not found.");
+            }
 
             // We don't want to have to worry about different parts of the model being
             // in different local coordinate systems, so let's just bake everything.
@@ -301,6 +305,8 @@ namespace AssetPipeline
                         mesh.Name, parentBoneName);
                 }
 
+                // We use this to load all models so this test removed
+                /*
                 if (!MeshHasSkinning(mesh))
                 {
                     context.Logger.LogWarning(null, null,
@@ -310,6 +316,7 @@ namespace AssetPipeline
                     mesh.Parent.Children.Remove(mesh);
                     return;
                 }
+                 * */
             }
             else if (node is BoneContent)
             {

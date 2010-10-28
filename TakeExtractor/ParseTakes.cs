@@ -93,6 +93,8 @@ namespace Extractor
 
             form.LoadAnimatedModel(fileFullPathToModel, items[0], items[1], items[2]);
 
+            // Save
+            fbx.SaveIndividualFBXtakes();
         }
 
         private bool ValidateModelFile(string modelRelativeFile, string takeFullFile)

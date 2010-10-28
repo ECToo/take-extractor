@@ -336,7 +336,7 @@ namespace Extractor
         public string Build()
         {
             // Clear any previous errors.
-            errorLogger.Errors.Clear();
+            errorLogger.ClearErrors();
 
             // Create and submit a new asynchronous build request.
             BuildManager.DefaultBuildManager.BeginBuild(buildParameters);
@@ -360,6 +360,23 @@ namespace Extractor
             return null;
         }
 
+        public List<string> WarningsList()
+        {
+            if (errorLogger.Warnings.Count > 0)
+            {
+                return errorLogger.Warnings;
+            }
+            return null;
+        }
+
+        public string Warnings()
+        {
+            if (errorLogger.Warnings.Count < 1)
+            {
+                return "";
+            }
+            return string.Join("\n", errorLogger.Warnings.ToArray());
+        }
 
         #endregion
 

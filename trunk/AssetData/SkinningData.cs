@@ -11,18 +11,19 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 #endregion
 
-namespace TakeAssets
+namespace AssetData
 {
     /// <summary>
     /// Combines all the data needed to render and animate a skinned object.
     /// This is typically stored in the Tag property of the Model being animated.
+    /// This class needs a reader and writer to serialise
     /// </summary>
     public class SkinningData
     {
-        IDictionary<string, AnimationClip> animationClipsValue;
-        IList<Matrix> bindPoseValue;
-        IList<Matrix> inverseBindPoseValue;
-        IList<int> skeletonHierarchyValue;
+        private IDictionary<string, AnimationClip> animationClipsValue;
+        private IList<Matrix> bindPoseValue;
+        private IList<Matrix> inverseBindPoseValue;
+        private IList<int> skeletonHierarchyValue;
 
         // To get bone names to match bone indexes
         // these are already available in the intermediate file but

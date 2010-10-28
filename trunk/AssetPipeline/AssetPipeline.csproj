@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-    <ProjectGuid>{CAB20A6F-3235-462A-AA85-B0D69A71E4B5}</ProjectGuid>
+    <ProjectGuid>{9BE01AC7-6736-4FC8-AFD6-B37DC59F869F}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TakePipeline</RootNamespace>
-    <AssemblyName>TakePipeline</AssemblyName>
+    <RootNamespace>AssetPipeline</RootNamespace>
+    <AssemblyName>AssetPipeline</AssemblyName>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
@@ -50,12 +50,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnimatedModelProcessor.cs" />
+    <Compile Include="AnimationWriters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TakeAssets\TakeAssets.csproj">
-      <Project>{F6EF9CA1-00BD-4EEC-9715-18AA3B295E66}</Project>
-      <Name>TakeAssets</Name>
+    <ProjectReference Include="..\AssetData\AssetData.csproj">
+      <Project>{1B08C8EA-A15D-4148-A9A9-5C5D7E8E502E}</Project>
+      <Name>AssetData</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

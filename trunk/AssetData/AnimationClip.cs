@@ -20,11 +20,12 @@ using System;
 using System.Collections.Generic;
 #endregion
 
-namespace TakeAssets
+namespace AssetData
 {
     // An animation clip is the runtime equivalent of the
     // Microsoft.Xna.Framework.Content.Pipeline.Graphics.AnimationContent type.
     // It holds all the keyframes needed to describe a single animation.
+    // This class needs a reader and writer to serialise
     public class AnimationClip
     {
         // Used to try to ensure the animation was created for the same armature

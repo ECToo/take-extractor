@@ -90,8 +90,7 @@ using System.Windows.Forms;
 //-----------------------------------------------------------------------------
 // TODO:
 //-----------------------------------------------------------------------------
-// - Load the .takes file
-// - Load FBX file as text
+// - Change the ContentBuilder so it does not use a hard coded path to the pipeline DLL
 // - Save separate FBX files with just one take in each
 // - Save a bone map (index to bone name)
 

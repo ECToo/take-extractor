@@ -5,24 +5,22 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TakeAssets")]
-[assembly: AssemblyProduct("TakeAssets")]
+[assembly: AssemblyTitle("AssetPipeline")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyCompany("Open Source")]
-[assembly: AssemblyCopyright("MIT License")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("AssetPipeline")]
+[assembly: AssemblyCopyright("Copyright ©  2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
-// COM, set the ComVisible attribute to true on that type. Only Windows
-// assemblies support COM.
+// COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 
-// On Windows, the following GUID is for the ID of the typelib if this
-// project is exposed to COM. On other platforms, it unique identifies the
-// title storage container when deploying this assembly to the device.
-[assembly: Guid("0fd1c3b2-c6e8-473f-85c4-774db9b5b355")]
+// The following GUID is for the ID of the typelib if this project is exposed to COM
+[assembly: Guid("a3948109-f7eb-4453-9813-fc6ccb9f7ddd")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,3 +30,4 @@ using System.Runtime.InteropServices;
 //      Revision
 //
 [assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

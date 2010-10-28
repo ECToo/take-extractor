@@ -18,10 +18,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Microsoft.Xna.Framework.Content.Pipeline.Processors;
-using TakeAssets;
+using AssetData;
 #endregion
 
-namespace TakePipeline
+namespace AssetPipeline
 {
     /// <summary>
     /// Custom processor extends the built in framework ModelProcessor class,
@@ -363,7 +363,8 @@ namespace TakePipeline
             }
         }
 
-
+        // At the moment we are not displaying any animations so we can keep basic effect
+        /*
         /// <summary>
         /// Changes all the materials to use our model effect.
         /// </summary>
@@ -396,5 +397,6 @@ namespace TakePipeline
             // Chain to the base ModelProcessor converter.
             return base.ConvertMaterial(effectMaterial, context);
         }
+         * */
     }
 }

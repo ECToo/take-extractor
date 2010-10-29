@@ -10,7 +10,7 @@
 // one animation (take) per file.  Blender exports multiple takes per
 // file and it is difficult to get Blender to do otherwise.
 //
-// In addition the takes are also converted and saved to the format used
+// In addition the takes are also converted and saved to the keyframe format used
 // by my game for individual animation clips.
 //-----------------------------------------------------------------------------
 // To extract files for use in my game this tool uses a config file.
@@ -90,7 +90,6 @@ using System.Windows.Forms;
 //-----------------------------------------------------------------------------
 // TODO:
 //-----------------------------------------------------------------------------
-// - Save separate FBX files with just one take in each
 // - Save the takes in to the format used by my game
 
 // - Extract individual takes from a model that has one very long take.

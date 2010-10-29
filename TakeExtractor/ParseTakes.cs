@@ -82,7 +82,7 @@ namespace Extractor
             ParseFBX fbx = new ParseFBX(form);
             fbx.LoadAsText(fileFullPathToModel);
 
-            // For storing the split lines
+            // For storing the rotations from the tkes file
             string[] items = new string[3] { "", "", "" };
 
             // Load the model as a model
@@ -93,7 +93,6 @@ namespace Extractor
 
             form.LoadAnimatedModel(fileFullPathToModel, items[0], items[1], items[2]);
 
-            // Save
             fbx.SaveIndividualFBXtakes();
         }
 

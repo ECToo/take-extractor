@@ -71,7 +71,6 @@ namespace Extractor
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
 
-
             fileDialog.InitialDirectory = defaultFileFolder;
 
             fileDialog.Title = "Load Model";
@@ -87,6 +86,27 @@ namespace Extractor
                 LoadModel(fileDialog.FileName);
             }
             AddMessageLine("== Finished ==");
+            HasModelLoaded();
+        }
+
+        private void SplitFBXMenuClicked(object sender, EventArgs e)
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+
+            fileDialog.InitialDirectory = defaultFileFolder;
+
+            fileDialog.Title = "Split FBX Model files to have only one take per file";
+
+            fileDialog.Filter = "FBX Files (*.fbx)|*.fbx|" +
+                                "All Files (*.*)|*.*";
+
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                lastLoadedFile = fileDialog.FileName;
+                SplitFBX(fileDialog.FileName);
+            }
+            AddMessageLine("== Finished ==");
+            HasModelLoaded();
         }
 
         private void OpenTakesMenuClicked(object sender, EventArgs e)
@@ -95,7 +115,7 @@ namespace Extractor
 
             fileDialog.InitialDirectory = defaultFileFolder;
 
-            fileDialog.Title = "Load Takes";
+            fileDialog.Title = "Load a list of animation takes and save them in a keyframe format";
 
             fileDialog.Filter = "Takes Files (*.takes)|*.takes|" +
                                 "All Files (*.*)|*.*";
@@ -106,6 +126,7 @@ namespace Extractor
                 LoadTakes(fileDialog.FileName);
             }
             AddMessageLine("== Finished ==");
+            HasModelLoaded();
         }
 
         private void SaveBoneMapMenuClicked(object sender, EventArgs e)
@@ -119,6 +140,7 @@ namespace Extractor
             if (skinData == null)
             {
                 AddMessageLine("Not an animated model!");
+                SaveBoneMapMenu.Enabled = false;
                 return;
             }
             BoneMapSaveDialogue(GetBoneMapList(skinData));
@@ -131,6 +153,19 @@ namespace Extractor
         private void ExitMenuClicked(object sender, EventArgs e)
         {
             Close();
+        }
+
+        /// <summary>
+        /// Call this to enable the save BoneMap menu item
+        /// </summary>
+        private void HasModelLoaded()
+        {
+            if (modelViewerControl.Model == null)
+            {
+                SaveBoneMapMenu.Enabled = false;
+                return;
+            }
+            SaveBoneMapMenu.Enabled = true;
         }
 
         /// <summary>
@@ -209,6 +244,27 @@ namespace Extractor
             Cursor = Cursors.Arrow;
         }
 
+        private void SplitFBX(string fileName)
+        {
+            Cursor = Cursors.WaitCursor;
+
+            if (!File.Exists(fileName))
+            {
+                AddMessageLine("File not found: " + fileName);
+                Cursor = Cursors.Arrow;
+                return;
+            }
+
+            ParseFBX fbx = new ParseFBX(this);
+            fbx.LoadAsText(fileName);
+
+            LoadAnimatedModel(fileName, "0", "0", "0");
+
+            fbx.SaveIndividualFBXtakes();
+
+            Cursor = Cursors.Arrow;
+        }
+
         /// <summary>
         /// Loads a text file into an array
         /// </summary>
@@ -257,7 +313,7 @@ namespace Extractor
 
             fileDialog.InitialDirectory = pathToSaveFolder;
 
-            fileDialog.Title = "Save BoneMap";
+            fileDialog.Title = "Save a list of bone names with their numeric index";
 
             fileDialog.FileName = fileName;
 

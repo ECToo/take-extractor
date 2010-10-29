@@ -96,6 +96,7 @@
     <Compile Include="AnimationPart.cs" />
     <Compile Include="AnimationReaders.cs" />
     <Compile Include="Keyframe.cs" />
+    <Compile Include="ParseData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReplaceBones.cs" />
     <Compile Include="SkinningData.cs" />

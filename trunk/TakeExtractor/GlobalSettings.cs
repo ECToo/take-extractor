@@ -13,6 +13,7 @@ namespace Extractor
 {
     public static class GlobalSettings
     {
+        // Prse FBX files
         public const string fbxStartTakes = "Takes:";
         public const string fbxStartTake = "take:";
         public const string fbxNotStartTake = "multitake:";
@@ -24,5 +25,13 @@ namespace Extractor
         public const string pathSaveDataFolder = "ExtractTakes";  // used to load and save the results
         public const string fileBoneMap = "BoneMap.txt";    // appended to the model name to save a bonemap
 
+        // Save keyframes
+        // All lowercase
+        public const string itemRigType = "rigtype";
+        public const string itemHeadBones = "headbones";
+        public const string itemArmsBones = "armbones";
+        public const string itemClipTake = "clip";
+        public const string itemHeadTake = "head";
+        public const string itemArmsTake = "arms";
     }
 }

@@ -90,11 +90,11 @@
     <Compile Include="ModelViewerControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ParseData.cs" />
     <Compile Include="ParseFBX.cs" />
     <Compile Include="ParseTakes.cs" />
     <Compile Include="ProgramStart.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WantedBones.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MainForm.cs</DependentUpon>

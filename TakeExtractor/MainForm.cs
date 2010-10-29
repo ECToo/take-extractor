@@ -244,6 +244,15 @@ namespace Extractor
             Cursor = Cursors.Arrow;
         }
 
+        public SkinningData GetModelSkinData()
+        {
+            if (modelViewerControl.Model == null)
+            {
+                return null;
+            }
+            return (SkinningData)modelViewerControl.Model.Tag;
+        }
+
         private void SplitFBX(string fileName)
         {
             Cursor = Cursors.WaitCursor;
@@ -343,7 +352,7 @@ namespace Extractor
 
         }
 
-        private List<string> GetBoneMapList(SkinningData skinData)
+        public static List<string> GetBoneMapList(SkinningData skinData)
         {
             IDictionary<string, int> boneMap = skinData.BoneMap;
 
@@ -360,7 +369,6 @@ namespace Extractor
                 bones.Add(String.Format("{0}{1}{2}", keys[i], " = ", values[i]));
             }
             return bones;
-
         }
 
 

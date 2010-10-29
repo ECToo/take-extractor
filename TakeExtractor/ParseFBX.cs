@@ -262,11 +262,24 @@ namespace Extractor
                 result.AddRange(GetLines(component[takeNumbers[t]].Start, component[takeNumbers[t]].Count));
                 result.AddRange(footer);
                 // Work out the file name
-                fileName = Path.Combine(pathToSaveFolder, fileNameWithoutExtension);
-                fileName += "-" + component[takeNumbers[t]].Name + fileExtension;
+                fileName = GetTakeFileName(component[takeNumbers[t]].Name);
                 // Output
                 SaveTheFile(fileName, result);
             }
+        }
+
+        public string GetTakeFileName(string takeName)
+        {
+            string result = Path.Combine(pathToSaveFolder, fileNameWithoutExtension);
+            result += "-" + takeName.ToLowerInvariant() + fileExtension;
+            return result;
+        }
+
+        public string GetKeyframeFileName(string rigType, string partName, string partType)
+        {
+            string result = Path.Combine(pathToSaveFolder, rigType);
+            result += "-" + partName + "." + partType;
+            return result;
         }
 
         private void SaveTheFile(string fullFilePath, List<string> data)

@@ -3,6 +3,15 @@
 // Author: JCBDigger
 // URL: http://Games.DiscoverThat.co.uk
 //-----------------------------------------------------------------------------
+// Extract the text of an FBX file
+//
+// Splits the file in to sections.  Header, multiple takes and a footer.
+//
+// LIMITATIONS
+// - The keyword 'Take:' must not be used for the name of any bones or other parts
+// - The name of the take must be on the same line as the keyword 'Take:'
+//      e.g. 'Take: "Name" {'
+//-----------------------------------------------------------------------------
 #endregion
 
 #region Using Statements
@@ -90,7 +99,7 @@ namespace Extractor
                 return;
             }
 
-            form.AddMessageLine("Processing file: " + fbxFullFile);
+            form.AddMessageLine("Extracting data from: " + fbxFullFile);
 
             source.Clear();
             source.AddRange(data);

@@ -53,6 +53,9 @@ namespace Extractor
 
         // Timer controls the rotation speed.
         Stopwatch timer;
+        // Keep track of the frame rate
+        private float previousTimeMS = 0;
+        private float elapsedTimeMS = 0;
 
 
         /// <summary>

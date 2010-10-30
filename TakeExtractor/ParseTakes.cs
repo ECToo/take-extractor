@@ -204,8 +204,8 @@ namespace Extractor
 
                 if (exportData == null || exportData.Count < 1)
                 {
-                    // Nothing to save
-                    return;
+                    // Nothing to save go to the next one
+                    continue;
                 }
                 // Save the file
                 fileName = fbx.GetKeyframeFileName(rigType, clipParts[c].partName, clipParts[c].partType);
@@ -234,7 +234,11 @@ namespace Extractor
                 return data;
             }
 
-            AnimationClip clip = skinData.AnimationClips[clipName];
+            AnimationClip clip = null;
+            if (skinData.AnimationClips.ContainsKey(clipName))
+            {
+                clip = skinData.AnimationClips[clipName];
+            }
             if (clip == null)
             {
                 form.AddMessageLine("Animation does not exist in the file: " + clipName);
@@ -271,7 +275,7 @@ namespace Extractor
             }
 
             IList<Keyframe> frames = clip.Keyframes;
-            if (frames != null)
+            if (frames == null)
             {
                 data.Clear();
                 form.AddMessageLine("Animation does not have any frames: " + clipName);

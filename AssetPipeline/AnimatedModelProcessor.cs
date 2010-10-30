@@ -1,11 +1,16 @@
 #region File Description
 //-----------------------------------------------------------------------------
-// Modified by: JCBDigger
-//
-// From Microsoft XNA Community Game Platform
+// Author: JCBDigger
+// URL: http://Games.DiscoverThat.co.uk
+// Modified from the samples provided by
+// Microsoft XNA Community Game Platform
+//-----------------------------------------------------------------------------
 // 
 // This only runs at compile time to produce the intermediate model files
 // Therefore it is the same code for both the Xbox360 and Windows
+//
+// This has been modified to change exceptions to errors for use with 
+// the model viewer.
 //
 //-----------------------------------------------------------------------------
 #endregion
@@ -119,6 +124,7 @@ namespace AssetPipeline
             if (skeleton == null)
             {
                 // this is a normal model not an animated one
+                // so do the base processing instead
                 return base.Process(input, context);
                 //throw new InvalidContentException("Input skeleton not found.");
             }
@@ -132,9 +138,15 @@ namespace AssetPipeline
 
             if (bones.Count > MaxBones)
             {
-                throw new InvalidContentException(string.Format(
+                //throw new InvalidContentException(string.Format(
+                  //  "Skeleton has {0} bones, but the maximum supported is {1}.",
+                    //bones.Count, MaxBones));
+                context.Logger.LogWarning(null, null,
+                    string.Format(
                     "Skeleton has {0} bones, but the maximum supported is {1}.",
                     bones.Count, MaxBones));
+                // If we needed the animations to work we should stop here but for the 
+                // purposes of the viewer we can continue.
             }
 
             List<Matrix> bindPose = new List<Matrix>();
@@ -153,28 +165,42 @@ namespace AssetPipeline
 
             // Convert animation data to our runtime format.
             Dictionary<string, AnimationClip> animationClips;
-            animationClips = ProcessAnimations(skeleton.Animations, bones, boneMap, context);    // JCB
+            animationClips = ProcessAnimations(skeleton.Animations, bones, boneMap, context);    // added bonemap
 
-            // Chain to the base ModelProcessor class so it can convert the model data.
-            ModelContent model = base.Process(input, context);
-            
-            // Store our custom animation data in the Tag property of the model.
-            model.Tag = new SkinningData(animationClips, bindPose,
-                                         inverseBindPose, skeletonHierarchy,
-                                         boneMap);
+            // Catch any build errors!
+            try
+            {
+                // Chain to the base ModelProcessor class so it can convert the model data.
+                ModelContent model = base.Process(input, context);
 
-            return model;
+                // Store our custom animation data in the Tag property of the model.
+                model.Tag = new SkinningData(animationClips, bindPose,
+                                             inverseBindPose, skeletonHierarchy,
+                                             boneMap);
+                return model;
+            }
+            catch (Exception e)
+            {
+                context.Logger.LogWarning(null, null, e.ToString());
+                return null;
+            }
         }
 
         // Rotate all the content before anything else
         // see http://forums.xna.com/forums/p/60188/370817.aspx#370817
         /*
-         * Shawn Hargreaves
-         * If you look at the skinned model processor, you will see that it pulls out animation data from the model into its own keyframe data structures, then chains to the base ModelProcessor which converts the model itself from NodeContent into ModelContent format.
-         * This base ModelProcessor call applies whatever rotation has been specified via these processor parameters, but this happens AFTER the keyframe data was extracted, so the keyframe values are not rotated.
+         * By Shawn Hargreaves
+         * If you look at the skinned model processor, you will see that it pulls out animation data from 
+         * the model into its own keyframe data structures, then chains to the base ModelProcessor which 
+         * converts the model itself from NodeContent into ModelContent format.
+         * This base ModelProcessor call applies whatever rotation has been specified via these processor 
+         * parameters, but this happens AFTER the keyframe data was extracted, so the keyframe values are 
+         * not rotated.
          * There are several ways you could fix this:
          * Manually apply the necessary rotation to each keyframe matrix
-         * Or, instead of using ModelProcessor to apply the rotation, do this yourself at the very start of your Process method (before you call ModelProcessor and before any of the keyframe extraction). The easiest way to do that is to call MeshHelper.TransformScene. 
+         * Or, instead of using ModelProcessor to apply the rotation, do this yourself at the very start of 
+         * your Process method (before you call ModelProcessor and before any of the keyframe extraction). 
+         * The easiest way to do that is to call MeshHelper.TransformScene. 
          * */
         // This only works if the animation keyframes are also rotated
         // As my animations are separate the source model would need to be rotated first.
@@ -212,7 +238,7 @@ namespace AssetPipeline
 
             foreach (KeyValuePair<string, AnimationContent> animation in animations)
             {
-                AnimationClip processed = ProcessAnimation(animation.Value, boneMap);
+                AnimationClip processed = ProcessAnimation(animation.Value, boneMap, context);
                 
                 animationClips.Add(animation.Key, processed);
             }
@@ -234,7 +260,8 @@ namespace AssetPipeline
         /// object to our runtime AnimationClip format.
         /// </summary>
         public static AnimationClip ProcessAnimation(AnimationContent animation,
-                                              IDictionary<string, int> boneMap)
+                                              IDictionary<string, int> boneMap, 
+                                              ContentProcessorContext context)
         {
             List<Keyframe> keyframes = new List<Keyframe>();
 
@@ -247,9 +274,14 @@ namespace AssetPipeline
 
                 if (!boneMap.TryGetValue(channel.Key, out boneIndex))
                 {
-                    throw new InvalidContentException(string.Format(
-                        "Found animation for bone '{0}', " +
+                    //throw new InvalidContentException(string.Format(
+                      //  "Found animation for bone '{0}', " +
+                        //"which is not part of the skeleton.", channel.Key));
+                    context.Logger.LogWarning(null, null,
+                        string.Format("Found animation for bone '{0}', " +
                         "which is not part of the skeleton.", channel.Key));
+                    // Skip this channel
+                    continue;
                 }
 
                 // Convert the keyframe data.
@@ -264,10 +296,18 @@ namespace AssetPipeline
             keyframes.Sort(CompareKeyframeTimes);
 
             if (keyframes.Count == 0)
-                throw new InvalidContentException("Animation has no keyframes.");
+            {
+                //throw new InvalidContentException("Animation has no keyframes.");
+                context.Logger.LogWarning(null, null, "Animation has no keyframes.");
+                return null;
+            }
 
             if (animation.Duration <= TimeSpan.Zero)
-                throw new InvalidContentException("Animation has a zero duration.");
+            {
+                //throw new InvalidContentException("Animation has a zero duration.");
+                context.Logger.LogWarning(null, null, "Animation has a zero duration.");
+                return null;
+            }
 
             // A model from a 3D modelling package does not have sound cues
             // We have to add them manually to our modified clip file

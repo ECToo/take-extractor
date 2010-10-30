@@ -1,9 +1,9 @@
 #region File Description
 //-----------------------------------------------------------------------------
-// ErrorLogger.cs
-//
+// Author: JCBDigger
+// URL: http://Games.DiscoverThat.co.uk
+// Modified from the samples provided by
 // Microsoft XNA Community Game Platform
-// Copyright (C) Microsoft Corporation. All rights reserved.
 //-----------------------------------------------------------------------------
 #endregion
 
@@ -47,7 +47,7 @@ namespace Extractor
         /// </summary>
         void ErrorRaised(object sender, BuildErrorEventArgs e)
         {
-            errors.Add(e.Message);
+            errors.Add("Error: " + e.Message);
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace Extractor
             set { verbosity = value; }
         }
 
-        LoggerVerbosity verbosity = LoggerVerbosity.Detailed; //.Normal;
+        LoggerVerbosity verbosity = LoggerVerbosity.Normal;     //.Detailed; //.Normal;
 
 
         #endregion

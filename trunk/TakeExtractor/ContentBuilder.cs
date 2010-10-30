@@ -1,9 +1,9 @@
 #region File Description
 //-----------------------------------------------------------------------------
-// ContentBuilder.cs
-//
+// Author: JCBDigger
+// URL: http://Games.DiscoverThat.co.uk
+// Modified from the samples provided by
 // Microsoft XNA Community Game Platform
-// Copyright (C) Microsoft Corporation. All rights reserved.
 //-----------------------------------------------------------------------------
 #endregion
 
@@ -87,11 +87,6 @@ namespace Extractor
         bool isDisposed;
 
 
-        #endregion
-
-        #region Properties
-
-
         /// <summary>
         /// Gets the output directory, which will contain the generated .xnb files.
         /// </summary>
@@ -100,23 +95,16 @@ namespace Extractor
             get { return Path.Combine(buildDirectory, "bin/Content"); }
         }
 
-
-        #endregion
-
-        #region Initialization
-
-
         /// <summary>
         /// Creates a new content builder.
         /// </summary>
         public ContentBuilder()
         {
             // Calculate the path relative to the current build to get the library project location
-#if DEBUG
+            // Pipeline projects are only built as debug
             string binaryFolder = "bin/x86/Debug";
-#else
-            string binaryFolder = "bin/x86/Release";
-#endif
+            //string binaryFolder = "bin/x86/Release";
+
             string relativeFolders = "../../../../";
             //string assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
             string assemblyLocation = AppDomain.CurrentDomain.BaseDirectory;
@@ -240,27 +228,27 @@ namespace Extractor
         // Default settings do not show up in the file.
         // Use a text editor to view the *.contentproj file
 
-        /*
-  <ItemGroup>
-    <Compile Include="Characters\Dude.fbx">
-      <Name>Dude</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>AnimatedModelProcessor</Processor>
-      <ProcessorParameters_DegreesX>90</ProcessorParameters_DegreesX>
-      <ProcessorParameters_DegreesY>0</ProcessorParameters_DegreesY>
-      <ProcessorParameters_DegreesZ>180</ProcessorParameters_DegreesZ>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Characters\Dude.fbx">
-      <Name>Dude</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-      <ProcessorParameters_RotationX>90</ProcessorParameters_RotationX>
-      <ProcessorParameters_RotationZ>180</ProcessorParameters_RotationZ>
-      <ProcessorParameters_RotationY>90</ProcessorParameters_RotationY>
-    </Compile>
-  </ItemGroup>
+        /* EXAMPLE
+          <ItemGroup>
+            <Compile Include="Characters\Dude.fbx">
+              <Name>Dude</Name>
+              <Importer>FbxImporter</Importer>
+              <Processor>AnimatedModelProcessor</Processor>
+              <ProcessorParameters_DegreesX>90</ProcessorParameters_DegreesX>
+              <ProcessorParameters_DegreesY>0</ProcessorParameters_DegreesY>
+              <ProcessorParameters_DegreesZ>180</ProcessorParameters_DegreesZ>
+            </Compile>
+          </ItemGroup>
+          <ItemGroup>
+            <Compile Include="Characters\Dude.fbx">
+              <Name>Dude</Name>
+              <Importer>FbxImporter</Importer>
+              <Processor>ModelProcessor</Processor>
+              <ProcessorParameters_RotationX>90</ProcessorParameters_RotationX>
+              <ProcessorParameters_RotationZ>180</ProcessorParameters_RotationZ>
+              <ProcessorParameters_RotationY>90</ProcessorParameters_RotationY>
+            </Compile>
+          </ItemGroup>
          * */
 
         /// <summary>
@@ -337,27 +325,38 @@ namespace Extractor
         {
             // Clear any previous errors.
             errorLogger.ClearErrors();
+            string errorResult = "";
 
-            // Create and submit a new asynchronous build request.
-            BuildManager.DefaultBuildManager.BeginBuild(buildParameters);
-            
-            BuildRequestData request = new BuildRequestData(buildProject.CreateProjectInstance(), new string[0]);
-            BuildSubmission submission = BuildManager.DefaultBuildManager.PendBuildRequest(request);
-
-            submission.ExecuteAsync(null, null);
-
-            // Wait for the build to finish.
-            submission.WaitHandle.WaitOne();
-
-            BuildManager.DefaultBuildManager.EndBuild();
-
-            // If the build failed, return an error string.
-            if (submission.BuildResult.OverallResult == BuildResultCode.Failure)
+            // Any number of problems with the model file can cause an exception!
+            // For some reason this try and catch does not trap them!
+            // I have changed as many exceptions as possible to errors instead.
+            try
             {
-                return string.Join("\n", errorLogger.Errors.ToArray());
+                // Create and submit a new asynchronous build request.
+                BuildManager.DefaultBuildManager.BeginBuild(buildParameters);
+
+                BuildRequestData request = new BuildRequestData(buildProject.CreateProjectInstance(), new string[0]);
+                BuildSubmission submission = BuildManager.DefaultBuildManager.PendBuildRequest(request);
+
+                submission.ExecuteAsync(null, null);
+
+                // Wait for the build to finish.
+                submission.WaitHandle.WaitOne();
+
+                BuildManager.DefaultBuildManager.EndBuild();
+
+                // If the build failed, return an error string.
+                if (submission.BuildResult.OverallResult == BuildResultCode.Failure)
+                {
+                    errorResult += string.Join("\n", errorLogger.Errors.ToArray());
+                }
+            }
+            catch (Exception e)
+            {
+                errorResult += "\n" + e.ToString();
             }
 
-            return null;
+            return errorResult;
         }
 
         public List<string> WarningsList()

@@ -1,9 +1,9 @@
 #region File Description
 //-----------------------------------------------------------------------------
-// MainForm.cs
-//
+// Author: JCBDigger
+// URL: http://Games.DiscoverThat.co.uk
+// Modified from the samples provided by
 // Microsoft XNA Community Game Platform
-// Copyright (C) Microsoft Corporation. All rights reserved.
 //-----------------------------------------------------------------------------
 #endregion
 
@@ -173,40 +173,7 @@ namespace Extractor
         /// </summary>
         public void LoadModel(string fileName)
         {
-            Cursor = Cursors.WaitCursor;
-            AddMessageLine("Loading model: " + fileName);
-
-            // Unload any existing model.
-            modelViewerControl.Model = null;
-            contentManager.Unload();
-
-            // Tell the ContentBuilder what to build.
-            contentBuilder.Clear();
-            //contentBuilder.Add(fileName, "Model", null, "ModelProcessor");
-            contentBuilder.AddAnimated(fileName, "Model", "0", "0", "0");
-
-            // Build this new model data and record the errors and warning
-            string buildError = contentBuilder.Build();
-            string buildWarnings = contentBuilder.Warnings();
-            if (!string.IsNullOrEmpty(buildWarnings))
-            {
-                AddMessageLine(buildWarnings);
-            }
-
-            if (string.IsNullOrEmpty(buildError))
-            {
-                // If the build succeeded, use the ContentManager to
-                // load the temporary .xnb file that we just created.
-                modelViewerControl.Model = contentManager.Load<Model>("Model");
-            }
-            else
-            {
-                // If the build failed, display an error message.
-                AddMessageLine(buildError);
-                MessageBox.Show(buildError, "Error");
-            }
-
-            Cursor = Cursors.Arrow;
+            LoadAnimatedModel(fileName, "0", "0", "0");
         }
 
         /// <summary>
@@ -223,10 +190,16 @@ namespace Extractor
 
             // Tell the ContentBuilder what to build.
             contentBuilder.Clear();
+            //contentBuilder.Add(fileName, "Model", null, "ModelProcessor");
             contentBuilder.AddAnimated(fileName, "Model", rotateXdeg, rotateYdeg, rotateZdeg);
 
             // Build this new model data.
             string buildError = contentBuilder.Build();
+            string buildWarnings = contentBuilder.Warnings();
+            if (!string.IsNullOrEmpty(buildWarnings))
+            {
+                AddMessageLine(buildWarnings);
+            }
 
             if (string.IsNullOrEmpty(buildError))
             {

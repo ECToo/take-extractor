@@ -1,6 +1,7 @@
 #region File Description
 // Author: JCBDigger
 // URL: http://Games.DiscoverThat.co.uk
+// URL: http://www.MistyManor.co.uk
 //-----------------------------------------------------------------------------
 // Based on the WinFormsContentLoading sample by Microsoft
 //-----------------------------------------------------------------------------
@@ -37,7 +38,7 @@
 //  e.g. 90|0|180 or 0|0|0
 //
 // RigType identifies different armature configurations: Human, Alien, LocalHuman etc.
-//  In conjunction with the type it is used to extract different bones in to
+//  In conjunction with the type it is used to filter which bones are extracted in to
 //  the output take file
 //  e.g. RigType|alien or RigType|human
 //
@@ -47,8 +48,8 @@
 //
 // Type is the name of the full or part animation and can be: clip, head or arms
 //  Clip = Full animation
-//  Head = Bones used to move the head to look round
-//  Arms = Bones used to move the arms to aim a weapon (this does not usually include the fingers)
+//  Head = Just the bones used to move the head to look round
+//  Arms = Just the bones used to move the arms to aim a weapon (this does not usually include the fingers)
 // SourceTakeName = the name of the animation take in the source file
 // OutputTakeName = the name used in game to reference the take.
 //      This does not include the rig armature name.
@@ -88,14 +89,16 @@ using System.Windows.Forms;
 #endregion
 
 //-----------------------------------------------------------------------------
-// TODO:
+// TODO (Extras):
 //-----------------------------------------------------------------------------
-// TEST Save the takes in to the format used by my game
-
 // - Extract individual takes from a model that has one very long take.
 //      Like the Mech robots have.
+//      Add a new type
 //      Type = List
-//      Enter the range of keyframes
+//      Enter the range of keyframes (from|To) inclusive
+//      The name of the animation to save (used for both the FBX and the keyframe files)
+// e.g.
+//  List|1250|2300|Walk
 //-----------------------------------------------------------------------------
 
 #region Source Control
@@ -121,10 +124,10 @@ using System.Windows.Forms;
 //-----------------------------------------------------------------------------
 // Subversion
 //   - Software
-//      Command line and server
+//      Server
 //        http://subversion.apache.org/
 //        http://subversion.tigris.org/
-//      Download
+//      Command line client
 //        http://www.sliksvn.com/en/download
 //      Windows Explorer extension GUI
 //        http://tortoisesvn.tigris.org/

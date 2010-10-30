@@ -82,6 +82,7 @@ namespace Extractor
 
             if (fileDialog.ShowDialog() == DialogResult.OK)
             {
+                ClearMessages();
                 lastLoadedFile = fileDialog.FileName;
                 LoadModel(fileDialog.FileName);
             }
@@ -102,6 +103,7 @@ namespace Extractor
 
             if (fileDialog.ShowDialog() == DialogResult.OK)
             {
+                ClearMessages();
                 lastLoadedFile = fileDialog.FileName;
                 SplitFBX(fileDialog.FileName);
             }
@@ -122,6 +124,7 @@ namespace Extractor
 
             if (fileDialog.ShowDialog() == DialogResult.OK)
             {
+                ClearMessages();
                 lastLoadedFile = fileDialog.FileName;
                 LoadTakes(fileDialog.FileName);
             }

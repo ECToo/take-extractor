@@ -288,9 +288,12 @@ namespace Extractor
             string rotateDegX, string rotateDegY, string rotateDegZ)
         {
             Add(filename, name, null, "AnimatedModelProcessor",
-                "ProcessorParameters_DegreesX", rotateDegX,
-                "ProcessorParameters_DegreesY", rotateDegY,
-                "ProcessorParameters_DegreesZ", rotateDegZ);
+                "ProcessorParameters_RotationX", rotateDegX,
+                "ProcessorParameters_RotationY", rotateDegY,
+                "ProcessorParameters_RotationZ", rotateDegZ);
+                //"ProcessorParameters_DegreesX", rotateDegX,
+                //"ProcessorParameters_DegreesY", rotateDegY,
+                //"ProcessorParameters_DegreesZ", rotateDegZ);
         }
 
         /// <summary>

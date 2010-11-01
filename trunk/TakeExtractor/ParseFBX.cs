@@ -42,6 +42,7 @@ namespace Extractor
         private enum element
         {
             Header,
+            Current,
             Take,
             Footer
         }
@@ -130,10 +131,12 @@ namespace Extractor
             for (int i = 0; i < source.Count; i++)
             {
                 countBrackets += CountCurlyBrackets(source[i]);
+
                 // Has the section ended
-                if (source[i].ToLowerInvariant().Contains(GlobalSettings.fbxStartTake) &&
-                    !source[i].ToLowerInvariant().Contains(GlobalSettings.fbxNotStartTake) || 
-                    countBrackets < 0)
+                if ((source[i].ToLowerInvariant().Contains(GlobalSettings.fbxStartTake) &&
+                    !source[i].ToLowerInvariant().Contains(GlobalSettings.fbxNotStartTake)) || 
+                    countBrackets < 0 ||
+                    source[i].ToLowerInvariant().Contains(GlobalSettings.fbxCurrentTake))
                 {
                     // End previous section
                     part.Count = i - part.Start;
@@ -141,7 +144,13 @@ namespace Extractor
                     // Start next section
                     part = new section();
                     part.Start = i;
-                    if (countBrackets >= 0)
+                    if (source[i].ToLowerInvariant().Contains(GlobalSettings.fbxCurrentTake))
+                    {
+                        // Is the Current take line
+                        part.Position = element.Current;
+                        part.Name = "";
+                    }
+                    else if (countBrackets >= 0)
                     {
                         // Must be a take
                         part.Position = element.Take;
@@ -224,13 +233,14 @@ namespace Extractor
 
         public void SaveIndividualFBXtakes()
         {
-            if (component.Count < 3 || source.Count < 1)
+            if (component.Count < 4 || source.Count < 1)
             {
-                form.AddMessageLine("No takes found in the file!");
+                form.AddMessageLine("No takes found or unsupportted file format!");
                 return;
             }
 
             List<string> header = new List<string>();
+            List<string> current = new List<string>();
             List<string> footer = new List<string>();
             List<int> takeNumbers = new List<int>();
             for (int c = 0; c < component.Count; c++)
@@ -238,6 +248,10 @@ namespace Extractor
                 if (component[c].Position == element.Header)
                 {
                     header.AddRange(GetLines(component[c].Start, component[c].Count));
+                }
+                else if (component[c].Position == element.Current)
+                {
+                    current.AddRange(GetLines(component[c].Start, component[c].Count));
                 }
                 else if (component[c].Position == element.Footer)
                 {
@@ -259,6 +273,7 @@ namespace Extractor
                 theTake.Clear();
                 // Create the new FBX contents
                 result.AddRange(header);
+                result.AddRange(GetCurrentForThisTake(current, component[takeNumbers[t]].Name));
                 result.AddRange(GetLines(component[takeNumbers[t]].Start, component[takeNumbers[t]].Count));
                 result.AddRange(footer);
                 // Work out the file name
@@ -266,6 +281,32 @@ namespace Extractor
                 // Output
                 SaveTheFile(fileName, result);
             }
+        }
+
+        private List<string> GetCurrentForThisTake(List<string> current, string takeName)
+        {
+            List<string> result = new List<string>();
+            for (int i = 0; i < current.Count; i++)
+            {
+                if (current[i].ToLowerInvariant().Contains(GlobalSettings.fbxCurrentTake))
+                {
+                    // This makes the assumption that the line is in the following format
+                    //      Current: "takeName"
+                    // with nothing else on the line
+                    // The following tries to retain the indented formatting
+                    // Find the first quote and replace the rest of string
+                    string line = current[i].Substring(0, current[i].IndexOf("\""));
+                    if (line.Length > 0)
+                    {
+                        result.Add(line + "\"" + takeName + "\"");
+                    }
+                }
+                else
+                {
+                    result.Add(current[i]);
+                }
+            }
+            return result;
         }
 
         public string GetTakeFileName(string takeName)

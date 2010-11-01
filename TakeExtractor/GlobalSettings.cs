@@ -13,8 +13,9 @@ namespace Extractor
 {
     public static class GlobalSettings
     {
-        // Prse FBX files
-        public const string fbxStartTakes = "Takes:";
+        // Parse FBX files (lowercase)
+        public const string fbxStartTakes = "takes:";
+        public const string fbxCurrentTake = "current:";
         public const string fbxStartTake = "take:";
         public const string fbxNotStartTake = "multitake:";
         public const string fbxStartSection = "{";

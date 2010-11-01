@@ -125,6 +125,7 @@ namespace AssetPipeline
             {
                 // this is a normal model not an animated one
                 // so do the base processing instead
+                context.Logger.LogWarning(null, null, "No skeleton found!");
                 return base.Process(input, context);
                 //throw new InvalidContentException("Input skeleton not found.");
             }

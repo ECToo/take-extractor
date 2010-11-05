@@ -189,6 +189,8 @@ namespace AssetPipeline
 
         // Rotate all the content before anything else
         // see http://forums.xna.com/forums/p/60188/370817.aspx#370817
+        // http://forums.create.msdn.com/forums/p/60188/370817.aspx
+        // http://forums.create.msdn.com/forums/p/64690/395491.aspx#395491
         /*
          * By Shawn Hargreaves
          * If you look at the skinned model processor, you will see that it pulls out animation data from 
@@ -346,8 +348,8 @@ namespace AssetPipeline
                         mesh.Name, parentBoneName);
                 }
 
-                // We use this to load all models so this test removed
-                /*
+                // This test only works for animated models
+                
                 if (!MeshHasSkinning(mesh))
                 {
                     context.Logger.LogWarning(null, null,
@@ -357,7 +359,7 @@ namespace AssetPipeline
                     mesh.Parent.Children.Remove(mesh);
                     return;
                 }
-                 * */
+                
             }
             else if (node is BoneContent)
             {

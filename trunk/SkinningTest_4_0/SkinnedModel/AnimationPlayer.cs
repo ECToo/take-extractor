@@ -82,6 +82,11 @@ namespace SkinnedModel
         public void Update(TimeSpan time, bool relativeToCurrentTime,
                            Matrix rootTransform)
         {
+            if (currentClipValue == null)
+            {
+                return;
+            }
+
             UpdateBoneTransforms(time, relativeToCurrentTime);
             UpdateWorldTransforms(rootTransform);
             UpdateSkinTransforms();
@@ -94,8 +99,15 @@ namespace SkinnedModel
         public void UpdateBoneTransforms(TimeSpan time, bool relativeToCurrentTime)
         {
             if (currentClipValue == null)
+            {
+                return;
+            }
+
+            /*
+            if (currentClipValue == null)
                 throw new InvalidOperationException(
                             "AnimationPlayer.Update was called before StartClip");
+             * */
 
             // Update the animation position.
             if (relativeToCurrentTime)

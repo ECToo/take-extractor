@@ -73,7 +73,8 @@ namespace SkinningSample
             spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
             font = Content.Load<SpriteFont>("Console");
             // Load the model.
-            currentModel = Content.Load<Model>("dude");
+            //currentModel = Content.Load<Model>("dude");
+            currentModel = Content.Load<Model>("TestDudeAnimations2");
 
             // Look up our custom skinning information.
             SkinningData skinningData = currentModel.Tag as SkinningData;
@@ -175,7 +176,10 @@ namespace SkinningSample
 
             spriteBatch.Begin();
 
-            spriteBatch.DrawString(font, clipNames[currentClip], Vector2.Zero, Color.White);
+            if (currentClip >= 0)
+            {
+                spriteBatch.DrawString(font, clipNames[currentClip], Vector2.Zero, Color.White);
+            }
 
             spriteBatch.End();
 

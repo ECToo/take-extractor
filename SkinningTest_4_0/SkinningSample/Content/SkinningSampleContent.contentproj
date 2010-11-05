@@ -44,6 +44,11 @@
       <Processor>SkinnedModelProcessor</Processor>
       <Name>dude</Name>
     </Compile>
+    <Compile Include="TestDudeAnimations2.x">
+      <Name>TestDudeAnimations2</Name>
+      <Importer>XImporter</Importer>
+      <Processor>SkinnedModelProcessor</Processor>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.AudioImporters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=None" />

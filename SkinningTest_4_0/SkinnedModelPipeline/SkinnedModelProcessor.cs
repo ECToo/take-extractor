@@ -71,7 +71,7 @@ namespace SkinnedModelPipeline
 
             // Convert animation data to our runtime format.
             Dictionary<string, AnimationClip> animationClips;
-            animationClips = ProcessAnimations(skeleton.Animations, bones);
+            animationClips = ProcessAnimations(skeleton.Animations, bones, context);
 
             // Chain to the base ModelProcessor class so it can convert the model data.
             ModelContent model = base.Process(input, context);
@@ -89,7 +89,8 @@ namespace SkinnedModelPipeline
         /// object to our runtime AnimationClip format.
         /// </summary>
         static Dictionary<string, AnimationClip> ProcessAnimations(
-            AnimationContentDictionary animations, IList<BoneContent> bones)
+            AnimationContentDictionary animations, IList<BoneContent> bones,
+            ContentProcessorContext context)
         {
             // Build up a table mapping bone names to indices.
             Dictionary<string, int> boneMap = new Dictionary<string, int>();
@@ -115,8 +116,8 @@ namespace SkinnedModelPipeline
 
             if (animationClips.Count == 0)
             {
-                throw new InvalidContentException(
-                            "Input file does not contain any animations.");
+                context.Logger.LogWarning(null, null, "Input file does not contain any animations.", "");
+                //throw new InvalidContentException("Input file does not contain any animations.");
             }
 
             return animationClips;

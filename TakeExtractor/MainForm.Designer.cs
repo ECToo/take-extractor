@@ -39,6 +39,7 @@ namespace Extractor
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.messageBox = new System.Windows.Forms.TextBox();
             this.modelViewerControl = new Extractor.ModelViewerControl();
+            this.viewRigidModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -57,6 +58,7 @@ namespace Extractor
             // 
             this.fileToolStripMenuItem.BackColor = System.Drawing.SystemColors.ControlDark;
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.viewRigidModelToolStripMenuItem,
             this.openModelToolStripMenuItem,
             this.splitFBXMenuItem,
             this.openTakesToolStripMenuItem,
@@ -74,15 +76,15 @@ namespace Extractor
             this.openModelToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
             this.openModelToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlText;
             this.openModelToolStripMenuItem.Name = "openModelToolStripMenuItem";
-            this.openModelToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
-            this.openModelToolStripMenuItem.Text = "View Model...";
+            this.openModelToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.openModelToolStripMenuItem.Text = "View Animated Model...";
             this.openModelToolStripMenuItem.ToolTipText = "Load a 3D model in to the viewer";
-            this.openModelToolStripMenuItem.Click += new System.EventHandler(this.OpenModelMenuClicked);
+            this.openModelToolStripMenuItem.Click += new System.EventHandler(this.OpenAnimatedModelMenuClicked);
             // 
             // splitFBXMenuItem
             // 
             this.splitFBXMenuItem.Name = "splitFBXMenuItem";
-            this.splitFBXMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.splitFBXMenuItem.Size = new System.Drawing.Size(200, 22);
             this.splitFBXMenuItem.Text = "Split FBX files...";
             this.splitFBXMenuItem.ToolTipText = "Split FBX Model files to have only one take per file";
             this.splitFBXMenuItem.Click += new System.EventHandler(this.SplitFBXMenuClicked);
@@ -92,7 +94,7 @@ namespace Extractor
             this.openTakesToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
             this.openTakesToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlText;
             this.openTakesToolStripMenuItem.Name = "openTakesToolStripMenuItem";
-            this.openTakesToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.openTakesToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
             this.openTakesToolStripMenuItem.Text = "Extract Takes...";
             this.openTakesToolStripMenuItem.ToolTipText = "Load a list of animation takes and save them in a keyframe format";
             this.openTakesToolStripMenuItem.Click += new System.EventHandler(this.OpenTakesMenuClicked);
@@ -102,13 +104,13 @@ namespace Extractor
             this.toolStripSeparator1.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.toolStripSeparator1.ForeColor = System.Drawing.SystemColors.ControlText;
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(158, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(197, 6);
             // 
             // SaveBoneMapMenu
             // 
             this.SaveBoneMapMenu.Enabled = false;
             this.SaveBoneMapMenu.Name = "SaveBoneMapMenu";
-            this.SaveBoneMapMenu.Size = new System.Drawing.Size(161, 22);
+            this.SaveBoneMapMenu.Size = new System.Drawing.Size(200, 22);
             this.SaveBoneMapMenu.Text = "Save BoneMap...";
             this.SaveBoneMapMenu.ToolTipText = "Save a list of bone names with their numeric index";
             this.SaveBoneMapMenu.Click += new System.EventHandler(this.SaveBoneMapMenuClicked);
@@ -116,14 +118,14 @@ namespace Extractor
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(158, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(197, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
             this.exitToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlText;
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitMenuClicked);
             // 
@@ -144,11 +146,18 @@ namespace Extractor
             // 
             this.modelViewerControl.Dock = System.Windows.Forms.DockStyle.Top;
             this.modelViewerControl.Location = new System.Drawing.Point(0, 24);
-            this.modelViewerControl.Model = null;
+            this.modelViewerControl.UnloadModel();
             this.modelViewerControl.Name = "modelViewerControl";
             this.modelViewerControl.Size = new System.Drawing.Size(792, 507);
             this.modelViewerControl.TabIndex = 1;
             this.modelViewerControl.Text = "modelViewerControl";
+            // 
+            // viewRigidModelToolStripMenuItem
+            // 
+            this.viewRigidModelToolStripMenuItem.Name = "viewRigidModelToolStripMenuItem";
+            this.viewRigidModelToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.viewRigidModelToolStripMenuItem.Text = "View Rigid Model...";
+            this.viewRigidModelToolStripMenuItem.Click += new System.EventHandler(this.OpenRigidModelMenuClicked);
             // 
             // MainForm
             // 
@@ -183,6 +192,7 @@ namespace Extractor
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem SaveBoneMapMenu;
         private System.Windows.Forms.ToolStripMenuItem splitFBXMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewRigidModelToolStripMenuItem;
 
     }
 }

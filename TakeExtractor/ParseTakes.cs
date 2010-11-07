@@ -92,7 +92,7 @@ namespace Extractor
                 items = ParseData.SplitItemByDivision(source[1]);
             }
 
-            form.LoadAnimatedModel(fileFullPathToModel, items[0], items[1], items[2]);
+            form.LoadAnimatedModel(true, fileFullPathToModel, items[0], items[1], items[2]);
 
             // Must save the takes to individual files and
             // the file names must be consistent
@@ -187,7 +187,7 @@ namespace Extractor
             for (int c = 0; c < clipParts.Count; c++)
             {
                 string fileName = fbx.GetTakeFileName(clipParts[c].takeName);
-                form.LoadAnimatedModel(fileName, rotateXdeg, rotateYdeg, rotateZdeg);
+                form.LoadAnimatedModel(true, fileName, rotateXdeg, rotateYdeg, rotateZdeg);
                 List<string> exportData;
                 if (clipParts[c].partType == GlobalSettings.itemHeadTake)
                 {

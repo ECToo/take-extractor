@@ -271,8 +271,8 @@ namespace Extractor
                     effect.Projection = projection;
 
                     // Add a bit more light to our animated models
-                    effect.EmissiveColor = new Vector3(0.8f, 0.8f, 0.8f);
-                    effect.LightingEnabled = true;
+                    //effect.EmissiveColor = new Vector3(0.8f, 0.8f, 0.8f);
+                    //effect.LightingEnabled = true;
 
                     effect.EnableDefaultLighting();
                     effect.PreferPerPixelLighting = true;

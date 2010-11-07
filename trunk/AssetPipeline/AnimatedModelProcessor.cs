@@ -19,6 +19,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
@@ -144,7 +145,7 @@ namespace AssetPipeline
                     //bones.Count, MaxBones));
                 context.Logger.LogWarning(null, null,
                     string.Format(
-                    "Skeleton has {0} bones, but the maximum supported is {1}.",
+                    "Skeleton has {0} bones.  The maximum supported with shadows is {1}.",
                     bones.Count, MaxBones));
                 // If we needed the animations to work we should stop here but for the 
                 // purposes of the viewer we can continue.
@@ -411,6 +412,17 @@ namespace AssetPipeline
                 // Recurse.
                 FlattenTransforms(child, skeleton);
             }
+        }
+
+        // == for animations
+        /// <summary>
+        /// Force all the materials to use our skinned model effect.
+        /// </summary>
+        [DefaultValue(MaterialProcessorDefaultEffect.SkinnedEffect)]
+        public override MaterialProcessorDefaultEffect DefaultEffect
+        {
+            get { return MaterialProcessorDefaultEffect.SkinnedEffect; }
+            set { }
         }
 
         // At the moment we are not displaying any animations so we can keep basic effect

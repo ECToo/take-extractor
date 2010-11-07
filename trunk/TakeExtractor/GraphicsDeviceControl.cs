@@ -117,6 +117,9 @@ namespace Extractor
         /// </summary>
         protected override void OnPaint(PaintEventArgs e)
         {
+            // Simulate the update loop in an XNA game
+            GameUpdate();
+
             string beginDrawError = BeginDraw();
 
             if (string.IsNullOrEmpty(beginDrawError))
@@ -291,6 +294,11 @@ namespace Extractor
         /// </summary>
         protected abstract void Initialize();
 
+
+        /// <summary>
+        /// Derived classes override this to simulate the Update loop in a Game.
+        /// </summary>
+        protected abstract void GameUpdate();
 
         /// <summary>
         /// Derived classes override this to draw themselves using the GraphicsDevice.

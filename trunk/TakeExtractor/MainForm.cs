@@ -64,16 +64,13 @@ namespace Extractor
             return result;
         }
 
-        /// <summary>
-        /// Event handler for the Open menu option.
-        /// </summary>
-        private void OpenModelMenuClicked(object sender, EventArgs e)
+        private void OpenRigidModelMenuClicked(object sender, EventArgs e)
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
 
             fileDialog.InitialDirectory = defaultFileFolder;
 
-            fileDialog.Title = "Load Model";
+            fileDialog.Title = "Load Rigid Model";
 
             fileDialog.Filter = "Model Files (*.fbx;*.x)|*.fbx;*.x|" +
                                 "FBX Files (*.fbx)|*.fbx|" +
@@ -85,6 +82,32 @@ namespace Extractor
                 ClearMessages();
                 lastLoadedFile = fileDialog.FileName;
                 LoadModel(fileDialog.FileName);
+            }
+            AddMessageLine("== Finished ==");
+            HasModelLoaded();
+        }
+
+        /// <summary>
+        /// Event handler for the Open menu option.
+        /// </summary>
+        private void OpenAnimatedModelMenuClicked(object sender, EventArgs e)
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+
+            fileDialog.InitialDirectory = defaultFileFolder;
+
+            fileDialog.Title = "Load Animated Model";
+
+            fileDialog.Filter = "Model Files (*.fbx;*.x)|*.fbx;*.x|" +
+                                "FBX Files (*.fbx)|*.fbx|" +
+                                "X Files (*.x)|*.x|" +
+                                "All Files (*.*)|*.*";
+
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                ClearMessages();
+                lastLoadedFile = fileDialog.FileName;
+                LoadAnimatedModel(true, fileDialog.FileName, "0", "0", "0");
             }
             AddMessageLine("== Finished ==");
             HasModelLoaded();
@@ -176,25 +199,31 @@ namespace Extractor
         /// </summary>
         public void LoadModel(string fileName)
         {
-            LoadAnimatedModel(fileName, "0", "0", "0");
+            LoadAnimatedModel(false, fileName, "0", "0", "0");
         }
 
         /// <summary>
         /// Loads a new 3D model file into the ModelViewerControl.
         /// </summary>
-        public void LoadAnimatedModel(string fileName, string rotateXdeg, string rotateYdeg, string rotateZdeg)
+        public void LoadAnimatedModel(bool isAnimated, string fileName, string rotateXdeg, string rotateYdeg, string rotateZdeg)
         {
             Cursor = Cursors.WaitCursor;
             AddMessageLine("Loading model: " + fileName);
 
             // Unload any existing model.
-            modelViewerControl.Model = null;
+            modelViewerControl.UnloadModel();
             contentManager.Unload();
 
             // Tell the ContentBuilder what to build.
             contentBuilder.Clear();
-            //contentBuilder.Add(fileName, "Model", null, "ModelProcessor");
-            contentBuilder.AddAnimated(fileName, "Model", rotateXdeg, rotateYdeg, rotateZdeg);
+            if (isAnimated)
+            {
+                contentBuilder.AddAnimated(fileName, "Model", rotateXdeg, rotateYdeg, rotateZdeg);
+            }
+            else
+            {
+                contentBuilder.Add(fileName, "Model", null, "ModelProcessor");
+            }
 
             // Build this new model data.
             string buildError = contentBuilder.Build();
@@ -208,7 +237,7 @@ namespace Extractor
             {
                 // If the build succeeded, use the ContentManager to
                 // load the temporary .xnb file that we just created.
-                modelViewerControl.Model = contentManager.Load<Model>("Model");
+                modelViewerControl.SetModel(isAnimated, contentManager.Load<Model>("Model"));
             }
             else
             {
@@ -243,7 +272,7 @@ namespace Extractor
             ParseFBX fbx = new ParseFBX(this);
             fbx.LoadAsText(fileName);
 
-            LoadAnimatedModel(fileName, "0", "0", "0");
+            LoadAnimatedModel(true, fileName, "0", "0", "0");
 
             fbx.SaveIndividualFBXtakes();
 

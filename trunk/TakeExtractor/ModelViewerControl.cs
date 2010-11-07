@@ -10,9 +10,11 @@
 #region Using Statements
 using System;
 using System.Diagnostics;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using AssetData;
 #endregion
 
 namespace Extractor
@@ -30,20 +32,24 @@ namespace Extractor
         public Model Model
         {
             get { return model; }
-
-            set
-            {
-                model = value;
-
-                if (model != null)
-                {
-                    MeasureModel();
-                }
-            }
         }
 
         Model model;
+        AnimationPlayer animationPlayer;
+        // Animations
+        public List<string> ClipNames
+        {
+            get { return clipNames; }
+        }
+        List<string> clipNames = new List<string>();
 
+        public bool IsAnimated
+        {
+            get { return isAnimated; }
+            set { isAnimated = value; }
+        }
+
+        bool isAnimated = false;
 
         // Cache information about the model size and position.
         Matrix[] boneTransforms;
@@ -53,7 +59,78 @@ namespace Extractor
 
         // Timer controls the rotation speed.
         Stopwatch timer;
-        // Keep track of the frame rate
+        // Keep track of elapsed time
+        TimeSpan previousTime;
+        TimeSpan currentTime;
+        TimeSpan elapsedGameTime;
+
+        /// <summary>
+        /// Set the model and return any error messages
+        /// </summary>
+        public string SetModel(bool animated, Model aModel)
+        {
+            string errors = "";
+            isAnimated = animated;
+            if (aModel != null)
+            {
+                model = aModel;
+                MeasureModel();
+            }
+
+            if (isAnimated)
+            {
+                // Look up our custom skinning information.
+                SkinningData skinningData = model.Tag as SkinningData;
+
+                if (skinningData == null)
+                {
+                    errors += "\nThis model does not contain a SkinningData tag.";
+                    isAnimated = false;
+                }
+                // Chack again to make sure it is still treated as animated
+                if (isAnimated)
+                {
+                    // Create an animation player, and start decoding an animation clip.
+                    animationPlayer = new AnimationPlayer(skinningData);
+                    clipNames.AddRange(skinningData.AnimationClips.Keys);
+
+                    if (clipNames.Count > 0)
+                    {
+                        //AnimationClip clip = skinningData.AnimationClips["Take 001"];
+                        AnimationClip clip = skinningData.AnimationClips[clipNames[0]];
+                        animationPlayer.StartClip(clip);
+                    }
+                }
+
+            }
+            return errors;
+        }
+
+        public void SetClipName(string name)
+        {
+            if (isAnimated && model != null && animationPlayer != null)
+            {
+                // Look up our custom skinning information.
+                SkinningData skinningData = model.Tag as SkinningData;
+                // Make sure the animation exists in the model
+                if (skinningData == null ||
+                    !skinningData.AnimationClips.ContainsKey(name))
+                {
+                    return;
+                }
+                // Change the animation
+                AnimationClip clip = skinningData.AnimationClips[name];
+                animationPlayer.StartClip(clip);
+            }
+        }
+
+        public void UnloadModel()
+        {
+            isAnimated = false;
+            clipNames.Clear();
+            animationPlayer = null;
+            model = null;
+        }
 
         /// <summary>
         /// Initializes the control.
@@ -62,9 +139,27 @@ namespace Extractor
         {
             // Start the animation timer.
             timer = Stopwatch.StartNew();
+            currentTime = timer.Elapsed;
+            previousTime = currentTime;
 
             // Hook the idle event to constantly redraw our animation.
             Application.Idle += delegate { Invalidate(); };
+        }
+
+        /// <summary>
+        /// Simulated update called prior to the draw method
+        /// </summary>
+        protected override void GameUpdate()
+        {
+            currentTime = timer.Elapsed;
+            elapsedGameTime = currentTime - previousTime;
+            previousTime = currentTime;
+
+            if (isAnimated && model != null && animationPlayer != null)
+            {
+                animationPlayer.Update(elapsedGameTime, true, Matrix.Identity);
+            }
+
         }
 
 
@@ -98,26 +193,69 @@ namespace Extractor
                 Matrix projection = Matrix.CreatePerspectiveFieldOfView(1, aspectRatio,
                                                                     nearClip, farClip);
 
-                // Draw the model.
-                foreach (ModelMesh mesh in model.Meshes)
+                // Set states ready for 3D
+                GraphicsDevice.BlendState = BlendState.Opaque;
+                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
+                if (isAnimated)
                 {
-                    foreach (BasicEffect effect in mesh.Effects)
-                    {
-                        effect.World = boneTransforms[mesh.ParentBone.Index] * world;
-                        effect.View = view;
-                        effect.Projection = projection;
-
-                        // Add a bit more light to our animated models
-                        effect.EmissiveColor = new Vector3(0.8f, 0.8f, 0.8f);
-                        effect.LightingEnabled = true;
-
-                        effect.EnableDefaultLighting();
-                        effect.PreferPerPixelLighting = true;
-                        effect.SpecularPower = 16;
-                    }
-
-                    mesh.Draw();
+                    DrawAnimated(world, view, projection);
                 }
+                else
+                {
+                    DrawRigid(world, view, projection);
+                }
+            }
+        }
+
+        private void DrawAnimated(Matrix world, Matrix view, Matrix projection)
+        {
+            Matrix[] bones = animationPlayer.GetSkinTransforms();
+
+            // Render the skinned mesh.
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (SkinnedEffect effect in mesh.Effects)
+                {
+                    effect.SetBoneTransforms(bones);
+
+                    // Added to move model
+                    effect.World = boneTransforms[mesh.ParentBone.Index] * world;
+
+                    effect.View = view;
+                    effect.Projection = projection;
+
+                    effect.EnableDefaultLighting();
+
+                    effect.SpecularColor = new Vector3(0.25f);
+                    effect.SpecularPower = 16;
+                }
+
+                mesh.Draw();
+            }
+        }
+
+        private void DrawRigid(Matrix world, Matrix view, Matrix projection)
+        {
+            // Draw the model.
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.World = boneTransforms[mesh.ParentBone.Index] * world;
+                    effect.View = view;
+                    effect.Projection = projection;
+
+                    // Add a bit more light to our animated models
+                    effect.EmissiveColor = new Vector3(0.8f, 0.8f, 0.8f);
+                    effect.LightingEnabled = true;
+
+                    effect.EnableDefaultLighting();
+                    effect.PreferPerPixelLighting = true;
+                    effect.SpecularPower = 16;
+                }
+
+                mesh.Draw();
             }
         }
 

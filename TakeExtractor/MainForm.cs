@@ -64,6 +64,8 @@ namespace Extractor
             return result;
         }
 
+        // == File
+
         private void OpenRigidModelMenuClicked(object sender, EventArgs e)
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
@@ -179,6 +181,25 @@ namespace Extractor
         private void ExitMenuClicked(object sender, EventArgs e)
         {
             Close();
+        }
+
+        // == View
+
+        private void yUpClicked(object sender, EventArgs e)
+        {
+            ToggleView();
+        }
+
+        private void zUpClicked(object sender, EventArgs e)
+        {
+            ToggleView();
+        }
+
+        private void ToggleView()
+        {
+            yUpMenuItem.Checked = !yUpMenuItem.Checked;
+            zUpMenuItem.Checked = !yUpMenuItem.Checked;
+            modelViewerControl.ViewYup = yUpMenuItem.Checked;
         }
 
         /// <summary>

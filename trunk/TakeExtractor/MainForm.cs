@@ -207,7 +207,7 @@ namespace Extractor
         /// </summary>
         private void HasModelLoaded()
         {
-            if (modelViewerControl.Model == null)
+            if (modelViewerControl.Model == null || !modelViewerControl.IsAnimated)
             {
                 SaveBoneMapMenu.Enabled = false;
                 return;

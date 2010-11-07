@@ -117,75 +117,79 @@ namespace AssetPipeline
             // recipient of those animations.
             RotateAll(input, DegreesX, DegreesY, DegreesZ);
 
-            ValidateMesh(input, context, null);
-
-            // Find the skeleton.
-            BoneContent skeleton = MeshHelper.FindSkeleton(input);
-
-            if (skeleton == null)
+            if (ValidateMesh(input, context, null))
             {
-                // this is a normal model not an animated one
-                // so do the base processing instead
-                context.Logger.LogWarning(null, null, "No skeleton found!");
-                return base.Process(input, context);
-                //throw new InvalidContentException("Input skeleton not found.");
-            }
+                // Find the skeleton.
+                BoneContent skeleton = MeshHelper.FindSkeleton(input);
 
-            // We don't want to have to worry about different parts of the model being
-            // in different local coordinate systems, so let's just bake everything.
-            FlattenTransforms(input, skeleton);
+                if (skeleton == null)
+                {
+                    // this is a normal model not an animated one
+                    // so do the base processing instead
+                    context.Logger.LogWarning(null, null, "No skeleton found!");
+                    // Not an animated model
+                    return null;
+                    //throw new InvalidContentException("Input skeleton not found.");
+                }
 
-            // Read the bind pose and skeleton hierarchy data.
-            IList<BoneContent> bones = MeshHelper.FlattenSkeleton(skeleton);
+                // We don't want to have to worry about different parts of the model being
+                // in different local coordinate systems, so let's just bake everything.
+                FlattenTransforms(input, skeleton);
 
-            if (bones.Count > MaxBones)
-            {
-                //throw new InvalidContentException(string.Format(
-                  //  "Skeleton has {0} bones, but the maximum supported is {1}.",
+                // Read the bind pose and skeleton hierarchy data.
+                IList<BoneContent> bones = MeshHelper.FlattenSkeleton(skeleton);
+
+                if (bones.Count > MaxBones)
+                {
+                    //throw new InvalidContentException(string.Format(
+                    //  "Skeleton has {0} bones, but the maximum supported is {1}.",
                     //bones.Count, MaxBones));
-                context.Logger.LogWarning(null, null,
-                    string.Format(
-                    "Skeleton has {0} bones.  The maximum supported with shadows is {1}.",
-                    bones.Count, MaxBones));
-                // If we needed the animations to work we should stop here but for the 
-                // purposes of the viewer we can continue.
+                    context.Logger.LogWarning(null, null,
+                        string.Format(
+                        "Skeleton has {0} bones.  The maximum supported with shadows is {1}.",
+                        bones.Count, MaxBones));
+                    // If we needed the animations to work we should stop here but for the 
+                    // purposes of the viewer we can continue.
+                }
+
+                List<Matrix> bindPose = new List<Matrix>();
+                List<Matrix> inverseBindPose = new List<Matrix>();
+                List<int> skeletonHierarchy = new List<int>();
+
+                foreach (BoneContent bone in bones)
+                {
+                    bindPose.Add(bone.Transform);
+                    inverseBindPose.Add(Matrix.Invert(bone.AbsoluteTransform));
+                    skeletonHierarchy.Add(bones.IndexOf(bone.Parent as BoneContent));
+                }
+
+                // Build up a table mapping bone names to indices. JCB
+                IDictionary<string, int> boneMap = new Dictionary<string, int>();
+
+                // Convert animation data to our runtime format.
+                Dictionary<string, AnimationClip> animationClips;
+                animationClips = ProcessAnimations(skeleton.Animations, bones, boneMap, context);    // added bonemap
+
+                // Catch any build errors!
+                try
+                {
+                    // Chain to the base ModelProcessor class so it can convert the model data.
+                    ModelContent model = base.Process(input, context);
+
+                    // Store our custom animation data in the Tag property of the model.
+                    model.Tag = new SkinningData(animationClips, bindPose,
+                                                    inverseBindPose, skeletonHierarchy,
+                                                    boneMap);
+                    return model;
+                }
+                catch (Exception e)
+                {
+                    context.Logger.LogWarning(null, null, e.ToString());
+                    return null;
+                }
             }
-
-            List<Matrix> bindPose = new List<Matrix>();
-            List<Matrix> inverseBindPose = new List<Matrix>();
-            List<int> skeletonHierarchy = new List<int>();
-
-            foreach (BoneContent bone in bones)
-            {
-                bindPose.Add(bone.Transform);
-                inverseBindPose.Add(Matrix.Invert(bone.AbsoluteTransform));
-                skeletonHierarchy.Add(bones.IndexOf(bone.Parent as BoneContent));
-            }
-
-            // Build up a table mapping bone names to indices. JCB
-            IDictionary<string, int> boneMap = new Dictionary<string, int>();
-
-            // Convert animation data to our runtime format.
-            Dictionary<string, AnimationClip> animationClips;
-            animationClips = ProcessAnimations(skeleton.Animations, bones, boneMap, context);    // added bonemap
-
-            // Catch any build errors!
-            try
-            {
-                // Chain to the base ModelProcessor class so it can convert the model data.
-                ModelContent model = base.Process(input, context);
-
-                // Store our custom animation data in the Tag property of the model.
-                model.Tag = new SkinningData(animationClips, bindPose,
-                                             inverseBindPose, skeletonHierarchy,
-                                             boneMap);
-                return model;
-            }
-            catch (Exception e)
-            {
-                context.Logger.LogWarning(null, null, e.ToString());
-                return null;
-            }
+            // Not an animated model
+            return null;
         }
 
         // Rotate all the content before anything else
@@ -333,7 +337,7 @@ namespace AssetPipeline
         /// <summary>
         /// Makes sure this mesh contains the kind of data we know how to animate.
         /// </summary>
-        public static void ValidateMesh(NodeContent node, ContentProcessorContext context,
+        public static bool ValidateMesh(NodeContent node, ContentProcessorContext context,
                                  string parentBoneName)
         {
             MeshContent mesh = node as MeshContent;
@@ -354,11 +358,11 @@ namespace AssetPipeline
                 if (!MeshHasSkinning(mesh))
                 {
                     context.Logger.LogWarning(null, null,
-                        "Mesh {0} has no skinning information, so it has been deleted.",
+                        "Mesh {0} has no skinning information", // so it has been deleted.",
                         mesh.Name);
 
-                    mesh.Parent.Children.Remove(mesh);
-                    return;
+                    //mesh.Parent.Children.Remove(mesh);
+                    return false;
                 }
                 
             }
@@ -371,7 +375,13 @@ namespace AssetPipeline
             // Recurse (iterating over a copy of the child collection,
             // because validating children may delete some of them).
             foreach (NodeContent child in new List<NodeContent>(node.Children))
-                ValidateMesh(child, context, parentBoneName);
+            {
+                if (!ValidateMesh(child, context, parentBoneName))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
 

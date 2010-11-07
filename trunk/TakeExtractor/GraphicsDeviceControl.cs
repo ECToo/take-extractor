@@ -117,13 +117,13 @@ namespace Extractor
         /// </summary>
         protected override void OnPaint(PaintEventArgs e)
         {
-            // Simulate the update loop in an XNA game
-            GameUpdate();
 
             string beginDrawError = BeginDraw();
 
             if (string.IsNullOrEmpty(beginDrawError))
             {
+                // Simulate the update loop in an XNA game
+                GameUpdate();
                 // Draw the control using the GraphicsDevice.
                 Draw();
                 EndDraw();

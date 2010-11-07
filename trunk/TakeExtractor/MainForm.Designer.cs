@@ -30,6 +30,7 @@ namespace Extractor
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewRigidModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitFBXMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openTakesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -37,9 +38,11 @@ namespace Extractor
             this.SaveBoneMapMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.yUpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zUpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.messageBox = new System.Windows.Forms.TextBox();
             this.modelViewerControl = new Extractor.ModelViewerControl();
-            this.viewRigidModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -47,7 +50,8 @@ namespace Extractor
             // 
             this.menuStrip1.BackColor = System.Drawing.SystemColors.ControlDark;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.viewToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(792, 24);
@@ -70,6 +74,13 @@ namespace Extractor
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
+            // 
+            // viewRigidModelToolStripMenuItem
+            // 
+            this.viewRigidModelToolStripMenuItem.Name = "viewRigidModelToolStripMenuItem";
+            this.viewRigidModelToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.viewRigidModelToolStripMenuItem.Text = "View Rigid Model...";
+            this.viewRigidModelToolStripMenuItem.Click += new System.EventHandler(this.OpenRigidModelMenuClicked);
             // 
             // openModelToolStripMenuItem
             // 
@@ -129,6 +140,31 @@ namespace Extractor
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitMenuClicked);
             // 
+            // viewToolStripMenuItem
+            // 
+            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.yUpMenuItem,
+            this.zUpMenuItem});
+            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.viewToolStripMenuItem.Text = "View";
+            // 
+            // yUpMenuItem
+            // 
+            this.yUpMenuItem.Checked = true;
+            this.yUpMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.yUpMenuItem.Name = "yUpMenuItem";
+            this.yUpMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.yUpMenuItem.Text = "Y Up XNA Default";
+            this.yUpMenuItem.Click += new System.EventHandler(this.yUpClicked);
+            // 
+            // zUpMenuItem
+            // 
+            this.zUpMenuItem.Name = "zUpMenuItem";
+            this.zUpMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.zUpMenuItem.Text = "Z Up";
+            this.zUpMenuItem.Click += new System.EventHandler(this.zUpClicked);
+            // 
             // messageBox
             // 
             this.messageBox.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -145,19 +181,12 @@ namespace Extractor
             // modelViewerControl
             // 
             this.modelViewerControl.Dock = System.Windows.Forms.DockStyle.Top;
+            this.modelViewerControl.IsAnimated = false;
             this.modelViewerControl.Location = new System.Drawing.Point(0, 24);
-            this.modelViewerControl.UnloadModel();
             this.modelViewerControl.Name = "modelViewerControl";
             this.modelViewerControl.Size = new System.Drawing.Size(792, 507);
             this.modelViewerControl.TabIndex = 1;
             this.modelViewerControl.Text = "modelViewerControl";
-            // 
-            // viewRigidModelToolStripMenuItem
-            // 
-            this.viewRigidModelToolStripMenuItem.Name = "viewRigidModelToolStripMenuItem";
-            this.viewRigidModelToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.viewRigidModelToolStripMenuItem.Text = "View Rigid Model...";
-            this.viewRigidModelToolStripMenuItem.Click += new System.EventHandler(this.OpenRigidModelMenuClicked);
             // 
             // MainForm
             // 
@@ -193,6 +222,9 @@ namespace Extractor
         private System.Windows.Forms.ToolStripMenuItem SaveBoneMapMenu;
         private System.Windows.Forms.ToolStripMenuItem splitFBXMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewRigidModelToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem yUpMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem zUpMenuItem;
 
     }
 }

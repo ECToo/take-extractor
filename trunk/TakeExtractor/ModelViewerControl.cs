@@ -51,6 +51,19 @@ namespace Extractor
 
         bool isAnimated = false;
 
+        public bool ViewYup
+        {
+            get { return viewYup; }
+            set { viewYup = value; }
+        }
+
+        bool viewYup = true;
+
+        // Used every frame
+        Matrix world = Matrix.Identity;
+        Matrix view = Matrix.Identity;
+        Matrix projection = Matrix.Identity;
+
         // Cache information about the model size and position.
         Matrix[] boneTransforms;
         Vector3 modelCenter;
@@ -175,23 +188,34 @@ namespace Extractor
 
             if (model != null)
             {
-                // Compute camera matrices.
-                float rotation = (float)timer.Elapsed.TotalSeconds;
-
-                Vector3 eyePosition = modelCenter;
-
-                eyePosition.Z += modelRadius * 2;
-                eyePosition.Y += modelRadius;
-
                 float aspectRatio = GraphicsDevice.Viewport.AspectRatio;
                 
                 float nearClip = modelRadius / 100;
                 float farClip = modelRadius * 100;
 
-                Matrix world = Matrix.CreateRotationY(rotation);
-                Matrix view = Matrix.CreateLookAt(eyePosition, modelCenter, Vector3.Up);
-                Matrix projection = Matrix.CreatePerspectiveFieldOfView(1, aspectRatio,
-                                                                    nearClip, farClip);
+                // Compute camera matrices.
+                float rotation = (float)timer.Elapsed.TotalSeconds;
+
+                Vector3 eyePosition = modelCenter;
+
+                // Change which way up the model is viewed
+                if (viewYup)
+                {
+                    // XNA Default
+                    eyePosition.Z += modelRadius * 2;
+                    eyePosition.Y += modelRadius;
+                    world = Matrix.CreateRotationY(rotation);
+                    view = Matrix.CreateLookAt(eyePosition, modelCenter, Vector3.Up);
+                }
+                else
+                {
+                    // Z up
+                    eyePosition.Y += modelRadius * 2;
+                    eyePosition.Z += modelRadius;
+                    world = Matrix.CreateRotationZ(rotation);
+                    view = Matrix.CreateLookAt(eyePosition, modelCenter, Vector3.Backward);
+                }
+                projection = Matrix.CreatePerspectiveFieldOfView(1, aspectRatio, nearClip, farClip);
 
                 // Set states ready for 3D
                 GraphicsDevice.BlendState = BlendState.Opaque;

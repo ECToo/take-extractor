@@ -207,19 +207,26 @@ namespace Extractor
 
         private void yUpClicked(object sender, EventArgs e)
         {
-            ToggleView();
+            yUpMenuItem.Checked = true;
+            zUpMenuItem.Checked = false;
+            zDownMenuItem.Checked = false;
+            modelViewerControl.ViewUp = 1;
         }
 
         private void zUpClicked(object sender, EventArgs e)
         {
-            ToggleView();
+            yUpMenuItem.Checked = false;
+            zUpMenuItem.Checked = true;
+            zDownMenuItem.Checked = false;
+            modelViewerControl.ViewUp = 2;
         }
 
-        private void ToggleView()
+        private void zDownClicked(object sender, EventArgs e)
         {
-            yUpMenuItem.Checked = !yUpMenuItem.Checked;
-            zUpMenuItem.Checked = !yUpMenuItem.Checked;
-            modelViewerControl.ViewYup = yUpMenuItem.Checked;
+            yUpMenuItem.Checked = false;
+            zUpMenuItem.Checked = false;
+            zDownMenuItem.Checked = true;
+            modelViewerControl.ViewUp = 3;
         }
 
         /// <summary>

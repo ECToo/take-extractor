@@ -33,6 +33,7 @@ namespace Extractor
             this.viewRigidModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LoadIndividualClipMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.splitFBXMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openTakesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -44,7 +45,7 @@ namespace Extractor
             this.zUpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.messageBox = new System.Windows.Forms.TextBox();
             this.modelViewerControl = new Extractor.ModelViewerControl();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.zDownMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -104,6 +105,11 @@ namespace Extractor
             this.LoadIndividualClipMenu.Text = "Load Individual Clip...";
             this.LoadIndividualClipMenu.Click += new System.EventHandler(this.loadIndividualClipClicked);
             // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(197, 6);
+            // 
             // splitFBXMenuItem
             // 
             this.splitFBXMenuItem.Name = "splitFBXMenuItem";
@@ -156,7 +162,8 @@ namespace Extractor
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.yUpMenuItem,
-            this.zUpMenuItem});
+            this.zUpMenuItem,
+            this.zDownMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "View";
@@ -166,15 +173,15 @@ namespace Extractor
             this.yUpMenuItem.Checked = true;
             this.yUpMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.yUpMenuItem.Name = "yUpMenuItem";
-            this.yUpMenuItem.Size = new System.Drawing.Size(167, 22);
-            this.yUpMenuItem.Text = "Y Up XNA Default";
+            this.yUpMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.yUpMenuItem.Text = "Y Up  (XNA Default)";
             this.yUpMenuItem.Click += new System.EventHandler(this.yUpClicked);
             // 
             // zUpMenuItem
             // 
             this.zUpMenuItem.Name = "zUpMenuItem";
-            this.zUpMenuItem.Size = new System.Drawing.Size(167, 22);
-            this.zUpMenuItem.Text = "Z Up";
+            this.zUpMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.zUpMenuItem.Text = "Z Up  (Blender Default)";
             this.zUpMenuItem.Click += new System.EventHandler(this.zUpClicked);
             // 
             // messageBox
@@ -199,12 +206,14 @@ namespace Extractor
             this.modelViewerControl.Size = new System.Drawing.Size(792, 507);
             this.modelViewerControl.TabIndex = 1;
             this.modelViewerControl.Text = "modelViewerControl";
-            this.modelViewerControl.ViewYup = true;
+            this.modelViewerControl.ViewUp = 1;
             // 
-            // toolStripSeparator3
+            // zDownMenuItem
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(197, 6);
+            this.zDownMenuItem.Name = "zDownMenuItem";
+            this.zDownMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.zDownMenuItem.Text = "Z Down";
+            this.zDownMenuItem.Click += new System.EventHandler(this.zDownClicked);
             // 
             // MainForm
             // 
@@ -245,6 +254,7 @@ namespace Extractor
         private System.Windows.Forms.ToolStripMenuItem zUpMenuItem;
         private System.Windows.Forms.ToolStripMenuItem LoadIndividualClipMenu;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem zDownMenuItem;
 
     }
 }

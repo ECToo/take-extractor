@@ -137,6 +137,15 @@ namespace Extractor
             }
         }
 
+        public void SetExternalClip(AnimationClip clip)
+        {
+            if (clip != null && isAnimated && model != null && animationPlayer != null)
+            {
+                // Change the animation
+                animationPlayer.StartClip(clip);
+            }
+        }
+
         public void UnloadModel()
         {
             isAnimated = false;

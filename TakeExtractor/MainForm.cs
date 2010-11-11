@@ -115,6 +115,26 @@ namespace Extractor
             HasModelLoaded();
         }
 
+        private void loadIndividualClipClicked(object sender, EventArgs e)
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+
+            fileDialog.InitialDirectory = defaultFileFolder;
+
+            fileDialog.Title = "Load an individual animation clip";
+
+            fileDialog.Filter = "Animation Files (*.clip)|*.clip|" +
+                                //"Part Files (*.head;*.arms)|*.head;*.arms|" +
+                                "All Files (*.*)|*.*";
+
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                ClearMessages();
+                LoadClip(fileDialog.FileName);
+            }
+            AddMessageLine("== Finished ==");
+        }
+
         private void SplitFBXMenuClicked(object sender, EventArgs e)
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
@@ -310,6 +330,28 @@ namespace Extractor
             ClearMessages();
             ParseTakes takes = new ParseTakes(this);
             takes.Load(fileName);
+
+            Cursor = Cursors.Arrow;
+        }
+
+        /// <summary>
+        /// Loads a text file and converts to an Animation Clip
+        /// </summary>
+        private void LoadClip(string fileName)
+        {
+            Cursor = Cursors.WaitCursor;
+
+            ClearMessages();
+            ParseClips clips = new ParseClips(this);
+            AnimationClip clip = clips.Load(fileName);
+            if (clip == null)
+            {
+                AddMessageLine("The clip did not load!");
+            }
+            else
+            {
+                modelViewerControl.SetExternalClip(clip);
+            }
 
             Cursor = Cursors.Arrow;
         }

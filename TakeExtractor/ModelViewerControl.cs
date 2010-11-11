@@ -51,13 +51,18 @@ namespace Extractor
 
         bool isAnimated = false;
 
-        public bool ViewYup
+        /// <summary>
+        /// 1 = Y Up
+        /// 2 = Z Up
+        /// 3 = Z Down
+        /// </summary>
+        public int ViewUp
         {
-            get { return viewYup; }
-            set { viewYup = value; }
+            get { return viewUp; }
+            set { viewUp = value; }
         }
 
-        bool viewYup = true;
+        int viewUp = 1;
 
         // Used every frame
         Matrix world = Matrix.Identity;
@@ -210,21 +215,29 @@ namespace Extractor
                 Vector3 eyePosition = modelCenter;
 
                 // Change which way up the model is viewed
-                if (viewYup)
+                if (viewUp == 3)
+                {
+                    // Z Down
+                    eyePosition.Y += modelRadius * 2;
+                    eyePosition.Z += modelRadius;
+                    world = Matrix.CreateRotationZ(rotation);
+                    view = Matrix.CreateLookAt(eyePosition, modelCenter, Vector3.Forward);
+                }
+                else if (viewUp == 2)
+                {
+                    // Z Up (Blender default)
+                    eyePosition.Y += modelRadius * 2;
+                    eyePosition.Z += modelRadius;
+                    world = Matrix.CreateRotationZ(rotation);
+                    view = Matrix.CreateLookAt(eyePosition, modelCenter, Vector3.Backward);
+                }
+                else
                 {
                     // XNA Default
                     eyePosition.Z += modelRadius * 2;
                     eyePosition.Y += modelRadius;
                     world = Matrix.CreateRotationY(rotation);
                     view = Matrix.CreateLookAt(eyePosition, modelCenter, Vector3.Up);
-                }
-                else
-                {
-                    // Z up
-                    eyePosition.Y += modelRadius * 2;
-                    eyePosition.Z += modelRadius;
-                    world = Matrix.CreateRotationZ(rotation);
-                    view = Matrix.CreateLookAt(eyePosition, modelCenter, Vector3.Backward);
                 }
                 projection = Matrix.CreatePerspectiveFieldOfView(1, aspectRatio, nearClip, farClip);
 

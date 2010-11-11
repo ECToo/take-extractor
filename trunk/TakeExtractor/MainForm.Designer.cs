@@ -43,6 +43,7 @@ namespace Extractor
             this.zUpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.messageBox = new System.Windows.Forms.TextBox();
             this.modelViewerControl = new Extractor.ModelViewerControl();
+            this.loadIndividualClipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -64,6 +65,7 @@ namespace Extractor
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.viewRigidModelToolStripMenuItem,
             this.openModelToolStripMenuItem,
+            this.loadIndividualClipToolStripMenuItem,
             this.splitFBXMenuItem,
             this.openTakesToolStripMenuItem,
             this.toolStripSeparator1,
@@ -187,6 +189,14 @@ namespace Extractor
             this.modelViewerControl.Size = new System.Drawing.Size(792, 507);
             this.modelViewerControl.TabIndex = 1;
             this.modelViewerControl.Text = "modelViewerControl";
+            this.modelViewerControl.ViewYup = true;
+            // 
+            // loadIndividualClipToolStripMenuItem
+            // 
+            this.loadIndividualClipToolStripMenuItem.Name = "loadIndividualClipToolStripMenuItem";
+            this.loadIndividualClipToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.loadIndividualClipToolStripMenuItem.Text = "Load Individual Clip...";
+            this.loadIndividualClipToolStripMenuItem.Click += new System.EventHandler(this.loadIndividualClipClicked);
             // 
             // MainForm
             // 
@@ -225,6 +235,7 @@ namespace Extractor
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem yUpMenuItem;
         private System.Windows.Forms.ToolStripMenuItem zUpMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem loadIndividualClipToolStripMenuItem;
 
     }
 }

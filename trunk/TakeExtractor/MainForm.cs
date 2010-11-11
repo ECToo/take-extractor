@@ -230,9 +230,11 @@ namespace Extractor
             if (modelViewerControl.Model == null || !modelViewerControl.IsAnimated)
             {
                 SaveBoneMapMenu.Enabled = false;
+                LoadIndividualClipMenu.Enabled = false;
                 return;
             }
             SaveBoneMapMenu.Enabled = true;
+            LoadIndividualClipMenu.Enabled = true;
         }
 
         /// <summary>
@@ -350,7 +352,11 @@ namespace Extractor
             }
             else
             {
-                modelViewerControl.SetExternalClip(clip);
+                string error = modelViewerControl.SetExternalClip(clip);
+                if (!string.IsNullOrEmpty(error))
+                {
+                    AddMessageLine(error);
+                }
             }
 
             Cursor = Cursors.Arrow;

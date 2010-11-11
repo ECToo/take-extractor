@@ -13,6 +13,8 @@
 //
 // In addition the takes are also converted and saved to the keyframe format used
 // by my game for individual animation clips.
+//
+// The clips can be loaded back and viewed individually.
 //-----------------------------------------------------------------------------
 // To extract files for use in my game this tool uses a config file.
 //

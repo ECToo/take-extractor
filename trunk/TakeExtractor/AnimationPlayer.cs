@@ -62,11 +62,22 @@ namespace Extractor
 
         /// <summary>
         /// Starts decoding the specified animation clip.
+        /// Returns an error message
         /// </summary>
-        public void StartClip(AnimationClip clip)
+        public string StartClip(AnimationClip clip)
         {
+            string error = "";
             if (clip == null)
-                throw new ArgumentNullException("clip");
+            {
+                //throw new ArgumentNullException("clip");
+                error += "\nClip data is null!";
+                return error;
+            }
+            if (skinningDataValue == null || clip.BoneCount != skinningDataValue.BoneMap.Count)
+            {
+                error += "\nThe number of bones in the clip does not match the number in the model!";
+                return error;
+            }
 
             currentClipValue = clip;
             currentTimeValue = TimeSpan.Zero;
@@ -74,6 +85,8 @@ namespace Extractor
 
             // Initialize bone transforms to the bind pose.
             skinningDataValue.BindPose.CopyTo(boneTransforms, 0);
+
+            return error;
         }
 
 

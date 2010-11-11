@@ -32,6 +32,7 @@ namespace Extractor
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewRigidModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.LoadIndividualClipMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.splitFBXMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openTakesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -43,7 +44,7 @@ namespace Extractor
             this.zUpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.messageBox = new System.Windows.Forms.TextBox();
             this.modelViewerControl = new Extractor.ModelViewerControl();
-            this.loadIndividualClipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -65,7 +66,8 @@ namespace Extractor
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.viewRigidModelToolStripMenuItem,
             this.openModelToolStripMenuItem,
-            this.loadIndividualClipToolStripMenuItem,
+            this.LoadIndividualClipMenu,
+            this.toolStripSeparator3,
             this.splitFBXMenuItem,
             this.openTakesToolStripMenuItem,
             this.toolStripSeparator1,
@@ -93,6 +95,14 @@ namespace Extractor
             this.openModelToolStripMenuItem.Text = "View Animated Model...";
             this.openModelToolStripMenuItem.ToolTipText = "Load a 3D model in to the viewer";
             this.openModelToolStripMenuItem.Click += new System.EventHandler(this.OpenAnimatedModelMenuClicked);
+            // 
+            // LoadIndividualClipMenu
+            // 
+            this.LoadIndividualClipMenu.Enabled = false;
+            this.LoadIndividualClipMenu.Name = "LoadIndividualClipMenu";
+            this.LoadIndividualClipMenu.Size = new System.Drawing.Size(200, 22);
+            this.LoadIndividualClipMenu.Text = "Load Individual Clip...";
+            this.LoadIndividualClipMenu.Click += new System.EventHandler(this.loadIndividualClipClicked);
             // 
             // splitFBXMenuItem
             // 
@@ -191,12 +201,10 @@ namespace Extractor
             this.modelViewerControl.Text = "modelViewerControl";
             this.modelViewerControl.ViewYup = true;
             // 
-            // loadIndividualClipToolStripMenuItem
+            // toolStripSeparator3
             // 
-            this.loadIndividualClipToolStripMenuItem.Name = "loadIndividualClipToolStripMenuItem";
-            this.loadIndividualClipToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.loadIndividualClipToolStripMenuItem.Text = "Load Individual Clip...";
-            this.loadIndividualClipToolStripMenuItem.Click += new System.EventHandler(this.loadIndividualClipClicked);
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(197, 6);
             // 
             // MainForm
             // 
@@ -235,7 +243,8 @@ namespace Extractor
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem yUpMenuItem;
         private System.Windows.Forms.ToolStripMenuItem zUpMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem loadIndividualClipToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem LoadIndividualClipMenu;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
 
     }
 }

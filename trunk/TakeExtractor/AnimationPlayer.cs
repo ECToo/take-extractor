@@ -69,11 +69,12 @@ namespace Extractor
             string error = "";
             if (clip == null)
             {
+                // Use a null clip to set the model to the bind pose
                 //throw new ArgumentNullException("clip");
-                error += "\nClip data is null!";
-                return error;
+                error += "\nBind pose selected.";
+                //return error;
             }
-            if (skinningDataValue == null || clip.BoneCount != skinningDataValue.BoneMap.Count)
+            if (clip != null && (skinningDataValue == null || clip.BoneCount != skinningDataValue.BoneMap.Count))
             {
                 error += "\nThe number of bones in the clip does not match the number in the model!";
                 return error;
@@ -96,10 +97,12 @@ namespace Extractor
         public void Update(TimeSpan time, bool relativeToCurrentTime,
                            Matrix rootTransform)
         {
+            /*
             if (currentClipValue == null)
             {
                 return;
             }
+             * */
 
             UpdateBoneTransforms(time, relativeToCurrentTime);
             UpdateWorldTransforms(rootTransform);
@@ -114,6 +117,9 @@ namespace Extractor
         {
             if (currentClipValue == null)
             {
+                // Display the bind pose
+                currentKeyframe = 0;
+                skinningDataValue.BindPose.CopyTo(boneTransforms, 0);
                 return;
             }
 

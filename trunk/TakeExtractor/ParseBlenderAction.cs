@@ -31,7 +31,6 @@ namespace Extractor
         IList<Keyframe> localKeyFrames = new List<Keyframe>();
 
 
-
         public ParseBlenderAction(MainForm parentForm)
         {
             form = parentForm;
@@ -130,15 +129,18 @@ namespace Extractor
                 Matrix transform = localKeyFrames[k].Transform;
                 if (boneID > 0)
                 {
-                    int parentBone = skinningData.SkeletonHierarchy[boneID];
+                    //int parentBone = skinningData.SkeletonHierarchy[boneID];
                     // This matrix multiplication will need to be in the right order
-                    poseTransforms[boneID] = poseTransforms[parentBone] * bindTransforms[boneID] * transform;
+                    //poseTransforms[boneID] = poseTransforms[parentBone] * bindTransforms[boneID] * transform;
+                    //poseTransforms[boneID] = bindTransforms[boneID] * transform;
+                    poseTransforms[boneID] = transform * bindTransforms[boneID];
                     poseKeyFrames.Add(new Keyframe(boneID, time, poseTransforms[boneID]));
                 }
                 else
                 {
                     // This is the root bone
-                    poseTransforms[boneID] = bindTransforms[boneID] * transform;
+                    //poseTransforms[boneID] = bindTransforms[boneID] * transform;
+                    poseTransforms[boneID] = transform * bindTransforms[boneID];
                     poseKeyFrames.Add(new Keyframe(boneID, time, poseTransforms[boneID]));
                 }
             }

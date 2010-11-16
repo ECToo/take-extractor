@@ -135,6 +135,25 @@ namespace Extractor
             AddMessageLine("== Finished ==");
         }
 
+        private void loadBlenderActionClicked(object sender, EventArgs e)
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+
+            fileDialog.InitialDirectory = defaultFileFolder;
+
+            fileDialog.Title = "Load a Blender Action";
+
+            fileDialog.Filter = "Animation Files (*.action)|*.action|" +
+                                "All Files (*.*)|*.*";
+
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                ClearMessages();
+                LoadAction(fileDialog.FileName);
+            }
+            AddMessageLine("== Finished ==");
+        }
+
         private void SplitFBXMenuClicked(object sender, EventArgs e)
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
@@ -230,7 +249,7 @@ namespace Extractor
         }
 
         /// <summary>
-        /// Call this to enable the save BoneMap menu item
+        /// Call this to enable the various menu items that require an already loaded animated model
         /// </summary>
         private void HasModelLoaded()
         {
@@ -238,10 +257,12 @@ namespace Extractor
             {
                 SaveBoneMapMenu.Enabled = false;
                 LoadIndividualClipMenu.Enabled = false;
+                loadBlenderActionMenuItem.Enabled = false;
                 return;
             }
             SaveBoneMapMenu.Enabled = true;
             LoadIndividualClipMenu.Enabled = true;
+            loadBlenderActionMenuItem.Enabled = true;
         }
 
         /// <summary>
@@ -367,6 +388,45 @@ namespace Extractor
             }
 
             Cursor = Cursors.Arrow;
+        }
+
+        /// <summary>
+        /// Loads a text file and converts to an Animation Clip
+        /// </summary>
+        private void LoadAction(string fileName)
+        {
+            Cursor = Cursors.WaitCursor;
+
+            ClearMessages();
+            ParseBlenderAction clips = new ParseBlenderAction(this);
+            AnimationClip clip = clips.Load(fileName, modelViewerControl.Model);
+            if (clip == null)
+            {
+                AddMessageLine("The action did not load!");
+            }
+            else
+            {
+                string error = modelViewerControl.SetExternalClip(clip);
+                if (!string.IsNullOrEmpty(error))
+                {
+                    AddMessageLine(error);
+                }
+            }
+
+            Cursor = Cursors.Arrow;
+        }
+
+        private void bindPoseMenuClicked(object sender, EventArgs e)
+        {
+            if (modelViewerControl.Model != null)
+            {
+                // Set the clip to null to show the bind pose
+                string error = modelViewerControl.SetExternalClip(null);
+                if (!string.IsNullOrEmpty(error))
+                {
+                    AddMessageLine(error);
+                }
+            }
         }
 
         public void ClearMessages()

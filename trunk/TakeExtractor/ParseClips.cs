@@ -76,7 +76,7 @@ namespace Extractor
                 }
             }
             IList<Keyframe> keyFrames = new List<Keyframe>();
-            if (input.Length < 1)
+            if (input.Length < 2)
             {
                 form.AddMessageLine("There are no key frames in this file!");
                 return null;

@@ -503,13 +503,25 @@ namespace Extractor
             int[] values = new int[boneMap.Values.Count];
             boneMap.Values.CopyTo(values, 0);
 
-            // Create the list and add the value pairs to it
-            List<string> bones = new List<string>();
+            // Create the list to store the results
+            List<string> results = new List<string>();
+            // Add the headings
+            results.Add("Bone = #  [ Parent = # ]");
+            results.Add("========================");
+            // Add the value pairs to the list
             for (int i = 0; i < boneMap.Count; i++)
             {
-                bones.Add(String.Format("{0}{1}{2}", keys[i], " = ", values[i]));
+                int parent = skinData.SkeletonHierarchy[values[i]];
+                if (parent >= 0 && parent < keys.Length)
+                {
+                    results.Add(String.Format("{0} = {1}  [ {2} = {3} ]", keys[i], values[i], keys[parent], parent));
+                }
+                else
+                {
+                    results.Add(String.Format("{0} = {1}  [ Root ]", keys[i], values[i]));
+                }
             }
-            return bones;
+            return results;
         }
 
 

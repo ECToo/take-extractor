@@ -13,6 +13,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using AssetData;
@@ -208,9 +209,29 @@ namespace Extractor
             {
                 AddMessageLine("Not an animated model!");
                 SaveBoneMapMenu.Enabled = false;
+                SaveBindPoseMenuItem.Enabled = false;
                 return;
             }
             BoneMapSaveDialogue(GetBoneMapList(skinData));
+            AddMessageLine("== Finished ==");
+        }
+
+        private void SaveBindPoseMenuClicked(object sender, EventArgs e)
+        {
+            if (modelViewerControl.Model == null)
+            {
+                // Can only save one if we have a model
+                return;
+            }
+            SkinningData skinData = (SkinningData)modelViewerControl.Model.Tag;
+            if (skinData == null)
+            {
+                AddMessageLine("Not an animated model!");
+                SaveBoneMapMenu.Enabled = false;
+                SaveBindPoseMenuItem.Enabled = false;
+                return;
+            }
+            BindPoseSaveDialogue(GetBindPoseList(skinData));
             AddMessageLine("== Finished ==");
         }
 
@@ -256,11 +277,13 @@ namespace Extractor
             if (modelViewerControl.Model == null || !modelViewerControl.IsAnimated)
             {
                 SaveBoneMapMenu.Enabled = false;
+                SaveBindPoseMenuItem.Enabled = false;
                 LoadIndividualClipMenu.Enabled = false;
                 loadBlenderActionMenuItem.Enabled = false;
                 return;
             }
             SaveBoneMapMenu.Enabled = true;
+            SaveBindPoseMenuItem.Enabled = true;
             LoadIndividualClipMenu.Enabled = true;
             loadBlenderActionMenuItem.Enabled = true;
         }
@@ -472,12 +495,50 @@ namespace Extractor
 
             if (fileDialog.ShowDialog() == DialogResult.OK)
             {
-                SaveBoneMap(fileDialog.FileName, data);
+                SaveTextFile(fileDialog.FileName, data);
             }
 
         }
 
-        private void SaveBoneMap(string fileName, List<string> data)
+        private void BindPoseSaveDialogue(List<string> data)
+        {
+            if (data.Count < 1)
+            {
+                AddMessageLine("No bind pose!");
+                return;
+            }
+            // Path to default location
+            string pathToSaveFolder = defaultFileFolder;
+            string assetName = "";
+            string fileName = GlobalSettings.fileBindPose;
+            // If we have loaded a file use that for the path and the name
+            if (lastLoadedFile != "")
+            {
+                pathToSaveFolder = Path.GetDirectoryName(lastLoadedFile);
+                assetName = Path.GetFileNameWithoutExtension(lastLoadedFile) + "-";
+            }
+            // Append the name to the end of the filename
+            fileName = assetName + fileName;
+
+            SaveFileDialog fileDialog = new SaveFileDialog();
+
+            fileDialog.InitialDirectory = pathToSaveFolder;
+
+            fileDialog.Title = "Save the bind pose matrices of the model";
+
+            fileDialog.FileName = fileName;
+
+            fileDialog.Filter = "Text Files (*.txt)|*.txt|" +
+                                "All Files (*.*)|*.*";
+
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                SaveTextFile(fileDialog.FileName, data);
+            }
+
+        }
+
+        private void SaveTextFile(string fileName, List<string> data)
         {
             if (data.Count < 1 || string.IsNullOrEmpty(fileName))
             {
@@ -520,6 +581,46 @@ namespace Extractor
                 {
                     results.Add(String.Format("{0} = {1}  [ Root ]", keys[i], values[i]));
                 }
+            }
+            return results;
+        }
+
+        public static List<string> GetBindPoseList(SkinningData skinData)
+        {
+            Matrix[] bonePose = new Matrix[skinData.BindPose.Count];
+            skinData.BindPose.CopyTo(bonePose, 0);
+
+            // Get the bone map so we can see the bone names
+            IDictionary<string, int> boneMap = skinData.BoneMap;
+            // Reverse the lookup
+            Dictionary<int, string> reverseBoneMap = new Dictionary<int, string>();
+
+            // Convert to an array so we can loop through
+            string[] keys = new string[boneMap.Keys.Count];
+            boneMap.Keys.CopyTo(keys, 0);
+            int[] values = new int[boneMap.Values.Count];
+            boneMap.Values.CopyTo(values, 0);
+
+            // Fill reverse bonemap
+            for (int b = 0; b < keys.Length; b++)
+            {
+                reverseBoneMap.Add(values[b], keys[b]);
+            }
+
+            // Create the list to store the results
+            List<string> results = new List<string>();
+            // Add the headings
+            results.Add("Bone | Bind Pose Transform Matrix");
+            results.Add("=================================");
+            // Add the value to the list
+            for (int i = 0; i < bonePose.Length; i++)
+            {
+                results.Add(String.Format("{0} | {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14} {15} {16}", 
+                    reverseBoneMap[i], 
+                    bonePose[i].M11, bonePose[i].M12, bonePose[i].M13, bonePose[i].M14, 
+                    bonePose[i].M21, bonePose[i].M22, bonePose[i].M23, bonePose[i].M24, 
+                    bonePose[i].M31, bonePose[i].M32, bonePose[i].M33, bonePose[i].M34, 
+                    bonePose[i].M41, bonePose[i].M42, bonePose[i].M43, bonePose[i].M44));
             }
             return results;
         }

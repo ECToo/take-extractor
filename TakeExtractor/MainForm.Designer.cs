@@ -50,6 +50,7 @@ namespace Extractor
             this.bindPoseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.messageBox = new System.Windows.Forms.TextBox();
             this.modelViewerControl = new Extractor.ModelViewerControl();
+            this.SaveBindPoseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -79,6 +80,7 @@ namespace Extractor
             this.openTakesToolStripMenuItem,
             this.toolStripSeparator1,
             this.SaveBoneMapMenu,
+            this.SaveBindPoseMenuItem,
             this.toolStripSeparator2,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -248,6 +250,14 @@ namespace Extractor
             this.modelViewerControl.Text = "modelViewerControl";
             this.modelViewerControl.ViewUp = 1;
             // 
+            // SaveBindPoseMenuItem
+            // 
+            this.SaveBindPoseMenuItem.Enabled = false;
+            this.SaveBindPoseMenuItem.Name = "SaveBindPoseMenuItem";
+            this.SaveBindPoseMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.SaveBindPoseMenuItem.Text = "Save Bind Pose...";
+            this.SaveBindPoseMenuItem.Click += new System.EventHandler(this.SaveBindPoseMenuClicked);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -292,6 +302,7 @@ namespace Extractor
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem bindPoseMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem SaveBindPoseMenuItem;
 
     }
 }

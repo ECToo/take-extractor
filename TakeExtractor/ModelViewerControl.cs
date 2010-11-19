@@ -188,7 +188,6 @@ namespace Extractor
             {
                 animationPlayer.Update(elapsedGameTime, true, Matrix.Identity);
             }
-
         }
 
 

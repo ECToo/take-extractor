@@ -40,6 +40,7 @@ namespace Extractor
             this.openTakesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.SaveBoneMapMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.SaveBindPoseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -48,9 +49,12 @@ namespace Extractor
             this.zDownMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.bindPoseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rotationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.XComboBox = new System.Windows.Forms.ToolStripComboBox();
+            this.YComboBox = new System.Windows.Forms.ToolStripComboBox();
+            this.ZComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.messageBox = new System.Windows.Forms.TextBox();
             this.modelViewerControl = new Extractor.ModelViewerControl();
-            this.SaveBindPoseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -59,7 +63,8 @@ namespace Extractor
             this.menuStrip1.BackColor = System.Drawing.SystemColors.ControlDark;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.viewToolStripMenuItem});
+            this.viewToolStripMenuItem,
+            this.rotationToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(792, 24);
@@ -165,6 +170,14 @@ namespace Extractor
             this.SaveBoneMapMenu.ToolTipText = "Save a list of bone names with their numeric index";
             this.SaveBoneMapMenu.Click += new System.EventHandler(this.SaveBoneMapMenuClicked);
             // 
+            // SaveBindPoseMenuItem
+            // 
+            this.SaveBindPoseMenuItem.Enabled = false;
+            this.SaveBindPoseMenuItem.Name = "SaveBindPoseMenuItem";
+            this.SaveBindPoseMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.SaveBindPoseMenuItem.Text = "Save Bind Pose...";
+            this.SaveBindPoseMenuItem.Click += new System.EventHandler(this.SaveBindPoseMenuClicked);
+            // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
@@ -226,6 +239,58 @@ namespace Extractor
             this.bindPoseMenuItem.Text = "Bind Pose";
             this.bindPoseMenuItem.Click += new System.EventHandler(this.bindPoseMenuClicked);
             // 
+            // rotationToolStripMenuItem
+            // 
+            this.rotationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.XComboBox,
+            this.YComboBox,
+            this.ZComboBox});
+            this.rotationToolStripMenuItem.Name = "rotationToolStripMenuItem";
+            this.rotationToolStripMenuItem.Size = new System.Drawing.Size(64, 20);
+            this.rotationToolStripMenuItem.Text = "Rotation";
+            // 
+            // XComboBox
+            // 
+            this.XComboBox.AccessibleDescription = "";
+            this.XComboBox.AccessibleName = "";
+            this.XComboBox.Items.AddRange(new object[] {
+            "X 0",
+            "X 90",
+            "X 180",
+            "X 270"});
+            this.XComboBox.Name = "XComboBox";
+            this.XComboBox.Size = new System.Drawing.Size(121, 23);
+            this.XComboBox.Tag = "";
+            this.XComboBox.Text = "X 0";
+            this.XComboBox.ToolTipText = "Rotate model while loading";
+            this.XComboBox.TextChanged += new System.EventHandler(this.XComboBoxChanged);
+            // 
+            // YComboBox
+            // 
+            this.YComboBox.Items.AddRange(new object[] {
+            "Y 0",
+            "Y 90",
+            "Y 180",
+            "Y 270"});
+            this.YComboBox.Name = "YComboBox";
+            this.YComboBox.Size = new System.Drawing.Size(121, 23);
+            this.YComboBox.Text = "Y 0";
+            this.YComboBox.ToolTipText = "Rotate model while loading";
+            this.YComboBox.TextChanged += new System.EventHandler(this.YComboBoxChanged);
+            // 
+            // ZComboBox
+            // 
+            this.ZComboBox.Items.AddRange(new object[] {
+            "Z 0",
+            "Z 90",
+            "Z 180",
+            "Z 270"});
+            this.ZComboBox.Name = "ZComboBox";
+            this.ZComboBox.Size = new System.Drawing.Size(121, 23);
+            this.ZComboBox.Text = "Z 0";
+            this.ZComboBox.ToolTipText = "Rotate model while loading";
+            this.ZComboBox.TextChanged += new System.EventHandler(this.ZComboBoxChanged);
+            // 
             // messageBox
             // 
             this.messageBox.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -249,14 +314,6 @@ namespace Extractor
             this.modelViewerControl.TabIndex = 1;
             this.modelViewerControl.Text = "modelViewerControl";
             this.modelViewerControl.ViewUp = 1;
-            // 
-            // SaveBindPoseMenuItem
-            // 
-            this.SaveBindPoseMenuItem.Enabled = false;
-            this.SaveBindPoseMenuItem.Name = "SaveBindPoseMenuItem";
-            this.SaveBindPoseMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.SaveBindPoseMenuItem.Text = "Save Bind Pose...";
-            this.SaveBindPoseMenuItem.Click += new System.EventHandler(this.SaveBindPoseMenuClicked);
             // 
             // MainForm
             // 
@@ -303,6 +360,10 @@ namespace Extractor
         private System.Windows.Forms.ToolStripMenuItem bindPoseMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem SaveBindPoseMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem rotationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripComboBox XComboBox;
+        private System.Windows.Forms.ToolStripComboBox YComboBox;
+        private System.Windows.Forms.ToolStripComboBox ZComboBox;
 
     }
 }

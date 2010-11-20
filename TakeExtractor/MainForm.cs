@@ -35,6 +35,10 @@ namespace Extractor
         private string defaultFileFolder = "";
         private string lastLoadedFile = "";
 
+        private string rotateX = "0";
+        private string rotateY = "0";
+        private string rotateZ = "0";
+
         /// <summary>
         /// Constructs the main form.
         /// </summary>
@@ -110,7 +114,8 @@ namespace Extractor
             {
                 ClearMessages();
                 lastLoadedFile = fileDialog.FileName;
-                LoadAnimatedModel(true, fileDialog.FileName, "0", "0", "0");
+                LoadAnimatedModel(true, fileDialog.FileName, rotateX, rotateY, rotateZ);
+                //LoadAnimatedModel(true, fileDialog.FileName, "90", "0", "180");
             }
             AddMessageLine("== Finished ==");
             HasModelLoaded();
@@ -223,15 +228,7 @@ namespace Extractor
                 // Can only save one if we have a model
                 return;
             }
-            SkinningData skinData = (SkinningData)modelViewerControl.Model.Tag;
-            if (skinData == null)
-            {
-                AddMessageLine("Not an animated model!");
-                SaveBoneMapMenu.Enabled = false;
-                SaveBindPoseMenuItem.Enabled = false;
-                return;
-            }
-            BindPoseSaveDialogue(GetBindPoseList(skinData));
+            BindPoseSaveDialogue(GetBindPoseList());
             AddMessageLine("== Finished ==");
         }
 
@@ -293,7 +290,7 @@ namespace Extractor
         /// </summary>
         public void LoadModel(string fileName)
         {
-            LoadAnimatedModel(false, fileName, "0", "0", "0");
+            LoadAnimatedModel(false, fileName, rotateX, rotateY, rotateZ);
         }
 
         /// <summary>
@@ -303,6 +300,7 @@ namespace Extractor
         {
             Cursor = Cursors.WaitCursor;
             AddMessageLine("Loading model: " + fileName);
+            AddMessageLine("Rotating model: X " + rotateXdeg + ", Y " + rotateYdeg + ", Z " + rotateZdeg);
 
             // Unload any existing model.
             modelViewerControl.UnloadModel();
@@ -366,7 +364,7 @@ namespace Extractor
             ParseFBX fbx = new ParseFBX(this);
             fbx.LoadAsText(fileName);
 
-            LoadAnimatedModel(true, fileName, "0", "0", "0");
+            LoadAnimatedModel(true, fileName, rotateX, rotateY, rotateZ);
 
             fbx.SaveIndividualFBXtakes();
 
@@ -502,7 +500,7 @@ namespace Extractor
 
         private void BindPoseSaveDialogue(List<string> data)
         {
-            if (data.Count < 1)
+            if (data == null || data.Count < 1)
             {
                 AddMessageLine("No bind pose!");
                 return;
@@ -554,7 +552,7 @@ namespace Extractor
 
         }
 
-        public static List<string> GetBoneMapList(SkinningData skinData)
+        public List<string> GetBoneMapList(SkinningData skinData)
         {
             IDictionary<string, int> boneMap = skinData.BoneMap;
 
@@ -585,8 +583,17 @@ namespace Extractor
             return results;
         }
 
-        public static List<string> GetBindPoseList(SkinningData skinData)
+        public List<string> GetBindPoseList()
         {
+            SkinningData skinData = (SkinningData)modelViewerControl.Model.Tag;
+            if (skinData == null)
+            {
+                AddMessageLine("Not an animated model!");
+                SaveBoneMapMenu.Enabled = false;
+                SaveBindPoseMenuItem.Enabled = false;
+                return null;
+            }
+
             Matrix[] bonePose = new Matrix[skinData.BindPose.Count];
             skinData.BindPose.CopyTo(bonePose, 0);
 
@@ -610,19 +617,47 @@ namespace Extractor
             // Create the list to store the results
             List<string> results = new List<string>();
             // Add the headings
-            results.Add("Bone | Bind Pose Transform Matrix");
-            results.Add("=================================");
+            results.Add("A= Pose Bone     | Bind Pose Transform Matrix");
+            results.Add("B= Armature Bone | Transform Matrix");
+            results.Add("================================================");
             // Add the value to the list
             for (int i = 0; i < bonePose.Length; i++)
             {
-                results.Add(String.Format("{0} | {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14} {15} {16}", 
+                // Bind pose matrices
+                results.Add(String.Format("A= {0} | {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14} {15} {16}", 
                     reverseBoneMap[i], 
                     bonePose[i].M11, bonePose[i].M12, bonePose[i].M13, bonePose[i].M14, 
                     bonePose[i].M21, bonePose[i].M22, bonePose[i].M23, bonePose[i].M24, 
                     bonePose[i].M31, bonePose[i].M32, bonePose[i].M33, bonePose[i].M34, 
                     bonePose[i].M41, bonePose[i].M42, bonePose[i].M43, bonePose[i].M44));
+                // Skeleton matrices
+                Matrix armature = modelViewerControl.Model.Bones[i].Transform;
+                results.Add(String.Format("B= {0} | {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14} {15} {16}",
+                    modelViewerControl.Model.Bones[i].Name,
+                    armature.M11, armature.M12, armature.M13, armature.M14,
+                    armature.M21, armature.M22, armature.M23, armature.M24,
+                    armature.M31, armature.M32, armature.M33, armature.M34,
+                    armature.M41, armature.M42, armature.M43, armature.M44));
             }
             return results;
+        }
+
+        private void XComboBoxChanged(object sender, EventArgs e)
+        {
+            rotateX = XComboBox.Text;
+            rotateX = rotateX.Substring(2);
+        }
+
+        private void YComboBoxChanged(object sender, EventArgs e)
+        {
+            rotateY = YComboBox.Text;
+            rotateY = rotateY.Substring(2);
+        }
+
+        private void ZComboBoxChanged(object sender, EventArgs e)
+        {
+            rotateZ = ZComboBox.Text;
+            rotateZ = rotateZ.Substring(2);
         }
 
 

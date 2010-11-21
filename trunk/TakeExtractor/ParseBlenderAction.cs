@@ -85,8 +85,26 @@ namespace Extractor
 
             form.AddMessageLine("Processing file: " + fullFile);
 
-            // First line of the file
-            string[] data = ParseData.SplitNumbersAtSpaces(input[0]);
+            // First line contains only the file format type so that we can use the correct processor
+            int formatType = ParseData.IntFromString(input[0]);
+            // Create the animation clip
+            switch (formatType)
+            {
+                case 1:
+                    return ProcessTypeOne(input, skinningData);
+                default:
+                    // Everything else just passes through from the action file
+                    return ProcessTypePassThrough(formatType, input, skinningData);
+            }
+        }
+
+        // The input only contains the local bone transform
+        // This processor adds the bind pose
+        private AnimationClip ProcessTypeOne(string[] input, SkinningData skinningData)
+        {
+            // First line contains only the file format so start from the 
+            // second line of the input file
+            string[] data = ParseData.SplitNumbersAtSpaces(input[1]);
             int count = ParseData.IntFromString(data[0]);
             TimeSpan duration = ParseData.TimeFromString(data[1]);
             // There will be no steps in a Blender Action this is just used as a placeholder
@@ -94,18 +112,20 @@ namespace Extractor
             // Each frame containing the bone and the transform
             // This contains the transform including the bind pose relative to the parent bone
             IList<Keyframe> poseKeyFrames = new List<Keyframe>();
-            if (input.Length < 2)
+            if (input.Length < 3)
             {
                 form.AddMessageLine("There are no key frames in this file!");
                 return null;
             }
+            form.AddMessageLine("Action Type 1: The bind pose is added from the loaded model!");
 
             // To store the current pose
             bindTransforms = new Matrix[skinningData.BindPose.Count];
             poseTransforms = new Matrix[skinningData.BindPose.Count];
             // Now process add all the frames
             localKeyFrames.Clear();
-            for (int i = 1; i < input.Length; i++)
+            // Start from the line following header information
+            for (int i = 2; i < input.Length; i++)
             {
                 string[] item = ParseData.SplitItemByDivision(input[i]);
                 data = ParseData.SplitNumbersAtSpaces(item[0]);
@@ -127,22 +147,71 @@ namespace Extractor
                 int boneID = localKeyFrames[k].Bone;
                 TimeSpan time = localKeyFrames[k].Time;
                 Matrix transform = localKeyFrames[k].Transform;
-                if (boneID > 0)
-                {
-                    //int parentBone = skinningData.SkeletonHierarchy[boneID];
-                    // This matrix multiplication will need to be in the right order
-                    //poseTransforms[boneID] = poseTransforms[parentBone] * bindTransforms[boneID] * transform;
-                    //poseTransforms[boneID] = bindTransforms[boneID] * transform;
-                    poseTransforms[boneID] = transform * bindTransforms[boneID];
-                    poseKeyFrames.Add(new Keyframe(boneID, time, poseTransforms[boneID]));
-                }
-                else
-                {
-                    // This is the root bone
-                    //poseTransforms[boneID] = bindTransforms[boneID] * transform;
-                    poseTransforms[boneID] = transform * bindTransforms[boneID];
-                    poseKeyFrames.Add(new Keyframe(boneID, time, poseTransforms[boneID]));
-                }
+                //int parentBone = skinningData.SkeletonHierarchy[boneID];
+                // This matrix multiplication will need to be in the right order
+                //poseTransforms[boneID] = poseTransforms[parentBone] * bindTransforms[boneID] * transform;
+                //poseTransforms[boneID] = bindTransforms[boneID] * transform;
+                poseTransforms[boneID] = transform * bindTransforms[boneID];
+                poseKeyFrames.Add(new Keyframe(boneID, time, poseTransforms[boneID]));
+            }
+            // Create the animation clip
+            return new AnimationClip(count, duration, poseKeyFrames, steps);
+        }
+
+        // The input contains the local bone transform and the bind pose
+        // this processor passes throught that matrix from the action file
+        private AnimationClip ProcessTypePassThrough(int formatType, string[] input, SkinningData skinningData)
+        {
+            // This code is copied from type one so is unnecessarily complicated
+
+            // First line contains only the file format so start from the 
+            // second line of the input file
+            string[] data = ParseData.SplitNumbersAtSpaces(input[1]);
+            int count = ParseData.IntFromString(data[0]);
+            TimeSpan duration = ParseData.TimeFromString(data[1]);
+            // There will be no steps in a Blender Action this is just used as a placeholder
+            List<TimeSpan> steps = new List<TimeSpan>();
+            // Each frame containing the bone and the transform
+            // This contains the transform including the bind pose relative to the parent bone
+            IList<Keyframe> poseKeyFrames = new List<Keyframe>();
+            if (input.Length < 3)
+            {
+                form.AddMessageLine("There are no key frames in this file!");
+                return null;
+            }
+            form.AddMessageLine(String.Format("Action Type {0}: Pass through from the action file!", formatType));
+
+            // To store the current pose
+            bindTransforms = new Matrix[skinningData.BindPose.Count];
+            poseTransforms = new Matrix[skinningData.BindPose.Count];
+            // Now process add all the frames
+            localKeyFrames.Clear();
+            // Start from the line following header information
+            for (int i = 2; i < input.Length; i++)
+            {
+                string[] item = ParseData.SplitItemByDivision(input[i]);
+                data = ParseData.SplitNumbersAtSpaces(item[0]);
+                // The Blender Action clip exports the name of the bone not the index
+                // this is to avoid accidentally having a different bone map order
+                AddSortedKeyFrame(skinningData.BoneMap[data[0]],
+                                    ParseData.TimeFromString(data[1]),
+                                    ParseData.StringToMatrix(item[1]));
+            }
+            // Get the bind pose
+            skinningData.BindPose.CopyTo(bindTransforms, 0);
+            // Start the pose off in the bind pose
+            skinningData.BindPose.CopyTo(poseTransforms, 0);
+            // Add the bind pose to the local key frames
+            poseKeyFrames.Clear();
+            // The local key frames are already sorted in to order
+            for (int k = 0; k < localKeyFrames.Count; k++)
+            {
+                int boneID = localKeyFrames[k].Bone;
+                TimeSpan time = localKeyFrames[k].Time;
+                Matrix transform = localKeyFrames[k].Transform;
+                // This line is changed from type 1
+                poseTransforms[boneID] = transform;
+                poseKeyFrames.Add(new Keyframe(boneID, time, poseTransforms[boneID]));
             }
             // Create the animation clip
             return new AnimationClip(count, duration, poseKeyFrames, steps);
@@ -184,8 +253,8 @@ namespace Extractor
             }
             // If we get this far the only place the new keyframe can fit is at the very beginning of the list
             localKeyFrames.Insert(0, new Keyframe(boneID, time, transform));
-
         }
+
 
     }
 }

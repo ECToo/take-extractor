@@ -91,6 +91,17 @@ using System.Windows.Forms;
 #endregion
 
 //-----------------------------------------------------------------------------
+// NOTES:
+//-----------------------------------------------------------------------------
+// - Using the FBX model exported from v2.49b of Blender
+//      with the actions exported from v2.55 of Blender in action format
+//      and importing using the Action importer adding the bind pose in XNA
+//      Then the animations appear correct
+//   Therefore: it is necessary to get the FBX output from v2.55 to match 
+//              the output from v2.49b of Blender
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 // TODO (Extras):
 //-----------------------------------------------------------------------------
 // - Extract individual takes from a model that has one very long take.

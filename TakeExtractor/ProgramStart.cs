@@ -99,6 +99,9 @@ using System.Windows.Forms;
 //      Then the animations appear correct
 //   Therefore: it is necessary to get the FBX output from v2.55 to match 
 //              the output from v2.49b of Blender
+// - To get the model to work correctly in XNA the Blender FBX
+//      has to be saved with the first Take in the bind pose position!
+//      I do not know why!
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

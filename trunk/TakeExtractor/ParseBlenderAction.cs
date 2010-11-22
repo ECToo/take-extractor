@@ -39,7 +39,7 @@ namespace Extractor
         /// <summary>
         /// Loads a text file and converts to an animation clip
         /// </summary>
-        public AnimationClip Load(string fileName, Model aModel)
+        public AnimationClip Load(string fileName, Model aModel, string degX, string degY, string degZ)
         {
             string[] result = new string[0];
 
@@ -72,10 +72,15 @@ namespace Extractor
                 return null;
             }
 
-            return ProcessData(result, fileName, skinningData);
+            Matrix rotate = Matrix.Identity *
+                Matrix.CreateRotationX(MathHelper.ToRadians(ParseData.IntFromString(degX))) *
+                Matrix.CreateRotationY(MathHelper.ToRadians(ParseData.IntFromString(degY))) *
+                Matrix.CreateRotationZ(MathHelper.ToRadians(ParseData.IntFromString(degZ)));
+
+            return ProcessData(result, fileName, skinningData, rotate);
         }
 
-        private AnimationClip ProcessData(string[] input, string fullFile, SkinningData skinningData)
+        private AnimationClip ProcessData(string[] input, string fullFile, SkinningData skinningData, Matrix rotation)
         {
             // If there is nothing do not process anything
             if (input.Length < 1)
@@ -91,16 +96,16 @@ namespace Extractor
             switch (formatType)
             {
                 case 1:
-                    return ProcessTypeOne(input, skinningData);
+                    return ProcessTypeOne(input, skinningData, rotation);
                 default:
                     // Everything else just passes through from the action file
-                    return ProcessTypePassThrough(formatType, input, skinningData);
+                    return ProcessTypePassThrough(formatType, input, skinningData, rotation);
             }
         }
 
         // The input only contains the local bone transform
         // This processor adds the bind pose
-        private AnimationClip ProcessTypeOne(string[] input, SkinningData skinningData)
+        private AnimationClip ProcessTypeOne(string[] input, SkinningData skinningData, Matrix rotation)
         {
             // First line contains only the file format so start from the 
             // second line of the input file
@@ -160,7 +165,7 @@ namespace Extractor
 
         // The input contains the local bone transform and the bind pose
         // this processor passes throught that matrix from the action file
-        private AnimationClip ProcessTypePassThrough(int formatType, string[] input, SkinningData skinningData)
+        private AnimationClip ProcessTypePassThrough(int formatType, string[] input, SkinningData skinningData, Matrix rotation)
         {
             // This code is copied from type one so is unnecessarily complicated
 
@@ -208,7 +213,7 @@ namespace Extractor
             {
                 int boneID = localKeyFrames[k].Bone;
                 TimeSpan time = localKeyFrames[k].Time;
-                Matrix transform = localKeyFrames[k].Transform;
+                Matrix transform = localKeyFrames[k].Transform * rotation;
                 // This line is changed from type 1
                 poseTransforms[boneID] = transform;
                 poseKeyFrames.Add(new Keyframe(boneID, time, poseTransforms[boneID]));

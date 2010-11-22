@@ -420,7 +420,8 @@ namespace Extractor
 
             ClearMessages();
             ParseBlenderAction clips = new ParseBlenderAction(this);
-            AnimationClip clip = clips.Load(fileName, modelViewerControl.Model);
+            AnimationClip clip = clips.Load(fileName, modelViewerControl.Model, 
+                                                rotateX, rotateY, rotateZ);
             if (clip == null)
             {
                 AddMessageLine("The action did not load!");

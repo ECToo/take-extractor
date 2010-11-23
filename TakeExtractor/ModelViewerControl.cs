@@ -87,7 +87,7 @@ namespace Extractor
         /// </summary>
         public string SetModel(bool animated, Model aModel)
         {
-            string errors = "";
+            string result = "";
             isAnimated = animated;
             if (aModel != null)
             {
@@ -102,10 +102,10 @@ namespace Extractor
 
                 if (skinningData == null)
                 {
-                    errors += "\nThis model does not contain a SkinningData tag.";
+                    result += "\nThis model does not contain a SkinningData tag.";
                     isAnimated = false;
                 }
-                // Chack again to make sure it is still treated as animated
+                // Check again to make sure it is still treated as animated
                 if (isAnimated)
                 {
                     // Create an animation player, and start decoding an animation clip.
@@ -116,12 +116,21 @@ namespace Extractor
                     {
                         //AnimationClip clip = skinningData.AnimationClips["Take 001"];
                         AnimationClip clip = skinningData.AnimationClips[clipNames[0]];
-                        animationPlayer.StartClip(clip);
+                        result += "\nClip: " + clipNames[0];
+                        string error = animationPlayer.StartClip(clip);
+                        if (!string.IsNullOrEmpty(error))
+                        {
+                            result += "\n" + error;
+                        }
+                    }
+                    else
+                    {
+                        result += "\nThis model does not have any takes!";
                     }
                 }
 
             }
-            return errors;
+            return result;
         }
 
         public void SetClipName(string name)

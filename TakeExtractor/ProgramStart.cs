@@ -93,17 +93,16 @@ using System.Windows.Forms;
 //-----------------------------------------------------------------------------
 // NOTES:
 //-----------------------------------------------------------------------------
-// - Using the FBX model exported from v2.49b of Blender
-//      with the actions exported from v2.55 of Blender in action format
-//      and importing using the Action importer adding the bind pose in XNA
-//      Then the animations appear correct
-//   Therefore: it is necessary to get the FBX output from v2.55 to match 
-//              the output from v2.49b of Blender
-// - To get the model to work correctly in XNA the Blender FBX
-//      has to be saved with the first Take in the bind pose position!
+// - To get the model to work correctly in XNA 4 from Blender 2.5x FBX
+//      the model has to be saved with the first Take in the bind pose position!
 //      I do not know why!
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+// TODO (Extras):
+//-----------------------------------------------------------------------------
+// - Rotate the Blender actions to match the model rotation
+//
 //-----------------------------------------------------------------------------
 // TODO (Extras):
 //-----------------------------------------------------------------------------

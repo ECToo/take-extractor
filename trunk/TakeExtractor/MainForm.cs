@@ -299,8 +299,6 @@ namespace Extractor
         public void LoadAnimatedModel(bool isAnimated, string fileName, string rotateXdeg, string rotateYdeg, string rotateZdeg)
         {
             Cursor = Cursors.WaitCursor;
-            AddMessageLine("Loading model: " + fileName);
-            AddMessageLine("Rotating model: X " + rotateXdeg + ", Y " + rotateYdeg + ", Z " + rotateZdeg);
 
             // Unload any existing model.
             modelViewerControl.UnloadModel();
@@ -310,12 +308,15 @@ namespace Extractor
             contentBuilder.Clear();
             if (isAnimated)
             {
+                AddMessageLine("Loading animated model: " + fileName);
                 contentBuilder.AddAnimated(fileName, "Model", rotateXdeg, rotateYdeg, rotateZdeg);
             }
             else
             {
+                AddMessageLine("Loading model: " + fileName);
                 contentBuilder.Add(fileName, "Model", null, "ModelProcessor");
             }
+            AddMessageLine("Rotating model: X " + rotateXdeg + ", Y " + rotateYdeg + ", Z " + rotateZdeg);
 
             // Build this new model data.
             string buildError = contentBuilder.Build();
@@ -329,7 +330,11 @@ namespace Extractor
             {
                 // If the build succeeded, use the ContentManager to
                 // load the temporary .xnb file that we just created.
-                modelViewerControl.SetModel(isAnimated, contentManager.Load<Model>("Model"));
+                string result = modelViewerControl.SetModel(isAnimated, contentManager.Load<Model>("Model"));
+                if (!string.IsNullOrEmpty(result))
+                {
+                    AddMessageLine(result);
+                }
             }
             else
             {

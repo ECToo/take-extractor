@@ -91,7 +91,7 @@ using System.Windows.Forms;
 #endregion
 
 //-----------------------------------------------------------------------------
-// NOTES:
+// LIMITATIONS:
 //-----------------------------------------------------------------------------
 // - To get the model to work correctly in XNA 4 from Blender 2.5x FBX
 //      the model has to be saved with the first Take in the bind pose position!
@@ -99,10 +99,13 @@ using System.Windows.Forms;
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-// TODO (Extras):
+// TODO:
 //-----------------------------------------------------------------------------
 // - Rotate the Blender actions to match the model rotation
-//
+//      Try:
+//      (rotation * parent[frame]).Invert * (rotation * self[frame])
+//      This needs to be done in order from the parent to the children
+
 //-----------------------------------------------------------------------------
 // TODO (Extras):
 //-----------------------------------------------------------------------------

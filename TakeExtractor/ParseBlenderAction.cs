@@ -19,16 +19,20 @@ namespace Extractor
     public class ParseBlenderAction
     {
         // Main form used to display results
-        private MainForm form;
+        MainForm form;
 
         // Used to store the bind pose
         Matrix[] bindTransforms;
         // The current transforms
         Matrix[] poseTransforms;
         // Each frame containing the bone and the transform
-        // Just the change from the bine pose relative to the parent bone
+        // Just the change from the bind pose relative to the parent bone
         // this excludes the original bind pose
         IList<Keyframe> localKeyFrames = new List<Keyframe>();
+        
+        // The next line to read from the file
+        // Used to keep track of the start of the next clip
+        int readLine = 0;
 
 
         public ParseBlenderAction(MainForm parentForm)
@@ -37,10 +41,12 @@ namespace Extractor
         }
 
         /// <summary>
-        /// Loads a text file and converts to an animation clip
+        /// Loads a text file and converts to animation clips
         /// </summary>
-        public AnimationClip Load(string fileName, Model aModel, string degX, string degY, string degZ)
+        public Dictionary<string, AnimationClip> Load(string fileName, Model aModel, string degX, string degY, string degZ)
         {
+            // Start from the beginning of the file
+            readLine = 0;
             string[] result = new string[0];
 
             if (aModel == null)
@@ -80,7 +86,7 @@ namespace Extractor
             return ProcessData(result, fileName, skinningData, rotate);
         }
 
-        private AnimationClip ProcessData(string[] input, string fullFile, SkinningData skinningData, Matrix rotation)
+        private Dictionary<string, AnimationClip> ProcessData(string[] input, string fullFile, SkinningData skinningData, Matrix rotation)
         {
             // If there is nothing do not process anything
             if (input.Length < 1)
@@ -88,57 +94,85 @@ namespace Extractor
                 return null;
             }
 
-            form.AddMessageLine("Processing file: " + fullFile);
+            Dictionary<string, AnimationClip> resultClips = new Dictionary<string,AnimationClip>();
 
-            // First line contains only the file format type so that we can use the correct processor
-            int formatType = ParseData.IntFromString(input[0]);
-            // Create the animation clip
-            switch (formatType)
+            form.AddMessageLine("Reading file: " + fullFile);
+
+            while (readLine < input.Length)
             {
-                case 1:
-                    return ProcessTypeOne(input, skinningData, rotation);
-                default:
-                    // Everything else just passes through from the action file
-                    return ProcessTypePassThrough(formatType, input, skinningData, rotation);
+                // First line of each clip should contain the clip name
+                // in the format "=ClipName"
+                string clipName = input[readLine];
+                if (clipName.Length > 1 && clipName.Substring(0, 1) == "=")
+                {
+                    // Remove the "=" sign
+                    clipName = clipName.Substring(1);
+                    readLine++;
+                }
+                else
+                {
+                    // Unique clip name based on the current date and time
+                    clipName = DateTime.Now.ToString(GlobalSettings.timeFormat);
+                    readLine++;
+                }
+                // Create the animation clip
+                form.AddMessageLine("Processing action: " + clipName);
+                AnimationClip thisClip = ProcessOneClip(input, skinningData, rotation);
+                if (thisClip != null)
+                {
+                    resultClips.Add(clipName, thisClip);
+                }
             }
+            return resultClips;
         }
 
         // The input only contains the local bone transform
         // This processor adds the bind pose
-        private AnimationClip ProcessTypeOne(string[] input, SkinningData skinningData, Matrix rotation)
+        private AnimationClip ProcessOneClip(string[] input, SkinningData skinningData, Matrix rotation)
         {
-            // First line contains only the file format so start from the 
-            // second line of the input file
-            string[] data = ParseData.SplitNumbersAtSpaces(input[1]);
+            // This should start at the first line FOLLOWING the clip name
+            string[] data = ParseData.SplitNumbersAtSpaces(input[readLine]);
+            readLine++;
+            // This contains the number of bones in the animation...
             int count = ParseData.IntFromString(data[0]);
+            // and the duration of the animation.
             TimeSpan duration = ParseData.TimeFromString(data[1]);
             // There will be no steps in a Blender Action this is just used as a placeholder
             List<TimeSpan> steps = new List<TimeSpan>();
             // Each frame containing the bone and the transform
             // This contains the transform including the bind pose relative to the parent bone
             IList<Keyframe> poseKeyFrames = new List<Keyframe>();
-            if (input.Length < 3)
+            if (readLine >= input.Length)
             {
                 form.AddMessageLine("There are no key frames in this file!");
                 return null;
             }
-            form.AddMessageLine("Action Type 1: The bind pose is added from the loaded model!");
 
             // To store the current pose
             bindTransforms = new Matrix[skinningData.BindPose.Count];
             poseTransforms = new Matrix[skinningData.BindPose.Count];
             // Now process add all the frames
             localKeyFrames.Clear();
-            // Start from the line following header information
-            for (int i = 2; i < input.Length; i++)
+            // Start from the line following the header information
+            while (readLine < input.Length)
             {
-                string[] item = ParseData.SplitItemByDivision(input[i]);
+                // If the line starts with an "=" it is the next clip
+                if (input[readLine].Substring(0, 1) == "=")
+                {
+                    break;
+                }
+                string[] item = ParseData.SplitItemByDivision(input[readLine]);
                 data = ParseData.SplitNumbersAtSpaces(item[0]);
                 // The Blender Action clip exports the name of the bone not the index
                 // this is to avoid accidentally having a different bone map order
                 AddSortedKeyFrame(skinningData.BoneMap[data[0]],
                                     ParseData.TimeFromString(data[1]),
                                     ParseData.StringToMatrix(item[1]));
+                readLine++;
+            }
+            if (localKeyFrames.Count < 1)
+            {
+                return null;
             }
             // Get the bind pose
             skinningData.BindPose.CopyTo(bindTransforms, 0);
@@ -157,65 +191,6 @@ namespace Extractor
                 //poseTransforms[boneID] = poseTransforms[parentBone] * bindTransforms[boneID] * transform;
                 //poseTransforms[boneID] = bindTransforms[boneID] * transform;
                 poseTransforms[boneID] = transform * bindTransforms[boneID];
-                poseKeyFrames.Add(new Keyframe(boneID, time, poseTransforms[boneID]));
-            }
-            // Create the animation clip
-            return new AnimationClip(count, duration, poseKeyFrames, steps);
-        }
-
-        // The input contains the local bone transform and the bind pose
-        // this processor passes throught that matrix from the action file
-        private AnimationClip ProcessTypePassThrough(int formatType, string[] input, SkinningData skinningData, Matrix rotation)
-        {
-            // This code is copied from type one so is unnecessarily complicated
-
-            // First line contains only the file format so start from the 
-            // second line of the input file
-            string[] data = ParseData.SplitNumbersAtSpaces(input[1]);
-            int count = ParseData.IntFromString(data[0]);
-            TimeSpan duration = ParseData.TimeFromString(data[1]);
-            // There will be no steps in a Blender Action this is just used as a placeholder
-            List<TimeSpan> steps = new List<TimeSpan>();
-            // Each frame containing the bone and the transform
-            // This contains the transform including the bind pose relative to the parent bone
-            IList<Keyframe> poseKeyFrames = new List<Keyframe>();
-            if (input.Length < 3)
-            {
-                form.AddMessageLine("There are no key frames in this file!");
-                return null;
-            }
-            form.AddMessageLine(String.Format("Action Type {0}: Pass through from the action file!", formatType));
-
-            // To store the current pose
-            bindTransforms = new Matrix[skinningData.BindPose.Count];
-            poseTransforms = new Matrix[skinningData.BindPose.Count];
-            // Now process add all the frames
-            localKeyFrames.Clear();
-            // Start from the line following header information
-            for (int i = 2; i < input.Length; i++)
-            {
-                string[] item = ParseData.SplitItemByDivision(input[i]);
-                data = ParseData.SplitNumbersAtSpaces(item[0]);
-                // The Blender Action clip exports the name of the bone not the index
-                // this is to avoid accidentally having a different bone map order
-                AddSortedKeyFrame(skinningData.BoneMap[data[0]],
-                                    ParseData.TimeFromString(data[1]),
-                                    ParseData.StringToMatrix(item[1]));
-            }
-            // Get the bind pose
-            skinningData.BindPose.CopyTo(bindTransforms, 0);
-            // Start the pose off in the bind pose
-            skinningData.BindPose.CopyTo(poseTransforms, 0);
-            // Add the bind pose to the local key frames
-            poseKeyFrames.Clear();
-            // The local key frames are already sorted in to order
-            for (int k = 0; k < localKeyFrames.Count; k++)
-            {
-                int boneID = localKeyFrames[k].Bone;
-                TimeSpan time = localKeyFrames[k].Time;
-                Matrix transform = localKeyFrames[k].Transform * rotation;
-                // This line is changed from type 1
-                poseTransforms[boneID] = transform;
                 poseKeyFrames.Add(new Keyframe(boneID, time, poseTransforms[boneID]));
             }
             // Create the animation clip

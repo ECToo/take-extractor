@@ -39,6 +39,10 @@ namespace Extractor
         private string rotateY = "0";
         private string rotateZ = "0";
 
+        private Dictionary<string, AnimationClip> loadedClips = new Dictionary<string,AnimationClip>();
+        private List<string> clipNames = new List<string>();
+        private string currentClipName = "";
+
         /// <summary>
         /// Constructs the main form.
         /// </summary>
@@ -285,6 +289,18 @@ namespace Extractor
             loadBlenderActionMenuItem.Enabled = true;
         }
 
+        private void HaveClipsLoaded()
+        {
+            if (loadedClips != null && loadedClips.Count < 1)
+            {
+                ClipNamesComboBox.Enabled = false;
+                return;
+            }
+            ClipNamesComboBox.Items.AddRange(clipNames.ToArray());
+            ClipNamesComboBox.Text = currentClipName;
+            ClipNamesComboBox.Enabled = true;
+        }
+
         /// <summary>
         /// Loads a new 3D model file into the ModelViewerControl.
         /// </summary>
@@ -306,6 +322,7 @@ namespace Extractor
 
             // Tell the ContentBuilder what to build.
             contentBuilder.Clear();
+            ClearClips();
             if (isAnimated)
             {
                 AddMessageLine("Loading animated model: " + fileName);
@@ -406,12 +423,22 @@ namespace Extractor
             }
             else
             {
+                string name = Path.GetFileNameWithoutExtension(fileName);
+                if (loadedClips.ContainsKey(name))
+                {
+                    // rename to avoid duplicates
+                    name += DateTime.Now.ToString(GlobalSettings.timeFormat);
+                }
+                clipNames.Add(name);
+                loadedClips.Add(name, clip);
+                currentClipName = name;
                 string error = modelViewerControl.SetExternalClip(clip);
                 if (!string.IsNullOrEmpty(error))
                 {
                     AddMessageLine(error);
                 }
             }
+            HaveClipsLoaded();
 
             Cursor = Cursors.Arrow;
         }
@@ -425,20 +452,24 @@ namespace Extractor
 
             ClearMessages();
             ParseBlenderAction clips = new ParseBlenderAction(this);
-            AnimationClip clip = clips.Load(fileName, modelViewerControl.Model, 
+            clipNames.Clear();
+            loadedClips = clips.Load(fileName, modelViewerControl.Model, 
                                                 rotateX, rotateY, rotateZ);
-            if (clip == null)
+            if (loadedClips == null)
             {
-                AddMessageLine("The action did not load!");
+                AddMessageLine("No actions loaded!");
             }
             else
             {
-                string error = modelViewerControl.SetExternalClip(clip);
+                clipNames.AddRange(loadedClips.Keys);
+                currentClipName = clipNames[0];
+                string error = modelViewerControl.SetExternalClip(loadedClips[currentClipName]);
                 if (!string.IsNullOrEmpty(error))
                 {
                     AddMessageLine(error);
                 }
             }
+            HaveClipsLoaded();
 
             Cursor = Cursors.Arrow;
         }
@@ -449,6 +480,8 @@ namespace Extractor
             {
                 // Set the clip to null to show the bind pose
                 string error = modelViewerControl.SetExternalClip(null);
+                currentClipName = "Bind Pose";
+                ClipNamesComboBox.Text = currentClipName;
                 if (!string.IsNullOrEmpty(error))
                 {
                     AddMessageLine(error);
@@ -459,6 +492,15 @@ namespace Extractor
         public void ClearMessages()
         {
             messageBox.Clear();
+        }
+
+        // Ready for a new model to load
+        private void ClearClips()
+        {
+            clipNames.Clear();
+            currentClipName = "";
+            loadedClips.Clear();
+            HaveClipsLoaded();
         }
 
         public void AddMessageLine(string text)
@@ -664,6 +706,25 @@ namespace Extractor
         {
             rotateZ = ZComboBox.Text;
             rotateZ = rotateZ.Substring(2);
+        }
+
+        private void ClipNamesComboBoxChanged(object sender, EventArgs e)
+        {
+            string nextClipName = ClipNamesComboBox.Text;
+            if (nextClipName != currentClipName)
+            {
+                if (loadedClips.ContainsKey(nextClipName))
+                {
+                    currentClipName = nextClipName;
+                    string error = modelViewerControl.SetExternalClip(loadedClips[currentClipName]);
+                    if (!string.IsNullOrEmpty(error))
+                    {
+                        AddMessageLine(error);
+                        // TODO: display Bind Pose if there are any errors
+                    }
+                }
+                HaveClipsLoaded();
+            }
         }
 
 

@@ -22,6 +22,7 @@ namespace Extractor
         public const string fbxEndSection = "}";
 
         // Paths and files
+        public const string timeFormat = "yyyymmddhhmmss";  // Names that need to be unique
         public const string pathSaveGameFolder = "SavedGames";   // Same as the XNA default
         public const string pathSaveDataFolder = "ExtractTakes";  // used to load and save the results
         public const string fileBoneMap = "BoneMap.txt";    // appended to the model name to save a bonemap

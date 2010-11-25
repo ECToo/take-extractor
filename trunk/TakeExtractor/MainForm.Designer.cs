@@ -53,6 +53,7 @@ namespace Extractor
             this.XComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.YComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.ZComboBox = new System.Windows.Forms.ToolStripComboBox();
+            this.ClipNamesComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.messageBox = new System.Windows.Forms.TextBox();
             this.modelViewerControl = new Extractor.ModelViewerControl();
             this.menuStrip1.SuspendLayout();
@@ -64,10 +65,11 @@ namespace Extractor
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.viewToolStripMenuItem,
-            this.rotationToolStripMenuItem});
+            this.rotationToolStripMenuItem,
+            this.ClipNamesComboBox});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(792, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(792, 27);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -90,7 +92,7 @@ namespace Extractor
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlText;
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 23);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // viewRigidModelToolStripMenuItem
@@ -201,7 +203,7 @@ namespace Extractor
             this.toolStripSeparator4,
             this.bindPoseMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 23);
             this.viewToolStripMenuItem.Text = "View";
             // 
             // yUpMenuItem
@@ -246,7 +248,7 @@ namespace Extractor
             this.YComboBox,
             this.ZComboBox});
             this.rotationToolStripMenuItem.Name = "rotationToolStripMenuItem";
-            this.rotationToolStripMenuItem.Size = new System.Drawing.Size(64, 20);
+            this.rotationToolStripMenuItem.Size = new System.Drawing.Size(64, 23);
             this.rotationToolStripMenuItem.Text = "Rotation";
             // 
             // XComboBox
@@ -291,6 +293,14 @@ namespace Extractor
             this.ZComboBox.ToolTipText = "Rotate model while loading";
             this.ZComboBox.TextChanged += new System.EventHandler(this.ZComboBoxChanged);
             // 
+            // ClipNamesComboBox
+            // 
+            this.ClipNamesComboBox.Enabled = false;
+            this.ClipNamesComboBox.Name = "ClipNamesComboBox";
+            this.ClipNamesComboBox.Size = new System.Drawing.Size(121, 23);
+            this.ClipNamesComboBox.Text = "Bind Pose";
+            this.ClipNamesComboBox.TextChanged += new System.EventHandler(this.ClipNamesComboBoxChanged);
+            // 
             // messageBox
             // 
             this.messageBox.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -308,7 +318,7 @@ namespace Extractor
             // 
             this.modelViewerControl.Dock = System.Windows.Forms.DockStyle.Top;
             this.modelViewerControl.IsAnimated = false;
-            this.modelViewerControl.Location = new System.Drawing.Point(0, 24);
+            this.modelViewerControl.Location = new System.Drawing.Point(0, 27);
             this.modelViewerControl.Name = "modelViewerControl";
             this.modelViewerControl.Size = new System.Drawing.Size(792, 507);
             this.modelViewerControl.TabIndex = 1;
@@ -364,6 +374,7 @@ namespace Extractor
         private System.Windows.Forms.ToolStripComboBox XComboBox;
         private System.Windows.Forms.ToolStripComboBox YComboBox;
         private System.Windows.Forms.ToolStripComboBox ZComboBox;
+        private System.Windows.Forms.ToolStripComboBox ClipNamesComboBox;
 
     }
 }

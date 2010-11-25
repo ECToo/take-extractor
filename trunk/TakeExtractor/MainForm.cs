@@ -159,7 +159,7 @@ namespace Extractor
             if (fileDialog.ShowDialog() == DialogResult.OK)
             {
                 ClearMessages();
-                LoadAction(fileDialog.FileName);
+                LoadActions(fileDialog.FileName);
             }
             AddMessageLine("== Finished ==");
         }
@@ -277,12 +277,19 @@ namespace Extractor
         {
             if (modelViewerControl.Model == null || !modelViewerControl.IsAnimated)
             {
+                PoseHeading.Visible = false;
+                ClipNamesComboBox.Visible = false;
+                ClipNamesComboBox.Enabled = false;
                 SaveBoneMapMenu.Enabled = false;
                 SaveBindPoseMenuItem.Enabled = false;
                 LoadIndividualClipMenu.Enabled = false;
                 loadBlenderActionMenuItem.Enabled = false;
                 return;
             }
+            PoseHeading.Visible = true;
+            ClipNamesComboBox.Visible = true;
+            ClipNamesComboBox.Text = currentClipName;
+            ClipNamesComboBox.Enabled = true;
             SaveBoneMapMenu.Enabled = true;
             SaveBindPoseMenuItem.Enabled = true;
             LoadIndividualClipMenu.Enabled = true;
@@ -291,14 +298,14 @@ namespace Extractor
 
         private void HaveClipsLoaded()
         {
+            ClipNamesComboBox.Items.Clear();
+            ClipNamesComboBox.Items.Add(GlobalSettings.listRestPoseName);
             if (loadedClips != null && loadedClips.Count < 1)
             {
-                ClipNamesComboBox.Enabled = false;
                 return;
             }
             ClipNamesComboBox.Items.AddRange(clipNames.ToArray());
             ClipNamesComboBox.Text = currentClipName;
-            ClipNamesComboBox.Enabled = true;
         }
 
         /// <summary>
@@ -352,6 +359,7 @@ namespace Extractor
                 {
                     AddMessageLine(result);
                 }
+                currentClipName = GlobalSettings.listRestPoseName;
             }
             else
             {
@@ -416,12 +424,18 @@ namespace Extractor
 
             ClearMessages();
             ParseClips clips = new ParseClips(this);
-            AnimationClip clip = clips.Load(fileName);
-            if (clip == null)
+            AnimationClip clip = null;
+            // Wrap in a try catch just in case the file format is wrong
+            try
             {
-                AddMessageLine("The clip did not load!");
+                clip = clips.Load(fileName);
             }
-            else
+            catch (Exception e)
+            {
+                AddMessageLine(e.ToString());
+            }
+
+            if (clip != null)
             {
                 string name = Path.GetFileNameWithoutExtension(fileName);
                 if (loadedClips.ContainsKey(name))
@@ -436,7 +450,12 @@ namespace Extractor
                 if (!string.IsNullOrEmpty(error))
                 {
                     AddMessageLine(error);
+                    DisplayTheBindPose();
                 }
+            }
+            else
+            {
+                AddMessageLine("The clip did not load!");
             }
             HaveClipsLoaded();
 
@@ -446,47 +465,37 @@ namespace Extractor
         /// <summary>
         /// Loads a text file and converts to an Animation Clip
         /// </summary>
-        private void LoadAction(string fileName)
+        private void LoadActions(string fileName)
         {
             Cursor = Cursors.WaitCursor;
 
             ClearMessages();
             ParseBlenderAction clips = new ParseBlenderAction(this);
             clipNames.Clear();
-            loadedClips = clips.Load(fileName, modelViewerControl.Model, 
-                                                rotateX, rotateY, rotateZ);
-            if (loadedClips == null)
+            loadedClips.Clear();
+            // Wrap in a try catch just in case the file format is wrong
+            try
             {
-                AddMessageLine("No actions loaded!");
+                loadedClips = clips.Load(fileName, modelViewerControl.Model,
+                                                    rotateX, rotateY, rotateZ);
+            }
+            catch (Exception e)
+            {
+                AddMessageLine(e.ToString());
+            }
+
+            if (loadedClips != null && loadedClips.Count > 0)
+            {
+                clipNames.AddRange(loadedClips.Keys);
+                AddMessageLine(string.Format("{0} actions loaded.", loadedClips.Count));
             }
             else
             {
-                clipNames.AddRange(loadedClips.Keys);
-                currentClipName = clipNames[0];
-                string error = modelViewerControl.SetExternalClip(loadedClips[currentClipName]);
-                if (!string.IsNullOrEmpty(error))
-                {
-                    AddMessageLine(error);
-                }
+                AddMessageLine("No actions loaded!");
             }
             HaveClipsLoaded();
 
             Cursor = Cursors.Arrow;
-        }
-
-        private void bindPoseMenuClicked(object sender, EventArgs e)
-        {
-            if (modelViewerControl.Model != null)
-            {
-                // Set the clip to null to show the bind pose
-                string error = modelViewerControl.SetExternalClip(null);
-                currentClipName = "Bind Pose";
-                ClipNamesComboBox.Text = currentClipName;
-                if (!string.IsNullOrEmpty(error))
-                {
-                    AddMessageLine(error);
-                }
-            }
         }
 
         public void ClearMessages()
@@ -711,7 +720,9 @@ namespace Extractor
         private void ClipNamesComboBoxChanged(object sender, EventArgs e)
         {
             string nextClipName = ClipNamesComboBox.Text;
-            if (nextClipName != currentClipName)
+            // Always re-apply the bind pose when selected
+            // otherwise only change if a different pose has been selected
+            if (nextClipName != currentClipName || nextClipName == GlobalSettings.listRestPoseName)
             {
                 if (loadedClips.ContainsKey(nextClipName))
                 {
@@ -720,13 +731,37 @@ namespace Extractor
                     if (!string.IsNullOrEmpty(error))
                     {
                         AddMessageLine(error);
-                        // TODO: display Bind Pose if there are any errors
+                        // Display Bind Pose if there are any errors
+                        DisplayTheBindPose();
                     }
                 }
-                HaveClipsLoaded();
+                else
+                {
+                    // Anything else displays the Bind pose
+                    DisplayTheBindPose();
+                }
             }
         }
 
+        private void DisplayTheBindPose()
+        {
+            if (modelViewerControl.Model != null)
+            {
+                // Set the clip to null to show the bind pose
+                string error = modelViewerControl.SetExternalClip(null);
+                currentClipName = GlobalSettings.listRestPoseName;
+                // To avoid an endless loop do not set the text unless it has changed
+                if (ClipNamesComboBox.Text != currentClipName)
+                {
+                    ClipNamesComboBox.Text = currentClipName;
+                }
+                if (!string.IsNullOrEmpty(error))
+                {
+                    AddMessageLine(error);
+                }
+            }
+
+        }
 
     }
 }

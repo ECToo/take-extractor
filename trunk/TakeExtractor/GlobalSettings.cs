@@ -36,5 +36,8 @@ namespace Extractor
         public const string itemClipTake = "clip";
         public const string itemHeadTake = "head";
         public const string itemArmsTake = "arms";
+
+        // Names
+        public const string listRestPoseName = "* Rest or bind pose";
     }
 }

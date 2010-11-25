@@ -105,6 +105,13 @@ using System.Windows.Forms;
 //      Try:
 //      (rotation * parent[frame]).Invert * (rotation * self[frame])
 //      This needs to be done in order from the parent to the children
+// - Convert actions in to clips
+//      Use a config file
+//      Model name
+//      Action file name
+//      Rotation
+//      Action name = clip name
+//  Also convert in to head and arms format
 
 //-----------------------------------------------------------------------------
 // TODO (Extras):

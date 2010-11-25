@@ -67,13 +67,7 @@ namespace Extractor
         public string StartClip(AnimationClip clip)
         {
             string error = "";
-            if (clip == null)
-            {
-                // Use a null clip to set the model to the bind pose
-                //throw new ArgumentNullException("clip");
-                error += "\nBind pose selected.";
-                //return error;
-            }
+            // Use a null clip to set the model to the bind pose
             if (clip != null && (skinningDataValue == null || clip.BoneCount != skinningDataValue.BoneMap.Count))
             {
                 error += "\nThe number of bones in the clip does not match the number in the model!";

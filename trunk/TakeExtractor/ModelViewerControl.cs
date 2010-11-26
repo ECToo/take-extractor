@@ -133,6 +133,15 @@ namespace Extractor
             return result;
         }
 
+        public AnimationClip GetCurrentClip()
+        {
+            if (isAnimated && animationPlayer != null)
+            {
+                return animationPlayer.CurrentClip;
+            }
+            return null;
+        }
+
         public void SetClipName(string name)
         {
             if (isAnimated && model != null && animationPlayer != null)

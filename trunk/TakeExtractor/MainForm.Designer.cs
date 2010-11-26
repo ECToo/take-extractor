@@ -39,18 +39,19 @@ namespace Extractor
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.loadBlenderActionMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LoadIndividualClipMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.splitFBXMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openTakesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.SaveBoneMapMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.SaveBindPoseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SaveClipMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.yUpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.zUpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.zDownMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.splitFBXMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openTakesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.SaveBoneMapMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.SaveBindPoseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PoseHeading = new System.Windows.Forms.ToolStripMenuItem();
             this.ClipNamesComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.messageBox = new System.Windows.Forms.TextBox();
@@ -64,6 +65,7 @@ namespace Extractor
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.viewToolStripMenuItem,
+            this.ToolsMenuItem,
             this.PoseHeading,
             this.ClipNamesComboBox});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -85,12 +87,7 @@ namespace Extractor
             this.toolStripSeparator4,
             this.loadBlenderActionMenuItem,
             this.LoadIndividualClipMenu,
-            this.toolStripSeparator3,
-            this.splitFBXMenuItem,
-            this.openTakesToolStripMenuItem,
-            this.toolStripSeparator1,
-            this.SaveBoneMapMenu,
-            this.SaveBindPoseMenuItem,
+            this.SaveClipMenu,
             this.toolStripSeparator2,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -189,54 +186,14 @@ namespace Extractor
             this.LoadIndividualClipMenu.Text = "Load Individual Clip...";
             this.LoadIndividualClipMenu.Click += new System.EventHandler(this.loadIndividualClipClicked);
             // 
-            // toolStripSeparator3
+            // SaveClipMenu
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(197, 6);
-            // 
-            // splitFBXMenuItem
-            // 
-            this.splitFBXMenuItem.Name = "splitFBXMenuItem";
-            this.splitFBXMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.splitFBXMenuItem.Text = "Split FBX files...";
-            this.splitFBXMenuItem.ToolTipText = "Split FBX Model files to have only one take per file";
-            this.splitFBXMenuItem.Click += new System.EventHandler(this.SplitFBXMenuClicked);
-            // 
-            // openTakesToolStripMenuItem
-            // 
-            this.openTakesToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
-            this.openTakesToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.openTakesToolStripMenuItem.Name = "openTakesToolStripMenuItem";
-            this.openTakesToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.openTakesToolStripMenuItem.Text = "Extract FBX Takes...";
-            this.openTakesToolStripMenuItem.ToolTipText = "Load a list of animation takes from an FBX file and save them in a keyframe forma" +
-                "t";
-            this.openTakesToolStripMenuItem.Click += new System.EventHandler(this.OpenTakesMenuClicked);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.toolStripSeparator1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(197, 6);
-            // 
-            // SaveBoneMapMenu
-            // 
-            this.SaveBoneMapMenu.Enabled = false;
-            this.SaveBoneMapMenu.Name = "SaveBoneMapMenu";
-            this.SaveBoneMapMenu.Size = new System.Drawing.Size(200, 22);
-            this.SaveBoneMapMenu.Text = "Save Bone Map...";
-            this.SaveBoneMapMenu.ToolTipText = "Save a list of bone names with their numeric index and thier parent bone";
-            this.SaveBoneMapMenu.Click += new System.EventHandler(this.SaveBoneMapMenuClicked);
-            // 
-            // SaveBindPoseMenuItem
-            // 
-            this.SaveBindPoseMenuItem.Enabled = false;
-            this.SaveBindPoseMenuItem.Name = "SaveBindPoseMenuItem";
-            this.SaveBindPoseMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.SaveBindPoseMenuItem.Text = "Save Bind Pose...";
-            this.SaveBindPoseMenuItem.ToolTipText = "Save the matrix of each bone while it is at rest";
-            this.SaveBindPoseMenuItem.Click += new System.EventHandler(this.SaveBindPoseMenuClicked);
+            this.SaveClipMenu.Enabled = false;
+            this.SaveClipMenu.Name = "SaveClipMenu";
+            this.SaveClipMenu.Size = new System.Drawing.Size(200, 22);
+            this.SaveClipMenu.Text = "Save Animation Clip...";
+            this.SaveClipMenu.ToolTipText = "Save the currently playing animation in AnimationClip format";
+            this.SaveClipMenu.Click += new System.EventHandler(this.SaveClipClicked);
             // 
             // toolStripSeparator2
             // 
@@ -284,6 +241,60 @@ namespace Extractor
             this.zDownMenuItem.Size = new System.Drawing.Size(194, 22);
             this.zDownMenuItem.Text = "Z Down";
             this.zDownMenuItem.Click += new System.EventHandler(this.zDownClicked);
+            // 
+            // ToolsMenuItem
+            // 
+            this.ToolsMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.splitFBXMenuItem,
+            this.openTakesToolStripMenuItem,
+            this.toolStripSeparator5,
+            this.SaveBoneMapMenu,
+            this.SaveBindPoseMenuItem});
+            this.ToolsMenuItem.Name = "ToolsMenuItem";
+            this.ToolsMenuItem.Size = new System.Drawing.Size(48, 23);
+            this.ToolsMenuItem.Text = "Tools";
+            // 
+            // splitFBXMenuItem
+            // 
+            this.splitFBXMenuItem.Name = "splitFBXMenuItem";
+            this.splitFBXMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.splitFBXMenuItem.Text = "Split FBX files...";
+            this.splitFBXMenuItem.ToolTipText = "Split FBX Model files to have only one take per file";
+            this.splitFBXMenuItem.Click += new System.EventHandler(this.SplitFBXMenuClicked);
+            // 
+            // openTakesToolStripMenuItem
+            // 
+            this.openTakesToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
+            this.openTakesToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.openTakesToolStripMenuItem.Name = "openTakesToolStripMenuItem";
+            this.openTakesToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.openTakesToolStripMenuItem.Text = "Extract FBX Takes...";
+            this.openTakesToolStripMenuItem.ToolTipText = "Load a list of animation takes from an FBX file and save them in a keyframe forma" +
+                "t";
+            this.openTakesToolStripMenuItem.Click += new System.EventHandler(this.OpenTakesMenuClicked);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(171, 6);
+            // 
+            // SaveBoneMapMenu
+            // 
+            this.SaveBoneMapMenu.Enabled = false;
+            this.SaveBoneMapMenu.Name = "SaveBoneMapMenu";
+            this.SaveBoneMapMenu.Size = new System.Drawing.Size(174, 22);
+            this.SaveBoneMapMenu.Text = "Save Bone Map...";
+            this.SaveBoneMapMenu.ToolTipText = "Save a list of bone names with their numeric index and thier parent bone";
+            this.SaveBoneMapMenu.Click += new System.EventHandler(this.SaveBoneMapMenuClicked);
+            // 
+            // SaveBindPoseMenuItem
+            // 
+            this.SaveBindPoseMenuItem.Enabled = false;
+            this.SaveBindPoseMenuItem.Name = "SaveBindPoseMenuItem";
+            this.SaveBindPoseMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.SaveBindPoseMenuItem.Text = "Save Bind Pose...";
+            this.SaveBindPoseMenuItem.ToolTipText = "Save the matrix of each bone while it is at rest";
+            this.SaveBindPoseMenuItem.Click += new System.EventHandler(this.SaveBindPoseMenuClicked);
             // 
             // PoseHeading
             // 
@@ -353,7 +364,6 @@ namespace Extractor
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private ModelViewerControl modelViewerControl;
         private System.Windows.Forms.ToolStripMenuItem openTakesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.TextBox messageBox;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem SaveBoneMapMenu;
@@ -363,7 +373,6 @@ namespace Extractor
         private System.Windows.Forms.ToolStripMenuItem yUpMenuItem;
         private System.Windows.Forms.ToolStripMenuItem zUpMenuItem;
         private System.Windows.Forms.ToolStripMenuItem LoadIndividualClipMenu;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem zDownMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadBlenderActionMenuItem;
         private System.Windows.Forms.ToolStripMenuItem SaveBindPoseMenuItem;
@@ -374,6 +383,9 @@ namespace Extractor
         private System.Windows.Forms.ToolStripMenuItem PoseHeading;
         private System.Windows.Forms.ToolStripTextBox RotationHeading;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem SaveClipMenu;
+        private System.Windows.Forms.ToolStripMenuItem ToolsMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
 
     }
 }

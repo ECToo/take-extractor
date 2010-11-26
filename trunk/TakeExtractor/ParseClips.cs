@@ -93,5 +93,71 @@ namespace Extractor
             return new AnimationClip(count, duration, keyFrames, steps);
         }
 
+        /// <summary>
+        /// Get the animation clip in the format used to save and load clips.
+        /// boneFilter is a list of bones to match that will be saved all other discarded
+        /// leave null or empty to select all bones
+        /// </summary>
+        public static List<string> GetAnimationClipData(AnimationClip clip, IDictionary<string, int> BoneMap, List<string> bonesFilter)
+        {
+            bool IsClip = false;
+            if (bonesFilter == null || bonesFilter.Count < 1)
+            {
+                IsClip = true;
+            }
+
+            // This is where we store the lines to export to the file
+            List<string> data = new List<string>();
+
+            if (IsClip)
+            {
+                // CLIP
+                // Add the details from the AnimationClip
+                data.Add(String.Format("{0} {1}",
+                    ParseData.IntToString(clip.BoneCount),
+                    ParseData.TimeToString(clip.Duration)));
+            }
+            else
+            {
+                // PART, head or arms
+                // Use the details from the AnimationClip to create the AnimationPart file
+                // Add the extra header information for, max, min and defaultFrame
+                data.Add(String.Format("{0} {1} {2} {3}",
+                    ParseData.IntToString(clip.BoneCount),
+                    ParseData.FloatToString(60.0f),
+                    ParseData.FloatToString(-60.0f),
+                    ParseData.FloatToString(((
+                                (float)clip.Keyframes.Count /
+                                (float)clip.BoneCount) + 1)
+                                * 0.5f)));  // The middle frame if the first frame is zero
+            }
+
+            IList<Keyframe> frames = clip.Keyframes;
+            if (frames == null)
+            {
+                data.Clear();
+                // Animation does not have any frames
+                return null;
+            }
+
+            // Add each keyframe
+            WantedBones BoneTest = new WantedBones(BoneMap, bonesFilter);
+            for (int i = 0; i < frames.Count; i++)
+            {
+                // FRAME
+                // Include some or all of the bones to create 
+                // either an AnimationClip or AnimationPart file
+                if (IsClip || BoneTest.IsBoneWeWant(frames[i].Bone))
+                {
+                    data.Add(String.Format("{0} {1}{2}{3}",
+                        ParseData.IntToString(frames[i].Bone),
+                        ParseData.TimeToString(frames[i].Time),
+                        ParseData.div,
+                        ParseData.MatrixToString(frames[i].Transform)));
+                }
+            }
+            return data;
+        }
+
     }
 }

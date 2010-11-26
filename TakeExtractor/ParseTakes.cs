@@ -218,20 +218,19 @@ namespace Extractor
         // Convert each clip to a string array for saving
         // boneFilter is a list of bones to match that will be saved all other discarded
         // leave null or empty to select all bones
-        private List<string> GetSaveClipData(SkinningData skinData, string clipName, List<string> bonesFilter)
+        public List<string> GetSaveClipData(SkinningData skinData, string clipName, List<string> bonesFilter)
         {
-            List<string> data = new List<string>();
             // Parse and populate
             if (string.IsNullOrEmpty(clipName))
             {
                 form.AddMessageLine("Animation name was blank!");
-                return data;
+                return null;
             }
 
             if (skinData == null)
             {
                 form.AddMessageLine("Animation skinning data is missing! " + clipName);
-                return data;
+                return null;
             }
 
             AnimationClip clip = null;
@@ -242,63 +241,10 @@ namespace Extractor
             if (clip == null)
             {
                 form.AddMessageLine("Animation does not exist in the file: " + clipName);
-                return data;
+                return null;
             }
 
-            bool IsClip = false;
-            if (bonesFilter == null || bonesFilter.Count < 1)
-            {
-                IsClip = true;
-            }
-
-            if (IsClip)
-            {
-                // CLIP
-                // Add the details from the AnimationClip
-                data.Add(String.Format("{0} {1}",
-                    ParseData.IntToString(clip.BoneCount),
-                    ParseData.TimeToString(clip.Duration)));
-            }
-            else
-            {
-                // PART, head or arms
-                // Use the details from the AnimationClip to create the AnimationPart file
-                // Add the extra header information for, max, min and defaultFrame
-                data.Add(String.Format("{0} {1} {2} {3}",
-                    ParseData.IntToString(clip.BoneCount),
-                    ParseData.FloatToString(60.0f),
-                    ParseData.FloatToString(-60.0f),
-                    ParseData.FloatToString(((
-                                (float)clip.Keyframes.Count /
-                                (float)clip.BoneCount) + 1)
-                                * 0.5f)));  // The middle frame if the first frame is zero
-            }
-
-            IList<Keyframe> frames = clip.Keyframes;
-            if (frames == null)
-            {
-                data.Clear();
-                form.AddMessageLine("Animation does not have any frames: " + clipName);
-                return data;
-            }
-
-            // Add each keyframe
-            WantedBones BoneTest = new WantedBones(skinData.BoneMap, bonesFilter);
-            for (int i = 0; i < frames.Count; i++)
-            {
-                // FRAME
-                // Include some or all of the bones to create 
-                // either an AnimationClip or AnimationPart file
-                if (IsClip || BoneTest.IsBoneWeWant(frames[i].Bone))
-                {
-                    data.Add(String.Format("{0} {1}{2}{3}",
-                        ParseData.IntToString(frames[i].Bone),
-                        ParseData.TimeToString(frames[i].Time),
-                        ParseData.div,
-                        ParseData.MatrixToString(frames[i].Transform)));
-                }
-            }
-            return data;
+            return ParseClips.GetAnimationClipData(clip, skinData.BoneMap, bonesFilter);
         }
 
         // Extracts the file names from the paths

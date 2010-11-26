@@ -236,6 +236,25 @@ namespace Extractor
             AddMessageLine("== Finished ==");
         }
 
+        private void SaveClipClicked(object sender, EventArgs e)
+        {
+            if (modelViewerControl.Model == null || currentClipName == GlobalSettings.listRestPoseName)
+            {
+                // Can only save one if we have a model and it is not displaying the bind pose
+                return;
+            }
+            SkinningData skinData = (SkinningData)modelViewerControl.Model.Tag;
+            if (skinData == null)
+            {
+                AddMessageLine("Not an animated model!");
+                return;
+            }
+            ClipSaveDialogue(ParseClips.GetAnimationClipData(modelViewerControl.GetCurrentClip(), 
+                                skinData.BoneMap, null));
+            AddMessageLine("== Finished ==");
+        }
+
+
         /// <summary>
         /// Event handler for the Exit menu option.
         /// </summary>
@@ -447,6 +466,7 @@ namespace Extractor
                 loadedClips.Add(name, clip);
                 currentClipName = name;
                 string error = modelViewerControl.SetExternalClip(clip);
+                SaveClipMenu.Enabled = true;
                 if (!string.IsNullOrEmpty(error))
                 {
                     AddMessageLine(error);
@@ -593,6 +613,45 @@ namespace Extractor
 
         }
 
+        private void ClipSaveDialogue(List<string> data)
+        {
+            if (data == null || data.Count < 1)
+            {
+                AddMessageLine("No clip data!");
+                return;
+            }
+            // Path to default location
+            string pathToSaveFolder = defaultFileFolder;
+            string assetName = "";
+            string fileName = currentClipName;
+            // If we have loaded a file use that for the path and the name
+            if (lastLoadedFile != "")
+            {
+                pathToSaveFolder = Path.GetDirectoryName(lastLoadedFile);
+                assetName = Path.GetFileNameWithoutExtension(lastLoadedFile) + "-";
+            }
+            // Append the name to the end of the filename
+            fileName = assetName + fileName;
+
+            SaveFileDialog fileDialog = new SaveFileDialog();
+
+            fileDialog.InitialDirectory = pathToSaveFolder;
+
+            fileDialog.Title = "Save the animation clip";
+
+            fileDialog.FileName = fileName;
+
+            fileDialog.Filter = "Clip Files (*.clip)|*.clip|" +
+                                "Head and Arms Files (*.head,*.arms)|*.head,*.arms|" +
+                                "All Files (*.*)|*.*";
+
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                SaveTextFile(fileDialog.FileName, data);
+            }
+
+        }
+
         private void SaveTextFile(string fileName, List<string> data)
         {
             if (data.Count < 1 || string.IsNullOrEmpty(fileName))
@@ -728,6 +787,8 @@ namespace Extractor
                 {
                     currentClipName = nextClipName;
                     string error = modelViewerControl.SetExternalClip(loadedClips[currentClipName]);
+                    // Display the save clip menu option
+                    SaveClipMenu.Enabled = true;
                     if (!string.IsNullOrEmpty(error))
                     {
                         AddMessageLine(error);
@@ -750,6 +811,8 @@ namespace Extractor
                 // Set the clip to null to show the bind pose
                 string error = modelViewerControl.SetExternalClip(null);
                 currentClipName = GlobalSettings.listRestPoseName;
+                // Disable saving clips
+                SaveClipMenu.Enabled = false;
                 // To avoid an endless loop do not set the text unless it has changed
                 if (ClipNamesComboBox.Text != currentClipName)
                 {

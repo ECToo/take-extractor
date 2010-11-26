@@ -174,6 +174,29 @@ namespace Extractor
             {
                 return null;
             }
+
+            // Rotate
+            /*
+            for (int r = localKeyFrames.Count - 1; r >= 0; r--)
+            {
+                Matrix changed = Matrix.Identity;
+                if (localKeyFrames[r].Bone > 0)
+                {
+                    int parentBone = skinningData.SkeletonHierarchy[localKeyFrames[r].Bone];
+                    Matrix parentInvert = Matrix.Invert(localKeyFrames[parentBone].Transform);
+                    // Move to parent space
+                    changed = localKeyFrames[r].Transform * parentInvert;
+                    changed = rotation * changed;
+                }
+                else
+                {
+                    // Root
+                    changed = rotation * localKeyFrames[r].Transform;
+                }
+                localKeyFrames[r] = new Keyframe(localKeyFrames[r].Bone, localKeyFrames[r].Time, changed);
+            }
+            */
+
             // Get the bind pose
             skinningData.BindPose.CopyTo(bindTransforms, 0);
             // Start the pose off in the bind pose
@@ -186,11 +209,25 @@ namespace Extractor
                 int boneID = localKeyFrames[k].Bone;
                 TimeSpan time = localKeyFrames[k].Time;
                 Matrix transform = localKeyFrames[k].Transform;
-                //int parentBone = skinningData.SkeletonHierarchy[boneID];
-                // This matrix multiplication will need to be in the right order
-                //poseTransforms[boneID] = poseTransforms[parentBone] * bindTransforms[boneID] * transform;
-                //poseTransforms[boneID] = bindTransforms[boneID] * transform;
                 poseTransforms[boneID] = transform * bindTransforms[boneID];
+                /*
+                if (boneID == 0)
+                {
+                    // Root bone
+                    poseTransforms[boneID] = transform * bindTransforms[boneID];
+                }
+                else
+                {
+                    int parentBone = skinningData.SkeletonHierarchy[boneID];
+                    Matrix parentInvert = Matrix.Invert(rotation * bindTransforms[parentBone]);
+                    // (rotation * parent[frame]).Invert * (rotation * self[frame])
+                    // Tried
+                    // Matrix parentInvert = Matrix.Invert(rotation * bindTransforms[parentBone]);
+                    // (parentInvert * (rotation * transform)) * bindTransforms[boneID];
+                    //poseTransforms[boneID] = transform * bindTransforms[boneID];
+                    poseTransforms[boneID] = (parentInvert * (rotation * transform)) * bindTransforms[boneID];
+                }
+                 * */
                 poseKeyFrames.Add(new Keyframe(boneID, time, poseTransforms[boneID]));
             }
             // Create the animation clip

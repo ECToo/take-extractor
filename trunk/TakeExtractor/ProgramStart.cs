@@ -101,8 +101,12 @@ using System.Windows.Forms;
 //-----------------------------------------------------------------------------
 // TODO:
 //-----------------------------------------------------------------------------
+// Test - Load animations from FBX files
+//      http://blogs.msdn.com/b/shawnhar/archive/2010/06/18/merging-animation-files.aspx
+// - Add a UI for adding animations to the merge animations processor
+
 // - Rotate the Blender actions to match the model rotation
-//      Try:
+//      Failed!
 //      (rotation * parent[frame]).Invert * (rotation * self[frame])
 //      This needs to be done in order from the parent to the children
 // - Convert actions in to clips

@@ -209,7 +209,7 @@ namespace Extractor
         /// </summary>
         public void Add(string filename, string name, string importer, string processor)
         {
-            Add(filename, name, importer, processor, "", "", "", "", "", "");
+            Add(filename, name, importer, processor, "", "", "", "", "", "", "", "");
         }
 
         /*
@@ -256,7 +256,8 @@ namespace Extractor
         /// Syntax: ProcessorParameters_ParamName
         /// </summary>
         public void Add(string filename, string name, string importer, string processor,
-            string param1, string val1, string param2, string val2, string param3, string val3)
+            string param1, string val1, string param2, string val2, string param3, string val3, 
+            string param4, string val4)
         {
             ProjectItem item = buildProject.AddItem("Compile", filename)[0];
 
@@ -278,6 +279,9 @@ namespace Extractor
             if (!string.IsNullOrEmpty(param3) && !string.IsNullOrEmpty(val3))
                 item.SetMetadataValue(param3, val3);
 
+            if (!string.IsNullOrEmpty(param4) && !string.IsNullOrEmpty(val4))
+                item.SetMetadataValue(param4, val4);
+
             projectItems.Add(item);
         }
 
@@ -293,6 +297,29 @@ namespace Extractor
                 //"ProcessorParameters_RotationZ", rotateDegZ);
                 "ProcessorParameters_DegreesX", rotateDegX,
                 "ProcessorParameters_DegreesY", rotateDegY,
+                "ProcessorParameters_DegreesZ", rotateDegZ,
+                null, null);
+        }
+
+        /// <summary>
+        /// Add a model using the AnimatedModelProcessor with rotation
+        /// </summary>
+        public void AddWithMergedAnimations(string filename, string name,
+            string rotateDegX, string rotateDegY, string rotateDegZ, List<string> AnimationFiles)
+        {
+            string mergeFile = "";
+            if (AnimationFiles != null && AnimationFiles.Count > 0)
+            {
+                mergeFile = AnimationFiles[0];
+                for (int i = 1; i < AnimationFiles.Count; i++)
+                {
+                    mergeFile += ";" + AnimationFiles[i];
+                }
+            }
+            Add(filename, name, null, "MergeAnimationsProcessor",
+                "ProcessorParameters_MergeAnimations", mergeFile,
+                "ProcessorParameters_DegreesX", rotateDegX,
+                "ProcessorParameters_DegreesY", rotateDegY,
                 "ProcessorParameters_DegreesZ", rotateDegZ);
         }
 
@@ -305,7 +332,8 @@ namespace Extractor
             Add(filename, name, null, "ModelProcessor",
                 "ProcessorParameters_RotationX", rotateDegX,
                 "ProcessorParameters_RotationY", rotateDegY,
-                "ProcessorParameters_RotationZ", rotateDegZ);
+                "ProcessorParameters_RotationZ", rotateDegZ,
+                null, null);
         }
 
         /// <summary>

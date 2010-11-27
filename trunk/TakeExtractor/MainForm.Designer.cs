@@ -30,14 +30,15 @@ namespace Extractor
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.viewRigidModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.LoadRigidModelMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.LoadAnimatedModelMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.RotationHeading = new System.Windows.Forms.ToolStripTextBox();
             this.XComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.YComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.ZComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.loadBlenderActionMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.LoadBlenderActionMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.LoadFBXAnimationMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.LoadIndividualClipMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.SaveClipMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -78,14 +79,15 @@ namespace Extractor
             // 
             this.fileToolStripMenuItem.BackColor = System.Drawing.SystemColors.ControlDark;
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.viewRigidModelToolStripMenuItem,
-            this.openModelToolStripMenuItem,
+            this.LoadRigidModelMenu,
+            this.LoadAnimatedModelMenu,
             this.RotationHeading,
             this.XComboBox,
             this.YComboBox,
             this.ZComboBox,
             this.toolStripSeparator4,
-            this.loadBlenderActionMenuItem,
+            this.LoadBlenderActionMenuItem,
+            this.LoadFBXAnimationMenu,
             this.LoadIndividualClipMenu,
             this.SaveClipMenu,
             this.toolStripSeparator2,
@@ -95,22 +97,22 @@ namespace Extractor
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 23);
             this.fileToolStripMenuItem.Text = "File";
             // 
-            // viewRigidModelToolStripMenuItem
+            // LoadRigidModelMenu
             // 
-            this.viewRigidModelToolStripMenuItem.Name = "viewRigidModelToolStripMenuItem";
-            this.viewRigidModelToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.viewRigidModelToolStripMenuItem.Text = "View Rigid Model...";
-            this.viewRigidModelToolStripMenuItem.Click += new System.EventHandler(this.OpenRigidModelMenuClicked);
+            this.LoadRigidModelMenu.Name = "LoadRigidModelMenu";
+            this.LoadRigidModelMenu.Size = new System.Drawing.Size(215, 22);
+            this.LoadRigidModelMenu.Text = "Load Rigid Model...";
+            this.LoadRigidModelMenu.Click += new System.EventHandler(this.OpenRigidModelMenuClicked);
             // 
-            // openModelToolStripMenuItem
+            // LoadAnimatedModelMenu
             // 
-            this.openModelToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
-            this.openModelToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.openModelToolStripMenuItem.Name = "openModelToolStripMenuItem";
-            this.openModelToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.openModelToolStripMenuItem.Text = "View Animated Model...";
-            this.openModelToolStripMenuItem.ToolTipText = "Load a 3D model in to the viewer";
-            this.openModelToolStripMenuItem.Click += new System.EventHandler(this.OpenAnimatedModelMenuClicked);
+            this.LoadAnimatedModelMenu.BackColor = System.Drawing.SystemColors.Control;
+            this.LoadAnimatedModelMenu.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.LoadAnimatedModelMenu.Name = "LoadAnimatedModelMenu";
+            this.LoadAnimatedModelMenu.Size = new System.Drawing.Size(215, 22);
+            this.LoadAnimatedModelMenu.Text = "Load Animated Model...";
+            this.LoadAnimatedModelMenu.ToolTipText = "Load a 3D model in to the viewer";
+            this.LoadAnimatedModelMenu.Click += new System.EventHandler(this.OpenAnimatedModelMenuClicked);
             // 
             // RotationHeading
             // 
@@ -168,21 +170,29 @@ namespace Extractor
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(197, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(212, 6);
             // 
-            // loadBlenderActionMenuItem
+            // LoadBlenderActionMenuItem
             // 
-            this.loadBlenderActionMenuItem.Enabled = false;
-            this.loadBlenderActionMenuItem.Name = "loadBlenderActionMenuItem";
-            this.loadBlenderActionMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.loadBlenderActionMenuItem.Text = "Load Blender Actions...";
-            this.loadBlenderActionMenuItem.Click += new System.EventHandler(this.loadBlenderActionClicked);
+            this.LoadBlenderActionMenuItem.Enabled = false;
+            this.LoadBlenderActionMenuItem.Name = "LoadBlenderActionMenuItem";
+            this.LoadBlenderActionMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.LoadBlenderActionMenuItem.Text = "Load Blender Actions...";
+            this.LoadBlenderActionMenuItem.Click += new System.EventHandler(this.loadBlenderActionClicked);
+            // 
+            // LoadFBXAnimationMenu
+            // 
+            this.LoadFBXAnimationMenu.Enabled = false;
+            this.LoadFBXAnimationMenu.Name = "LoadFBXAnimationMenu";
+            this.LoadFBXAnimationMenu.Size = new System.Drawing.Size(215, 22);
+            this.LoadFBXAnimationMenu.Text = "Load FBX or X Animation...";
+            this.LoadFBXAnimationMenu.Click += new System.EventHandler(this.LoadFBXAnimationMenuClicked);
             // 
             // LoadIndividualClipMenu
             // 
             this.LoadIndividualClipMenu.Enabled = false;
             this.LoadIndividualClipMenu.Name = "LoadIndividualClipMenu";
-            this.LoadIndividualClipMenu.Size = new System.Drawing.Size(200, 22);
+            this.LoadIndividualClipMenu.Size = new System.Drawing.Size(215, 22);
             this.LoadIndividualClipMenu.Text = "Load Individual Clip...";
             this.LoadIndividualClipMenu.Click += new System.EventHandler(this.loadIndividualClipClicked);
             // 
@@ -190,7 +200,7 @@ namespace Extractor
             // 
             this.SaveClipMenu.Enabled = false;
             this.SaveClipMenu.Name = "SaveClipMenu";
-            this.SaveClipMenu.Size = new System.Drawing.Size(200, 22);
+            this.SaveClipMenu.Size = new System.Drawing.Size(215, 22);
             this.SaveClipMenu.Text = "Save Animation Clip...";
             this.SaveClipMenu.ToolTipText = "Save the currently playing animation in AnimationClip format";
             this.SaveClipMenu.Click += new System.EventHandler(this.SaveClipClicked);
@@ -198,14 +208,14 @@ namespace Extractor
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(197, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(212, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
             this.exitToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlText;
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitMenuClicked);
             // 
@@ -360,7 +370,7 @@ namespace Extractor
 
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openModelToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem LoadAnimatedModelMenu;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private ModelViewerControl modelViewerControl;
         private System.Windows.Forms.ToolStripMenuItem openTakesToolStripMenuItem;
@@ -368,13 +378,13 @@ namespace Extractor
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem SaveBoneMapMenu;
         private System.Windows.Forms.ToolStripMenuItem splitFBXMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem viewRigidModelToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem LoadRigidModelMenu;
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem yUpMenuItem;
         private System.Windows.Forms.ToolStripMenuItem zUpMenuItem;
         private System.Windows.Forms.ToolStripMenuItem LoadIndividualClipMenu;
         private System.Windows.Forms.ToolStripMenuItem zDownMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem loadBlenderActionMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem LoadBlenderActionMenuItem;
         private System.Windows.Forms.ToolStripMenuItem SaveBindPoseMenuItem;
         private System.Windows.Forms.ToolStripComboBox XComboBox;
         private System.Windows.Forms.ToolStripComboBox YComboBox;
@@ -386,6 +396,7 @@ namespace Extractor
         private System.Windows.Forms.ToolStripMenuItem SaveClipMenu;
         private System.Windows.Forms.ToolStripMenuItem ToolsMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem LoadFBXAnimationMenu;
 
     }
 }

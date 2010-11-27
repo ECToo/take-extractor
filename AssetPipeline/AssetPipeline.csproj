@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="AnimatedModelProcessor.cs" />
     <Compile Include="AnimationWriters.cs" />
+    <Compile Include="MergeAnimationsProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -164,6 +164,28 @@ namespace Extractor
             AddMessageLine("== Finished ==");
         }
 
+        private void LoadFBXAnimationMenuClicked(object sender, EventArgs e)
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+
+            fileDialog.InitialDirectory = defaultFileFolder;
+
+            fileDialog.Title = "Load FBX or X Animation";
+
+            fileDialog.Filter = "Animation (*.fbx;*.x)|*.fbx;*.x|" +
+                    "FBX Animation (*.fbx)|*.fbx|" +
+                    "X Animation (*.x)|*.x|" +
+                    "All Files (*.*)|*.*";
+
+
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                ClearMessages();
+                LoadAnimationTakes(fileDialog.FileName, rotateX, rotateY, rotateZ);
+            }
+            AddMessageLine("== Finished ==");
+        }
+
         private void SplitFBXMenuClicked(object sender, EventArgs e)
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
@@ -302,7 +324,8 @@ namespace Extractor
                 SaveBoneMapMenu.Enabled = false;
                 SaveBindPoseMenuItem.Enabled = false;
                 LoadIndividualClipMenu.Enabled = false;
-                loadBlenderActionMenuItem.Enabled = false;
+                LoadBlenderActionMenuItem.Enabled = false;
+                LoadFBXAnimationMenu.Enabled = false;
                 return;
             }
             PoseHeading.Visible = true;
@@ -312,7 +335,8 @@ namespace Extractor
             SaveBoneMapMenu.Enabled = true;
             SaveBindPoseMenuItem.Enabled = true;
             LoadIndividualClipMenu.Enabled = true;
-            loadBlenderActionMenuItem.Enabled = true;
+            LoadBlenderActionMenuItem.Enabled = true;
+            LoadFBXAnimationMenu.Enabled = true;
         }
 
         private void HaveClipsLoaded()
@@ -352,6 +376,11 @@ namespace Extractor
             if (isAnimated)
             {
                 AddMessageLine("Loading animated model: " + fileName);
+                // Test
+                //List<string> mergeFiles = new List<string>();
+                //mergeFiles.Add("C:\\Users\\John\\Documents\\SavedGames\\ExtractTakes\\TestDudeAnimations-Patrol2.fbx");
+                //contentBuilder.AddWithMergedAnimations(fileName, "Model", rotateXdeg, rotateYdeg, rotateZdeg, mergeFiles);
+
                 contentBuilder.AddAnimated(fileName, "Model", rotateXdeg, rotateYdeg, rotateZdeg);
             }
             else
@@ -378,7 +407,83 @@ namespace Extractor
                 {
                     AddMessageLine(result);
                 }
+                if (modelViewerControl.Model != null)
+                {
+                    // Add any animation
+                    SkinningData skinData = (SkinningData)modelViewerControl.Model.Tag;
+                    if (skinData != null)
+                    {
+                        foreach (string key in skinData.AnimationClips.Keys)
+                        {
+                            AnimationClip clip = skinData.AnimationClips[key];
+                            if (clip != null)
+                            {
+                                AddToClipList(clip, key);
+                            }
+                        }
+                    }
+                }
                 currentClipName = GlobalSettings.listRestPoseName;
+            }
+            else
+            {
+                // If the build failed, display an error message and log it
+                AddMessageLine(buildError);
+                MessageBox.Show(buildError, "Error");
+            }
+
+            Cursor = Cursors.Arrow;
+        }
+
+        /// <summary>
+        /// Loads an animation and add to the clips
+        /// </summary>
+        public void LoadAnimationTakes(string fileName, string rotateXdeg, string rotateYdeg, string rotateZdeg)
+        {
+            Cursor = Cursors.WaitCursor;
+
+            // Tell the ContentBuilder what to build.
+            //contentBuilder.Clear();
+            AddMessageLine("Loading animation: " + fileName);
+            contentBuilder.AddAnimated(fileName, "Takes", rotateXdeg, rotateYdeg, rotateZdeg);
+            AddMessageLine("Rotating animation: X " + rotateXdeg + ", Y " + rotateYdeg + ", Z " + rotateZdeg);
+
+            // Build this new model data.
+            string buildError = contentBuilder.Build();
+            string buildWarnings = contentBuilder.Warnings();
+            if (!string.IsNullOrEmpty(buildWarnings))
+            {
+                AddMessageLine(buildWarnings);
+            }
+
+            if (string.IsNullOrEmpty(buildError))
+            {
+                // If the build succeeded, use the ContentManager to
+                // load the temporary .xnb file that we just created.
+                Model animated = contentManager.Load<Model>("Takes");
+                if (animated == null)
+                {
+                    AddMessageLine("The animation file did not load!");
+                }
+                else
+                {
+                    SkinningData skinData = (SkinningData)animated.Tag;
+                    if (skinData != null)
+                    {
+                        foreach (string key in skinData.AnimationClips.Keys)
+                        {
+                            AnimationClip clip = skinData.AnimationClips[key];
+                            if (clip != null)
+                            {
+                                AddToClipList(clip, key);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        AddMessageLine("No animations were found in the file!");
+                    }
+                }
             }
             else
             {
@@ -454,9 +559,17 @@ namespace Extractor
                 AddMessageLine(e.ToString());
             }
 
+            string name = Path.GetFileNameWithoutExtension(fileName);
+            AddToClipList(clip, name);
+
+            Cursor = Cursors.Arrow;
+        }
+
+        // Add a clip to the list and diplays it
+        private void AddToClipList(AnimationClip clip, string name)
+        {
             if (clip != null)
             {
-                string name = Path.GetFileNameWithoutExtension(fileName);
                 if (loadedClips.ContainsKey(name))
                 {
                     // rename to avoid duplicates
@@ -475,11 +588,9 @@ namespace Extractor
             }
             else
             {
-                AddMessageLine("The clip did not load!");
+                AddMessageLine("No clip data!");
             }
             HaveClipsLoaded();
-
-            Cursor = Cursors.Arrow;
         }
 
         /// <summary>
@@ -642,7 +753,7 @@ namespace Extractor
             fileDialog.FileName = fileName;
 
             fileDialog.Filter = "Clip Files (*.clip)|*.clip|" +
-                                "Head and Arms Files (*.head,*.arms)|*.head,*.arms|" +
+                                "Head and Arms Files (*.head;*.arms)|*.head;*.arms|" +
                                 "All Files (*.*)|*.*";
 
             if (fileDialog.ShowDialog() == DialogResult.OK)
@@ -825,6 +936,7 @@ namespace Extractor
             }
 
         }
+
 
     }
 }

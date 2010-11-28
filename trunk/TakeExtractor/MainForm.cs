@@ -386,7 +386,7 @@ namespace Extractor
             else
             {
                 AddMessageLine("Loading model: " + fileName);
-                contentBuilder.Add(fileName, "Model", null, "ModelProcessor");
+                contentBuilder.AddModel(fileName, "Model", rotateXdeg, rotateYdeg, rotateZdeg);
             }
             AddMessageLine("Rotating model: X " + rotateXdeg + ", Y " + rotateYdeg + ", Z " + rotateZdeg);
 
@@ -442,10 +442,12 @@ namespace Extractor
         {
             Cursor = Cursors.WaitCursor;
 
-            // Tell the ContentBuilder what to build.
+            // Clear the content builder as each item must have a unique content name
             //contentBuilder.Clear();
+            // Tell the ContentBuilder what to build.
+            string uniqueName = DateTime.Now.ToString(GlobalSettings.timeFormat);
             AddMessageLine("Loading animation: " + fileName);
-            contentBuilder.AddAnimated(fileName, "Takes", rotateXdeg, rotateYdeg, rotateZdeg);
+            contentBuilder.AddAnimated(fileName, uniqueName, rotateXdeg, rotateYdeg, rotateZdeg);
             AddMessageLine("Rotating animation: X " + rotateXdeg + ", Y " + rotateYdeg + ", Z " + rotateZdeg);
 
             // Build this new model data.
@@ -460,7 +462,7 @@ namespace Extractor
             {
                 // If the build succeeded, use the ContentManager to
                 // load the temporary .xnb file that we just created.
-                Model animated = contentManager.Load<Model>("Takes");
+                Model animated = contentManager.Load<Model>(uniqueName);
                 if (animated == null)
                 {
                     AddMessageLine("The animation file did not load!");

@@ -97,13 +97,22 @@ using System.Windows.Forms;
 //      the model has to be saved with the first Take in the bind pose position!
 //      I do not know why!
 //-----------------------------------------------------------------------------
+// FEATURES
+//-----------------------------------------------------------------------------
+// - Load and view models
+// - Split FBX files in to one file per animation
+// - Load animations from Blender actions
+// - Load animations from AnimationClips
+// - Load animations from FBX files
+//-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 // TODO:
 //-----------------------------------------------------------------------------
-// Test - Load animations from FBX files
-//      http://blogs.msdn.com/b/shawnhar/archive/2010/06/18/merging-animation-files.aspx
 // - Add a UI for adding animations to the merge animations processor
+//     Merge animations:
+//      http://blogs.msdn.com/b/shawnhar/archive/2010/06/18/merging-animation-files.aspx
 
 // - Rotate the Blender actions to match the model rotation
 //      Failed!

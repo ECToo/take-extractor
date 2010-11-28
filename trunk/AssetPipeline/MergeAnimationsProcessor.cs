@@ -383,7 +383,8 @@ namespace AssetPipeline
                         "Mesh {0} has no skinning information", // so it has been deleted.",
                         mesh.Name);
 
-                    //mesh.Parent.Children.Remove(mesh);
+                    // This does not work for non-animated models
+                    mesh.Parent.Children.Remove(mesh);
                     return false;
                 }
                 

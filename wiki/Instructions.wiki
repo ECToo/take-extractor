@@ -22,8 +22,3 @@ To create suitable animations it is necessary from your 3D drawing programme to 
 
 http://code.google.com/p/blender-to-xna/
 
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages

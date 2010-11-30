@@ -10,7 +10,7 @@ Once selected those animations can then be saved as individual AnimationClip fil
 
 - Load FBX (or X) files that contain an animation for that model.  It can only load the first animation in the file.  (That is the limitation of the Autodesk FBX importer shipped with XNA 4.0)
 
-You can load several animations and select between them using the drop down selection box.
+You can load several animations and select between them using the drop down selection box.  The currently selected animation will play.
 
 = Details =
 
@@ -21,4 +21,3 @@ Also on the File menu there is a separate option to _Load Animations..._  Load a
 To create suitable animations it is necessary from your 3D drawing programme to export each animation in to a separate FBX file.  In Blender that is done by selecting the action in pose mode and Exporting to FBX.  See my related project for Blender 2.5 FBX export scripts suitable for XNA.
 
 http://code.google.com/p/blender-to-xna/
-

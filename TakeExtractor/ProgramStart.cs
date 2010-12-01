@@ -110,21 +110,15 @@ using System.Windows.Forms;
 //-----------------------------------------------------------------------------
 // TODO:
 //-----------------------------------------------------------------------------
-// - Add a UI for adding animations to the merge animations processor
-//     Merge animations:
-//      http://blogs.msdn.com/b/shawnhar/archive/2010/06/18/merging-animation-files.aspx
+// - Rearrange the File menu with the rotation as the first options
+// - Add a Blender preset option 'From Z Up to Y Up Preset'
+// - Remove the option to Load Blender Actions
+// - Change the Extract Takes tool to load from individual FBX animation files
+//      Keep the existing method and have an option file format type on the 
+//      first line of the file.
+//      The new type has an FBX file name on each row mapped to a clip name
+//-----------------------------------------------------------------------------
 
-// - Rotate the Blender actions to match the model rotation
-//      Failed!
-//      (rotation * parent[frame]).Invert * (rotation * self[frame])
-//      This needs to be done in order from the parent to the children
-// - Convert actions in to clips
-//      Use a config file
-//      Model name
-//      Action file name
-//      Rotation
-//      Action name = clip name
-//  Also convert in to head and arms format
 
 //-----------------------------------------------------------------------------
 // TODO (Extras):
@@ -137,6 +131,10 @@ using System.Windows.Forms;
 //      The name of the animation to save (used for both the FBX and the keyframe files)
 // e.g.
 //  List|1250|2300|Walk
+//
+// - Add a UI for adding animations to the merge animations processor
+//     Merge animations:
+//      http://blogs.msdn.com/b/shawnhar/archive/2010/06/18/merging-animation-files.aspx
 //-----------------------------------------------------------------------------
 
 #region Source Control

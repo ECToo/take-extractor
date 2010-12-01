@@ -506,6 +506,21 @@ namespace Extractor
             return (SkinningData)modelViewerControl.Model.Tag;
         }
 
+        public IDictionary<string, int> GetBoneMap()
+        {
+            if (modelViewerControl.Model == null)
+            {
+                return null;
+            }
+
+            SkinningData skinData = (SkinningData)modelViewerControl.Model.Tag;
+            if (skinData == null)
+            {
+                return null;
+            }
+            return skinData.BoneMap;
+        }
+
         private void SplitFBX(string fileName)
         {
             Cursor = Cursors.WaitCursor;
@@ -915,6 +930,15 @@ namespace Extractor
                     DisplayTheBindPose();
                 }
             }
+        }
+
+        public AnimationClip GetClip(string clipName)
+        {
+            if (loadedClips.ContainsKey(clipName))
+            {
+                return loadedClips[currentClipName];
+            }
+            return null;
         }
 
         private void DisplayTheBindPose()

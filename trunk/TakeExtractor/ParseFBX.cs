@@ -105,12 +105,13 @@ namespace Extractor
             source.Clear();
             source.AddRange(data);
 
-            GetFileNames(fbxFullFile);
+            ExtractFileNames(fbxFullFile);
 
             ExtractComponents();
         }
 
-        private void GetFileNames(string pathFullFile)
+        // This is used to set up the variables used to create the take file names
+        public void ExtractFileNames(string pathFullFile)
         {
             // Work out the file strings
             pathToSaveFolder = Path.GetDirectoryName(pathFullFile);
@@ -313,6 +314,12 @@ namespace Extractor
         {
             string result = Path.Combine(pathToSaveFolder, fileNameWithoutExtension);
             result += "-" + takeName.ToLowerInvariant() + fileExtension;
+            return result;
+        }
+
+        public string GetFullPath(string shortfilename)
+        {
+            string result = Path.Combine(pathToSaveFolder, shortfilename);
             return result;
         }
 

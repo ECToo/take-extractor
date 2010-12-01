@@ -73,23 +73,40 @@ namespace Extractor
             source.Clear();
             source.AddRange(data);
 
-            // The first element in the data must be the model file name
-            if (!ValidateModelFile(source[0], takeFullFile))
+            // The second element in the data must be the model file name
+            // Extract the path and file name
+            if (!ExtractPathNames(source[1], takeFullFile))
             {
                 form.AddMessageLine("File not found: " + fileFullPathToModel);
                 return;
             }
 
+            // Decide what file type we have
+            int formatType = ParseData.IntFromString(source[0]);
+            switch (formatType)
+            {
+                case 1:
+                    ProcessTypeOne();
+                    break;
+            }
+            // TODO:  Type 2 will need to extract the paths in to the fbx class
+            // so that the files are loaded from the correct place.
+        }
+
+        private void ProcessTypeOne()
+        {
             ParseFBX fbx = new ParseFBX(form);
+            // TODO:  type 2 here
             fbx.LoadAsText(fileFullPathToModel);
 
             // For storing the rotations from the tkes file
             string[] items = new string[3] { "", "", "" };
 
             // Load the model as a model
-            if (source.Count > 1)
+            if (source.Count > 2)
             {
-                items = ParseData.SplitItemByDivision(source[1]);
+                // Get the rotation
+                items = ParseData.SplitItemByDivision(source[2]);
             }
 
             form.LoadAnimatedModel(true, fileFullPathToModel, items[0], items[1], items[2]);
@@ -98,8 +115,9 @@ namespace Extractor
             // the file names must be consistent
             fbx.SaveIndividualFBXtakes();
             // Now we can load each in turn to get the keyframe data
-            ExportTakesToKeyframes(fbx, items[0], items[1], items[2]);
+            ExportTakesToKeyframes(1, fbx, items[0], items[1], items[2]);
         }
+
 
         private struct Parts
         {
@@ -108,7 +126,7 @@ namespace Extractor
             public string partName;
         }
 
-        private void ExportTakesToKeyframes(ParseFBX fbx, string rotateXdeg, string rotateYdeg, string rotateZdeg)
+        private void ExportTakesToKeyframes(int formatType, ParseFBX fbx, string rotateXdeg, string rotateYdeg, string rotateZdeg)
         {
             string rigType = "unknown";
             List<string> headFilter = new List<string>();
@@ -119,8 +137,8 @@ namespace Extractor
 
             // For extractng the data
             string[] items;
-            // Starting on the third line following the file name and the rotation
-            for (int s = 2; s < source.Count; s++)
+            // Starting on the fourth line following the file name and the rotation
+            for (int s = 3; s < source.Count; s++)
             {
                 items = ParseData.SplitItemByDivision(source[s]);
                 switch (items[0].ToLowerInvariant())
@@ -183,23 +201,36 @@ namespace Extractor
             }
 
             // == Export each clip
-
             for (int c = 0; c < clipParts.Count; c++)
             {
-                string fileName = fbx.GetTakeFileName(clipParts[c].takeName);
-                form.LoadAnimatedModel(true, fileName, rotateXdeg, rotateYdeg, rotateZdeg);
-                List<string> exportData;
-                if (clipParts[c].partType == GlobalSettings.itemHeadTake)
+                string fileName = "";
+                if (formatType == 1)
                 {
-                    exportData = GetSaveClipData(form.GetModelSkinData(), clipParts[c].takeName, headFilter);
+                    fileName = fbx.GetTakeFileName(clipParts[c].takeName);
                 }
-                else if (clipParts[c].partType == GlobalSettings.itemArmsTake)
+                else if (formatType == 2)
                 {
-                    exportData = GetSaveClipData(form.GetModelSkinData(), clipParts[c].takeName, armsFilter);
+                    fileName = fbx.GetFullPath(clipParts[c].takeName);
                 }
                 else
                 {
-                    exportData = GetSaveClipData(form.GetModelSkinData(), clipParts[c].takeName, null);
+                    // Error
+                    return;
+                }
+                // Add each animation in to the form
+                form.LoadAnimationTakes(fileName, rotateXdeg, rotateYdeg, rotateZdeg);
+                List<string> exportData;
+                if (clipParts[c].partType == GlobalSettings.itemHeadTake)
+                {
+                    exportData = GetSaveClipData(form.GetClip(clipParts[c].takeName), form.GetBoneMap(), clipParts[c].takeName, headFilter);
+                }
+                else if (clipParts[c].partType == GlobalSettings.itemArmsTake)
+                {
+                    exportData = GetSaveClipData(form.GetClip(clipParts[c].takeName), form.GetBoneMap(), clipParts[c].takeName, armsFilter);
+                }
+                else
+                {
+                    exportData = GetSaveClipData(form.GetClip(clipParts[c].takeName), form.GetBoneMap(), clipParts[c].takeName, null);
                 }
 
                 if (exportData == null || exportData.Count < 1)
@@ -218,37 +249,19 @@ namespace Extractor
         // Convert each clip to a string array for saving
         // boneFilter is a list of bones to match that will be saved all other discarded
         // leave null or empty to select all bones
-        public List<string> GetSaveClipData(SkinningData skinData, string clipName, List<string> bonesFilter)
+        public List<string> GetSaveClipData(AnimationClip clip, IDictionary<string, int> boneMap, string clipName, List<string> bonesFilter)
         {
-            // Parse and populate
-            if (string.IsNullOrEmpty(clipName))
-            {
-                form.AddMessageLine("Animation name was blank!");
-                return null;
-            }
-
-            if (skinData == null)
-            {
-                form.AddMessageLine("Animation skinning data is missing! " + clipName);
-                return null;
-            }
-
-            AnimationClip clip = null;
-            if (skinData.AnimationClips.ContainsKey(clipName))
-            {
-                clip = skinData.AnimationClips[clipName];
-            }
-            if (clip == null)
+            if (clip == null || boneMap == null)
             {
                 form.AddMessageLine("Animation does not exist in the file: " + clipName);
                 return null;
             }
 
-            return ParseClips.GetAnimationClipData(clip, skinData.BoneMap, bonesFilter);
+            return ParseClips.GetAnimationClipData(clip, boneMap, bonesFilter);
         }
 
-        // Extracts the file names from the paths
-        private bool ValidateModelFile(string modelRelativeFile, string takeFullFile)
+        // Extracts the file names from the paths and validate that the file exists
+        private bool ExtractPathNames(string modelRelativeFile, string takeFullFile)
         {
             string pathToTakeFolder = Path.GetDirectoryName(takeFullFile);
             fileFullPathToModel = Path.Combine(pathToTakeFolder, modelRelativeFile);

@@ -7,9 +7,9 @@
 //-----------------------------------------------------------------------------
 // Extract takes from 3D model files and save them in to separate files
 //-----------------------------------------------------------------------------
-// Originally designed because the FBX importer with XNA 4.0 only supports 
-// one animation (take) per file.  Blender exports multiple takes per
-// file and it is difficult to get Blender to do otherwise.
+// Originally designed because the Autodesk FBX importer included with XNA 4.0 
+// only supports one animation (take) per file.
+// Blender can export multiple takes per file.
 //
 // In addition the takes are also converted and saved to the keyframe format used
 // by my game for individual animation clips.
@@ -18,11 +18,16 @@
 //-----------------------------------------------------------------------------
 // To extract files for use in my game this tool uses a config file.
 //
-// File format for Take Conversion config files (.takes)
-//  (Most things are case sensitive)
+// File formats for Take Conversion config files (.takes)
+// There are several formats the first line of the 'takes' file
+// indicates what format the rest of the file is in.
+// (Most things are case sensitive)
 //
-// Source file
-// X|Y|Z
+// Format Type 1
+// =============
+// 1
+// Source file containing all the animations and model in one file
+// X|Y|Z rotation to apply to the model while loading typically 90, 0, 180
 // RigType|Armature Rig Prefix
 // HeadBones|Neck|Head
 // ArmBones|L-Upper|L-Hand|R-Hand|...
@@ -31,13 +36,18 @@
 // type|SourceTakeName|OutputTakeName
 // ...
 //
+// Format Type
+//  1
+//
 // Source file
-//  The full name and relative path to the file to extract animations from.
+//  The full name and relative path to the file to extract the model and animations from.
 //  At the moment only FBX files are supported.
+//  All paths have to be relative to the folder that the 'takes' file is loaded from.
 //
 // X|Y|Z
 //  Rotation to apply to the model while loading
-//  e.g. 90|0|180 or 0|0|0
+//  e.g. To convert from Blender Z Up to XNA Y Up use 90|0|180
+//       for no rotation use 0|0|0
 //
 // RigType identifies different armature configurations: Human, Alien, LocalHuman etc.
 //  In conjunction with the type it is used to filter which bones are extracted in to
@@ -56,6 +66,32 @@
 // OutputTakeName = the name used in game to reference the take.
 //      This does not include the rig armature name.
 // e.g. Arms|Snipe|AimRifle or Clip|Patrol2|Patrol
+//
+// Format Type 2
+// =============
+// 2
+// Source file containing the model
+// X|Y|Z rotation to apply to the model while loading typically 90, 0, 180
+// RigType|Armature Rig Prefix
+// HeadBones|Neck|Head
+// ArmBones|L-Upper|L-Hand|R-Hand|...
+// type|SourceAnimationFileName|OutputTakeName
+// type|SourceAnimationFileName|OutputTakeName
+// type|SourceAnimationFileName|OutputTakeName
+// ...
+//
+// Format Type
+//  2
+//
+// Source file
+//  Only the model data is used from this file any animations in it are ignored
+//  All paths have to be relative to the folder that the 'takes' file is loaded from.
+//
+// Rotation, RigType, HeadBones, ArmBones, the clip type and the OutputTakeName are the same as for type 1 files.
+//
+// SourceAnimationFileName = the relative path to the file containing the animation.  Only the 
+//  first animation in the file is used.
+//  All paths have to be relative to the folder that the 'takes' file is loaded from.
 //
 //-----------------------------------------------------------------------------
 // The output clip format is simply the Keyframes saved from the SkinningData
@@ -91,27 +127,22 @@ using System.Windows.Forms;
 #endregion
 
 //-----------------------------------------------------------------------------
-// LIMITATIONS:
-//-----------------------------------------------------------------------------
-// - To get the model to work correctly in XNA 4 from Blender 2.5x FBX
-//      the model has to be saved with the first Take in the bind pose position!
-//      I do not know why!
-//-----------------------------------------------------------------------------
 // FEATURES
 //-----------------------------------------------------------------------------
 // - Load and view models
 // - Split FBX files in to one file per animation
-// - Load animations from Blender actions
-// - Load animations from AnimationClips
 // - Load animations from FBX files
+// - Load animations from AnimationClips
+// - Save animationClips in the format used by the Microsoft Skinning Sample
+// - Use a config file to convert multiple animations in to animationClip format
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 // TODO:
 //-----------------------------------------------------------------------------
-// - Rearrange the File menu with the rotation as the first options
 // - Add a Blender preset option 'From Z Up to Y Up Preset'
+// - Rearrange the File menu with the rotation as the first options
 // - Remove the option to Load Blender Actions
 // - Change the Extract Takes tool to load from individual FBX animation files
 //      Keep the existing method and have an option file format type on the 

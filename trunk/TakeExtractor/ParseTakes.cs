@@ -80,42 +80,56 @@ namespace Extractor
                 form.AddMessageLine("File not found: " + fileFullPathToModel);
                 return;
             }
-
-            // Decide what file type we have
-            int formatType = ParseData.IntFromString(source[0]);
-            switch (formatType)
-            {
-                case 1:
-                    ProcessTypeOne();
-                    break;
-            }
-            // TODO:  Type 2 will need to extract the paths in to the fbx class
-            // so that the files are loaded from the correct place.
-        }
-
-        private void ProcessTypeOne()
-        {
-            ParseFBX fbx = new ParseFBX(form);
-            // TODO:  type 2 here
-            fbx.LoadAsText(fileFullPathToModel);
-
-            // For storing the rotations from the tkes file
+            // Get the rotation
+            // For storing the rotations from the takes file
             string[] items = new string[3] { "", "", "" };
-
-            // Load the model as a model
             if (source.Count > 2)
             {
                 // Get the rotation
                 items = ParseData.SplitItemByDivision(source[2]);
             }
 
-            form.LoadAnimatedModel(true, fileFullPathToModel, items[0], items[1], items[2]);
+            // Decide what file type we have
+            int formatType = ParseData.IntFromString(source[0]);
+            switch (formatType)
+            {
+                case 1:
+                    ProcessTypeOne(items[0], items[1], items[2]);
+                    break;
+                case 2:
+                    ProcessTypeTwo(items[0], items[1], items[2]);
+                    break;
+                default:
+                    // Error
+                    form.AddMessageLine("Unrecognised file format type: " + formatType);
+                    return;
+            }
+        }
 
+        private void ProcessTypeOne(string rotateXdeg, string rotateYdeg, string rotateZdeg)
+        {
+            ParseFBX fbx = new ParseFBX(form);
+            // Load the model text for splitting to separate files
+            fbx.LoadAsText(fileFullPathToModel);
+            // Load the model as a model
+            form.LoadAnimatedModel(true, fileFullPathToModel, rotateXdeg, rotateYdeg, rotateZdeg);
             // Must save the takes to individual files and
             // the file names must be consistent
             fbx.SaveIndividualFBXtakes();
             // Now we can load each in turn to get the keyframe data
-            ExportTakesToKeyframes(1, fbx, items[0], items[1], items[2]);
+            ExportTakesToKeyframes(1, fbx, rotateXdeg, rotateYdeg, rotateZdeg);
+        }
+
+        private void ProcessTypeTwo(string rotateXdeg, string rotateYdeg, string rotateZdeg)
+        {
+            ParseFBX fbx = new ParseFBX(form);
+            // Just get the file names and paths
+            fbx.ExtractFileNames(fileFullPathToModel);
+            // Load the model as a model
+            form.LoadAnimatedModel(true, fileFullPathToModel, rotateXdeg, rotateYdeg, rotateZdeg);
+            // Animation files (FBX) must already exist
+            // Now we can load each in turn to get the keyframe data
+            ExportTakesToKeyframes(2, fbx, rotateXdeg, rotateYdeg, rotateZdeg);
         }
 
 
@@ -203,34 +217,39 @@ namespace Extractor
             // == Export each clip
             for (int c = 0; c < clipParts.Count; c++)
             {
+                // Get the filename to load each take from
                 string fileName = "";
                 if (formatType == 1)
                 {
+                    // In type 1 only the animation (action, take) name is included in the config file
                     fileName = fbx.GetTakeFileName(clipParts[c].takeName);
                 }
                 else if (formatType == 2)
                 {
+                    // In type 2 the file including extension that contains the 
+                    // animation is included in the config file
                     fileName = fbx.GetFullPath(clipParts[c].takeName);
                 }
                 else
                 {
-                    // Error
+                    // Error but we should never get this far anyway
                     return;
                 }
                 // Add each animation in to the form
                 form.LoadAnimationTakes(fileName, rotateXdeg, rotateYdeg, rotateZdeg);
+                // The animation loaded must have been selected as the current animation for this to work
                 List<string> exportData;
                 if (clipParts[c].partType == GlobalSettings.itemHeadTake)
                 {
-                    exportData = GetSaveClipData(form.GetClip(clipParts[c].takeName), form.GetBoneMap(), clipParts[c].takeName, headFilter);
+                    exportData = GetSaveClipData(form.GetCurrentClip(), form.GetBoneMap(), clipParts[c].takeName, headFilter);
                 }
                 else if (clipParts[c].partType == GlobalSettings.itemArmsTake)
                 {
-                    exportData = GetSaveClipData(form.GetClip(clipParts[c].takeName), form.GetBoneMap(), clipParts[c].takeName, armsFilter);
+                    exportData = GetSaveClipData(form.GetCurrentClip(), form.GetBoneMap(), clipParts[c].takeName, armsFilter);
                 }
                 else
                 {
-                    exportData = GetSaveClipData(form.GetClip(clipParts[c].takeName), form.GetBoneMap(), clipParts[c].takeName, null);
+                    exportData = GetSaveClipData(form.GetCurrentClip(), form.GetBoneMap(), clipParts[c].takeName, null);
                 }
 
                 if (exportData == null || exportData.Count < 1)

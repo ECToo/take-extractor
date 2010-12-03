@@ -319,8 +319,7 @@ namespace Extractor
 
         public string GetFullPath(string shortfilename)
         {
-            string result = Path.Combine(pathToSaveFolder, shortfilename);
-            return result;
+            return Path.Combine(pathToSaveFolder, shortfilename);
         }
 
         public string GetKeyframeFileName(string rigType, string partName, string partType)

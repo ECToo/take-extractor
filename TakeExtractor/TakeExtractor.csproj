@@ -91,7 +91,6 @@
     <Compile Include="ModelViewerControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ParseBlenderAction.cs" />
     <Compile Include="ParseClips.cs" />
     <Compile Include="ParseFBX.cs" />
     <Compile Include="ParseTakes.cs" />

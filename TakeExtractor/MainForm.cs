@@ -145,6 +145,7 @@ namespace Extractor
             AddMessageLine("== Finished ==");
         }
 
+        /*
         private void loadBlenderActionClicked(object sender, EventArgs e)
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
@@ -163,6 +164,7 @@ namespace Extractor
             }
             AddMessageLine("== Finished ==");
         }
+        */
 
         private void LoadFBXAnimationMenuClicked(object sender, EventArgs e)
         {
@@ -324,7 +326,6 @@ namespace Extractor
                 SaveBoneMapMenu.Enabled = false;
                 SaveBindPoseMenuItem.Enabled = false;
                 LoadIndividualClipMenu.Enabled = false;
-                LoadBlenderActionMenuItem.Enabled = false;
                 LoadFBXAnimationMenu.Enabled = false;
                 return;
             }
@@ -335,7 +336,6 @@ namespace Extractor
             SaveBoneMapMenu.Enabled = true;
             SaveBindPoseMenuItem.Enabled = true;
             LoadIndividualClipMenu.Enabled = true;
-            LoadBlenderActionMenuItem.Enabled = true;
             LoadFBXAnimationMenu.Enabled = true;
         }
 
@@ -610,6 +610,7 @@ namespace Extractor
             HaveClipsLoaded();
         }
 
+        /*
         /// <summary>
         /// Loads a text file and converts to an Animation Clip
         /// </summary>
@@ -645,6 +646,7 @@ namespace Extractor
 
             Cursor = Cursors.Arrow;
         }
+         * */
 
         public void ClearMessages()
         {
@@ -886,6 +888,38 @@ namespace Extractor
             return results;
         }
 
+
+        // Rotations
+
+        private void PresetNoRotationMenuClicked(object sender, EventArgs e)
+        {
+            XComboBox.Text = "X 0";
+            rotateX = "0";
+            YComboBox.Text = "Y 0";
+            rotateY = "0";
+            ZComboBox.Text = "Z 0";
+            rotateZ = "0";
+
+            AddMessageLine("Reset to no rotation");
+            AddMessageLine("Models loaded will be rotated using the follow settings: X=" +
+                rotateX + " Y=" + rotateY + " Z=" + rotateZ);
+        }
+
+        // Blender to XNA
+        private void PresetZUpToYUpClicked(object sender, EventArgs e)
+        {
+            XComboBox.Text = "X 90";
+            rotateX = "90";
+            YComboBox.Text = "Y 0";
+            rotateY = "0";
+            ZComboBox.Text = "Z 180";
+            rotateZ = "180";
+
+            AddMessageLine("Preset rotation selected to rotate models from being +Z upwards to being +Y upwards (Blender to XNA)");
+            AddMessageLine("Models loaded will be rotated using the follow settings: X=" +
+                rotateX + " Y=" + rotateY + " Z=" + rotateZ);
+        }
+
         private void XComboBoxChanged(object sender, EventArgs e)
         {
             rotateX = XComboBox.Text;
@@ -932,13 +966,18 @@ namespace Extractor
             }
         }
 
-        public AnimationClip GetClip(string clipName)
+        public AnimationClip GetCurrentClip()
         {
-            if (loadedClips.ContainsKey(clipName))
+            if (!string.IsNullOrEmpty(currentClipName))
             {
                 return loadedClips[currentClipName];
             }
             return null;
+        }
+
+        public string GetCurrentClipName()
+        {
+            return currentClipName;
         }
 
         private void DisplayTheBindPose()

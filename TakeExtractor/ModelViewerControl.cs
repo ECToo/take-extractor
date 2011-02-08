@@ -13,8 +13,10 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using AssetData;
+using Keys = Microsoft.Xna.Framework.Input.Keys;
 #endregion
 
 namespace Extractor
@@ -84,6 +86,11 @@ namespace Extractor
         Vector3 modelCentre;
         float modelRadius;
 
+        // Move the model view
+        float rotationAngle = 0;
+        const float rotateRadiansPerSec = 1.0f;
+        float distanceFraction = 1.0f;
+        const float movePerSec = 0.2f;
 
         // Timer controls the rotation speed.
         Stopwatch timer;
@@ -210,6 +217,11 @@ namespace Extractor
             return showFloor;
         }
 
+        public void ResetViewingPoint()
+        {
+            distanceFraction = 1.0f;
+            rotationAngle = 0;
+        }
 
         /// <summary>
         /// Initializes the control.
@@ -228,11 +240,13 @@ namespace Extractor
         /// <summary>
         /// Simulated update called prior to the draw method
         /// </summary>
-        protected override void GameUpdate()
+        protected override void UpdateGameLoop()
         {
             currentTime = timer.Elapsed;
             elapsedGameTime = currentTime - previousTime;
             previousTime = currentTime;
+
+            HandleInput();
 
             if (isAnimated && model != null && animationPlayer != null)
             {
@@ -240,6 +254,26 @@ namespace Extractor
             }
         }
 
+        private void HandleInput()
+        {
+            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            {
+                rotationAngle += ((float)elapsedGameTime.TotalSeconds * rotateRadiansPerSec);
+            }
+            else if (Keyboard.GetState().IsKeyDown(Keys.Left))
+            {
+                rotationAngle -= ((float)elapsedGameTime.TotalSeconds * rotateRadiansPerSec);
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+            {
+                distanceFraction -= ((float)elapsedGameTime.TotalSeconds * movePerSec);
+            }
+            else if (Keyboard.GetState().IsKeyDown(Keys.Down))
+            {
+                distanceFraction += ((float)elapsedGameTime.TotalSeconds * movePerSec);
+            }
+        }
 
         /// <summary>
         /// Draws the control.
@@ -251,7 +285,7 @@ namespace Extractor
 
             GraphicsDevice.Clear(backColor);
             float aspectRatio = GraphicsDevice.Viewport.AspectRatio;
-            float rotation = (float)timer.Elapsed.TotalSeconds;
+            float rotation = rotationAngle;
 
             if (model != null)
             {
@@ -263,28 +297,31 @@ namespace Extractor
 
                 Vector3 eyePosition = modelCentre;
 
+                float away = modelRadius * 2 * distanceFraction;
+                float up = modelRadius;
+
                 // Change which way up the model is viewed
                 if (viewUp == 3)
                 {
                     // Z Down
-                    eyePosition.Y += modelRadius * 2;
-                    eyePosition.Z += modelRadius;
+                    eyePosition.Y += away;
+                    eyePosition.Z += up;
                     world = Matrix.CreateRotationZ(rotation);
                     view = Matrix.CreateLookAt(eyePosition, modelCentre, Vector3.Forward);
                 }
                 else if (viewUp == 2)
                 {
                     // Z Up (Blender default)
-                    eyePosition.Y += modelRadius * 2;
-                    eyePosition.Z += modelRadius;
+                    eyePosition.Y += away;
+                    eyePosition.Z += up;
                     world = Matrix.CreateRotationZ(rotation);
                     view = Matrix.CreateLookAt(eyePosition, modelCentre, Vector3.Backward);
                 }
                 else
                 {
                     // XNA Default
-                    eyePosition.Z += modelRadius * 2;
-                    eyePosition.Y += modelRadius;
+                    eyePosition.Z += away;
+                    eyePosition.Y += up;
                     world = Matrix.CreateRotationY(rotation);
                     view = Matrix.CreateLookAt(eyePosition, modelCentre, Vector3.Up);
                 }

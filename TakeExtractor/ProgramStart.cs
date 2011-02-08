@@ -129,19 +129,13 @@ using System.Windows.Forms;
 //-----------------------------------------------------------------------------
 // FEATURES
 //-----------------------------------------------------------------------------
-// - Load and view models
+// - Load and view models, zoom in and out and rotate round
 // - Split FBX files in to one file per animation
 // - Load animations from FBX files
 // - Load animations from AnimationClips
 // - Save animationClips in the format used by the Microsoft Skinning Sample
 // - Use a config file to convert multiple animations in to animationClip format
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-// TODO:
-//-----------------------------------------------------------------------------
-// test - show a floor under the models
+// - Show a floor
 //-----------------------------------------------------------------------------
 
 

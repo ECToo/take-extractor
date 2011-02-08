@@ -31,6 +31,7 @@ namespace Extractor
     {
         private ContentBuilder contentBuilder;
         private ContentManager contentManager;
+        private ContentManager contentPersistent;
 
         private string contentFolder = "";
         private string defaultFileFolder = "";
@@ -54,6 +55,9 @@ namespace Extractor
             contentBuilder = new ContentBuilder();
 
             contentManager = new ContentManager(modelViewerControl.Services,
+                                                contentBuilder.OutputDirectory);
+
+            contentPersistent = new ContentManager(modelViewerControl.Services,
                                                 contentBuilder.OutputDirectory);
 
             // A folder in the users MyDocuments
@@ -122,7 +126,7 @@ namespace Extractor
                 ClearMessages();
                 lastLoadedFile = fileDialog.FileName;
                 LoadAnimatedModel(true, fileDialog.FileName, rotateX, rotateY, rotateZ);
-                //LoadAnimatedModel(true, fileDialog.FileName, "90", "0", "180");
+                //LoadAnimatedModel(contentManager, true, fileDialog.FileName, "90", "0", "180");
             }
             AddMessageLine("== Finished ==");
             HasModelLoaded();
@@ -364,6 +368,8 @@ namespace Extractor
             ClipNamesComboBox.Text = currentClipName;
         }
 
+
+
         /// <summary>
         /// Loads a new 3D model file into the ModelViewerControl.
         /// </summary>
@@ -381,6 +387,8 @@ namespace Extractor
 
             // Unload any existing model.
             modelViewerControl.UnloadModel();
+
+            // Clear the content manager so that a new model is loaded otherwise the same name cannot be loaded again!
             contentManager.Unload();
 
             // Tell the ContentBuilder what to build.
@@ -904,7 +912,7 @@ namespace Extractor
 
         // Rotations
 
-        private void PresetNoRotationMenuClicked(object sender, EventArgs e)
+        private void PresetNoRotation_Click(object sender, EventArgs e)
         {
             XComboBox.Text = "X 0";
             rotateX = "0";
@@ -919,7 +927,7 @@ namespace Extractor
         }
 
         // Blender to XNA
-        private void PresetZUpToYUpClicked(object sender, EventArgs e)
+        private void PresetZUpToYUp_Click(object sender, EventArgs e)
         {
             XComboBox.Text = "X 90";
             rotateX = "90";
@@ -933,25 +941,30 @@ namespace Extractor
                 rotateX + " Y=" + rotateY + " Z=" + rotateZ);
         }
 
-        private void XComboBoxChanged(object sender, EventArgs e)
+        private void XComboBox_Changed(object sender, EventArgs e)
         {
             rotateX = XComboBox.Text;
             rotateX = rotateX.Substring(2);
         }
 
-        private void YComboBoxChanged(object sender, EventArgs e)
+        private void YComboBox_Changed(object sender, EventArgs e)
         {
             rotateY = YComboBox.Text;
             rotateY = rotateY.Substring(2);
         }
 
-        private void ZComboBoxChanged(object sender, EventArgs e)
+        private void ZComboBox_Changed(object sender, EventArgs e)
         {
             rotateZ = ZComboBox.Text;
             rotateZ = rotateZ.Substring(2);
         }
 
-        private void ClipNamesComboBoxChanged(object sender, EventArgs e)
+        private void resetViewingPoint_Click(object sender, EventArgs e)
+        {
+            modelViewerControl.ResetViewingPoint();
+        }
+
+        private void ClipNamesComboBox_Changed(object sender, EventArgs e)
         {
             string nextClipName = ClipNamesComboBox.Text;
             // Always re-apply the bind pose when selected
@@ -1026,7 +1039,6 @@ namespace Extractor
         {
             Cursor = Cursors.WaitCursor;
 
-            contentManager.Unload();
             // Tell the ContentBuilder what to build.
             contentBuilder.Clear();
             string fileName = Path.Combine(
@@ -1046,9 +1058,9 @@ namespace Extractor
 
             if (string.IsNullOrEmpty(buildError))
             {
-                // If the build succeeded, use the ContentManager to
+                // If the build succeeded, use a different ContentManager to
                 // load the temporary .xnb file that we just created.
-                modelViewerControl.SetFloor(contentManager.Load<Model>("Floor"));
+                modelViewerControl.SetFloor(contentPersistent.Load<Model>("Floor"));
             }
             else
             {
@@ -1059,9 +1071,6 @@ namespace Extractor
 
             Cursor = Cursors.Arrow;
         }
-
-
-
 
     }
 }

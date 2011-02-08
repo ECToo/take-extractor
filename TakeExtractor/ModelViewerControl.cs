@@ -33,9 +33,9 @@ namespace Extractor
         {
             get { return model; }
         }
-
         Model model;
         AnimationPlayer animationPlayer;
+
         // Animations
         public List<string> ClipNames
         {
@@ -50,6 +50,16 @@ namespace Extractor
         }
 
         bool isAnimated = false;
+
+        public Model Floor
+        {
+            get { return floor; }
+        }
+        Model floor;
+
+        private bool showFloor = false;
+        Vector3 floorCentre = Vector3.Zero;
+        float floorRadius = 30;
 
         /// <summary>
         /// 1 = Y Up
@@ -71,7 +81,7 @@ namespace Extractor
 
         // Cache information about the model size and position.
         Matrix[] boneTransforms;
-        Vector3 modelCenter;
+        Vector3 modelCentre;
         float modelRadius;
 
 
@@ -179,6 +189,28 @@ namespace Extractor
             model = null;
         }
 
+        public void SetFloor(Model aModel)
+        {
+            if (aModel != null)
+            {
+                floor = aModel;
+            }
+        }
+
+        public bool ShowFloor(bool enable)
+        {
+            if (floor != null)
+            {
+                showFloor = enable;
+            }
+            else
+            {
+                showFloor = false;
+            }
+            return showFloor;
+        }
+
+
         /// <summary>
         /// Initializes the control.
         /// </summary>
@@ -218,18 +250,18 @@ namespace Extractor
             Color backColor = new Color(BackColor.R, BackColor.G, BackColor.B);
 
             GraphicsDevice.Clear(backColor);
+            float aspectRatio = GraphicsDevice.Viewport.AspectRatio;
+            float rotation = (float)timer.Elapsed.TotalSeconds;
 
             if (model != null)
             {
-                float aspectRatio = GraphicsDevice.Viewport.AspectRatio;
-                
+
                 float nearClip = modelRadius / 100;
                 float farClip = modelRadius * 100;
 
                 // Compute camera matrices.
-                float rotation = (float)timer.Elapsed.TotalSeconds;
 
-                Vector3 eyePosition = modelCenter;
+                Vector3 eyePosition = modelCentre;
 
                 // Change which way up the model is viewed
                 if (viewUp == 3)
@@ -238,7 +270,7 @@ namespace Extractor
                     eyePosition.Y += modelRadius * 2;
                     eyePosition.Z += modelRadius;
                     world = Matrix.CreateRotationZ(rotation);
-                    view = Matrix.CreateLookAt(eyePosition, modelCenter, Vector3.Forward);
+                    view = Matrix.CreateLookAt(eyePosition, modelCentre, Vector3.Forward);
                 }
                 else if (viewUp == 2)
                 {
@@ -246,7 +278,7 @@ namespace Extractor
                     eyePosition.Y += modelRadius * 2;
                     eyePosition.Z += modelRadius;
                     world = Matrix.CreateRotationZ(rotation);
-                    view = Matrix.CreateLookAt(eyePosition, modelCenter, Vector3.Backward);
+                    view = Matrix.CreateLookAt(eyePosition, modelCentre, Vector3.Backward);
                 }
                 else
                 {
@@ -254,7 +286,7 @@ namespace Extractor
                     eyePosition.Z += modelRadius * 2;
                     eyePosition.Y += modelRadius;
                     world = Matrix.CreateRotationY(rotation);
-                    view = Matrix.CreateLookAt(eyePosition, modelCenter, Vector3.Up);
+                    view = Matrix.CreateLookAt(eyePosition, modelCentre, Vector3.Up);
                 }
                 projection = Matrix.CreatePerspectiveFieldOfView(1, aspectRatio, nearClip, farClip);
 
@@ -268,9 +300,34 @@ namespace Extractor
                 }
                 else
                 {
-                    DrawRigid(world, view, projection);
+                    DrawRigid(world, view, projection, model);
+                }
+
+                if (showFloor && floor != null)
+                {
+                    // Change the size of the floor based on the model size
+                    float scale = modelRadius / floorRadius;
+                    world = Matrix.CreateRotationY(rotation) * Matrix.CreateScale(scale);
+                    DrawRigid(world, view, projection, floor);
                 }
             }
+            else if (showFloor && floor != null)
+            {
+                // Still show the floor even if no model has been loaded
+                float nearClip = floorRadius / 100;
+                float farClip = floorRadius * 100;
+
+                projection = Matrix.CreatePerspectiveFieldOfView(1, aspectRatio, nearClip, farClip);
+
+                Vector3 eyePosition = floorCentre;
+                eyePosition.Z += floorRadius * 2;
+                eyePosition.Y += floorRadius;
+                world = Matrix.CreateTranslation(floorCentre);
+                view = Matrix.CreateLookAt(eyePosition, floorCentre, Vector3.Up);
+
+                DrawRigid(world, view, projection, floor);
+            }
+
         }
 
         private void DrawAnimated(Matrix world, Matrix view, Matrix projection)
@@ -300,14 +357,21 @@ namespace Extractor
             }
         }
 
-        private void DrawRigid(Matrix world, Matrix view, Matrix projection)
+        private void DrawRigid(Matrix world, Matrix view, Matrix projection, Model aModel)
         {
             // Draw the model.
-            foreach (ModelMesh mesh in model.Meshes)
+            foreach (ModelMesh mesh in aModel.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
-                    effect.World = boneTransforms[mesh.ParentBone.Index] * world;
+                    if (boneTransforms != null)
+                    {
+                        effect.World = boneTransforms[mesh.ParentBone.Index] * world;
+                    }
+                    else
+                    {
+                        effect.World = world;
+                    }
                     effect.View = view;
                     effect.Projection = projection;
 
@@ -339,7 +403,7 @@ namespace Extractor
 
             // Compute an (approximate) model center position by
             // averaging the center of each mesh bounding sphere.
-            modelCenter = Vector3.Zero;
+            modelCentre = Vector3.Zero;
 
             foreach (ModelMesh mesh in model.Meshes)
             {
@@ -347,10 +411,10 @@ namespace Extractor
                 Matrix transform = boneTransforms[mesh.ParentBone.Index];
                 Vector3 meshCenter = Vector3.Transform(meshBounds.Center, transform);
 
-                modelCenter += meshCenter;
+                modelCentre += meshCenter;
             }
 
-            modelCenter /= model.Meshes.Count;
+            modelCentre /= model.Meshes.Count;
 
             // Now we know the center point, we can compute the model radius
             // by examining the radius of each mesh bounding sphere.
@@ -364,7 +428,7 @@ namespace Extractor
 
                 float transformScale = transform.Forward.Length();
                 
-                float meshRadius = (meshCenter - modelCenter).Length() +
+                float meshRadius = (meshCenter - modelCentre).Length() +
                                    (meshBounds.Radius * transformScale);
 
                 modelRadius = Math.Max(modelRadius,  meshRadius);

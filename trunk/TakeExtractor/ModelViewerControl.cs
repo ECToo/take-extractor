@@ -258,11 +258,11 @@ namespace Extractor
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Right))
             {
-                rotationAngle += ((float)elapsedGameTime.TotalSeconds * rotateRadiansPerSec);
+                rotationAngle -= ((float)elapsedGameTime.TotalSeconds * rotateRadiansPerSec);
             }
             else if (Keyboard.GetState().IsKeyDown(Keys.Left))
             {
-                rotationAngle -= ((float)elapsedGameTime.TotalSeconds * rotateRadiansPerSec);
+                rotationAngle += ((float)elapsedGameTime.TotalSeconds * rotateRadiansPerSec);
             }
 
             if (Keyboard.GetState().IsKeyDown(Keys.Up))

@@ -141,13 +141,7 @@ using System.Windows.Forms;
 //-----------------------------------------------------------------------------
 // TODO:
 //-----------------------------------------------------------------------------
-// Done - Add a Blender preset option 'From Z Up to Y Up Preset'
-// Done - Rearrange the File menu with the rotation as the first options
-// Done - Remove the option to Load Blender Actions
-// Done - Change the Extract Takes tool to load from individual FBX animation files
-//      Keep the existing method and have an option file format type on the 
-//      first line of the file.
-//      The new type has an FBX file name on each row mapped to a clip name
+// test - show a floor under the models
 //-----------------------------------------------------------------------------
 
 

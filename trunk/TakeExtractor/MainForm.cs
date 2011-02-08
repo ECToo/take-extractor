@@ -32,6 +32,7 @@ namespace Extractor
         private ContentBuilder contentBuilder;
         private ContentManager contentManager;
 
+        private string contentFolder = "";
         private string defaultFileFolder = "";
         private string lastLoadedFile = "";
 
@@ -57,9 +58,11 @@ namespace Extractor
 
             // A folder in the users MyDocuments
             defaultFileFolder = GetSavePath();
+            contentFolder = GetContentFolder();
 
             /// Automatically bring up the "Load Model" dialog when we are first shown.
             //this.Shown += OpenModelMenuClicked;
+            
         }
 
         private string GetSavePath()
@@ -75,7 +78,7 @@ namespace Extractor
 
         // == File
 
-        private void OpenRigidModelMenuClicked(object sender, EventArgs e)
+        private void OpenRigidModelMenu_Click(object sender, EventArgs e)
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
 
@@ -101,7 +104,7 @@ namespace Extractor
         /// <summary>
         /// Event handler for the Open menu option.
         /// </summary>
-        private void OpenAnimatedModelMenuClicked(object sender, EventArgs e)
+        private void OpenAnimatedModelMenu_Click(object sender, EventArgs e)
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
 
@@ -125,7 +128,7 @@ namespace Extractor
             HasModelLoaded();
         }
 
-        private void loadIndividualClipClicked(object sender, EventArgs e)
+        private void loadIndividualClip_Click(object sender, EventArgs e)
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
 
@@ -146,7 +149,7 @@ namespace Extractor
         }
 
         /*
-        private void loadBlenderActionClicked(object sender, EventArgs e)
+        private void loadBlenderAction_Click(object sender, EventArgs e)
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
 
@@ -166,7 +169,7 @@ namespace Extractor
         }
         */
 
-        private void LoadFBXAnimationMenuClicked(object sender, EventArgs e)
+        private void LoadFBXAnimationMenu_Click(object sender, EventArgs e)
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
 
@@ -188,7 +191,7 @@ namespace Extractor
             AddMessageLine("== Finished ==");
         }
 
-        private void SplitFBXMenuClicked(object sender, EventArgs e)
+        private void SplitFBXMenu_Click(object sender, EventArgs e)
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
 
@@ -209,7 +212,7 @@ namespace Extractor
             HasModelLoaded();
         }
 
-        private void OpenTakesMenuClicked(object sender, EventArgs e)
+        private void OpenTakesMenu_Click(object sender, EventArgs e)
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
 
@@ -230,7 +233,7 @@ namespace Extractor
             HasModelLoaded();
         }
 
-        private void SaveBoneMapMenuClicked(object sender, EventArgs e)
+        private void SaveBoneMapMenu_Click(object sender, EventArgs e)
         {
             if (modelViewerControl.Model == null)
             {
@@ -249,7 +252,7 @@ namespace Extractor
             AddMessageLine("== Finished ==");
         }
 
-        private void SaveBindPoseMenuClicked(object sender, EventArgs e)
+        private void SaveBindPoseMenu_Click(object sender, EventArgs e)
         {
             if (modelViewerControl.Model == null)
             {
@@ -260,7 +263,7 @@ namespace Extractor
             AddMessageLine("== Finished ==");
         }
 
-        private void SaveClipClicked(object sender, EventArgs e)
+        private void SaveClip_Click(object sender, EventArgs e)
         {
             if (modelViewerControl.Model == null || currentClipName == GlobalSettings.listRestPoseName)
             {
@@ -282,14 +285,14 @@ namespace Extractor
         /// <summary>
         /// Event handler for the Exit menu option.
         /// </summary>
-        private void ExitMenuClicked(object sender, EventArgs e)
+        private void ExitMenu_Click(object sender, EventArgs e)
         {
             Close();
         }
 
         // == View
 
-        private void yUpClicked(object sender, EventArgs e)
+        private void yUp_Click(object sender, EventArgs e)
         {
             yUpMenuItem.Checked = true;
             zUpMenuItem.Checked = false;
@@ -297,7 +300,7 @@ namespace Extractor
             modelViewerControl.ViewUp = 1;
         }
 
-        private void zUpClicked(object sender, EventArgs e)
+        private void zUp_Click(object sender, EventArgs e)
         {
             yUpMenuItem.Checked = false;
             zUpMenuItem.Checked = true;
@@ -305,12 +308,22 @@ namespace Extractor
             modelViewerControl.ViewUp = 2;
         }
 
-        private void zDownClicked(object sender, EventArgs e)
+        private void zDown_Click(object sender, EventArgs e)
         {
             yUpMenuItem.Checked = false;
             zUpMenuItem.Checked = false;
             zDownMenuItem.Checked = true;
             modelViewerControl.ViewUp = 3;
+        }
+
+        private void showFloor_Click(object sender, EventArgs e)
+        {
+            if (modelViewerControl.Floor == null)
+            {
+                LoadTheFloor();
+            }
+            showFloorMenuItem.Checked = !showFloorMenuItem.Checked;
+            showFloorMenuItem.Checked = modelViewerControl.ShowFloor(showFloorMenuItem.Checked);
         }
 
         /// <summary>
@@ -1001,6 +1014,53 @@ namespace Extractor
             }
 
         }
+
+        private string GetContentFolder()
+        {
+            return Path.Combine(
+                    Environment.CurrentDirectory,
+                    GlobalSettings.pathContentFolder);
+        }
+
+        public void LoadTheFloor()
+        {
+            Cursor = Cursors.WaitCursor;
+
+            contentManager.Unload();
+            // Tell the ContentBuilder what to build.
+            contentBuilder.Clear();
+            string fileName = Path.Combine(
+                    contentFolder,
+                    GlobalSettings.fileFloor);
+
+            AddMessageLine("Loading the floor: " + fileName);
+            contentBuilder.AddModel(fileName, "Floor", "0", "0", "0");
+
+            // Build this new model data.
+            string buildError = contentBuilder.Build();
+            string buildWarnings = contentBuilder.Warnings();
+            if (!string.IsNullOrEmpty(buildWarnings))
+            {
+                AddMessageLine(buildWarnings);
+            }
+
+            if (string.IsNullOrEmpty(buildError))
+            {
+                // If the build succeeded, use the ContentManager to
+                // load the temporary .xnb file that we just created.
+                modelViewerControl.SetFloor(contentManager.Load<Model>("Floor"));
+            }
+            else
+            {
+                // If the build failed, display an error message and log it
+                AddMessageLine(buildError);
+                MessageBox.Show(buildError, "Error");
+            }
+
+            Cursor = Cursors.Arrow;
+        }
+
+
 
 
     }

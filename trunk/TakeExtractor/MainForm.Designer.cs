@@ -48,6 +48,7 @@ namespace Extractor
             this.yUpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.zUpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.zDownMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showFloorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitFBXMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openTakesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -171,7 +172,7 @@ namespace Extractor
             this.LoadRigidModelMenu.Name = "LoadRigidModelMenu";
             this.LoadRigidModelMenu.Size = new System.Drawing.Size(201, 22);
             this.LoadRigidModelMenu.Text = "Load Rigid Model...";
-            this.LoadRigidModelMenu.Click += new System.EventHandler(this.OpenRigidModelMenuClicked);
+            this.LoadRigidModelMenu.Click += new System.EventHandler(this.OpenRigidModelMenu_Click);
             // 
             // LoadAnimatedModelMenu
             // 
@@ -181,7 +182,7 @@ namespace Extractor
             this.LoadAnimatedModelMenu.Size = new System.Drawing.Size(201, 22);
             this.LoadAnimatedModelMenu.Text = "Load Animated Model...";
             this.LoadAnimatedModelMenu.ToolTipText = "Load a 3D model in to the viewer";
-            this.LoadAnimatedModelMenu.Click += new System.EventHandler(this.OpenAnimatedModelMenuClicked);
+            this.LoadAnimatedModelMenu.Click += new System.EventHandler(this.OpenAnimatedModelMenu_Click);
             // 
             // LoadFBXAnimationMenu
             // 
@@ -189,7 +190,7 @@ namespace Extractor
             this.LoadFBXAnimationMenu.Name = "LoadFBXAnimationMenu";
             this.LoadFBXAnimationMenu.Size = new System.Drawing.Size(201, 22);
             this.LoadFBXAnimationMenu.Text = "Load Animation...";
-            this.LoadFBXAnimationMenu.Click += new System.EventHandler(this.LoadFBXAnimationMenuClicked);
+            this.LoadFBXAnimationMenu.Click += new System.EventHandler(this.LoadFBXAnimationMenu_Click);
             // 
             // toolStripSeparator4
             // 
@@ -202,7 +203,7 @@ namespace Extractor
             this.LoadIndividualClipMenu.Name = "LoadIndividualClipMenu";
             this.LoadIndividualClipMenu.Size = new System.Drawing.Size(201, 22);
             this.LoadIndividualClipMenu.Text = "Load Individual Clip...";
-            this.LoadIndividualClipMenu.Click += new System.EventHandler(this.loadIndividualClipClicked);
+            this.LoadIndividualClipMenu.Click += new System.EventHandler(this.loadIndividualClip_Click);
             // 
             // SaveClipMenu
             // 
@@ -211,7 +212,7 @@ namespace Extractor
             this.SaveClipMenu.Size = new System.Drawing.Size(201, 22);
             this.SaveClipMenu.Text = "Save Animation Clip...";
             this.SaveClipMenu.ToolTipText = "Save the currently playing animation in AnimationClip format";
-            this.SaveClipMenu.Click += new System.EventHandler(this.SaveClipClicked);
+            this.SaveClipMenu.Click += new System.EventHandler(this.SaveClip_Click);
             // 
             // toolStripSeparator2
             // 
@@ -225,14 +226,15 @@ namespace Extractor
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitMenuClicked);
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitMenu_Click);
             // 
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.yUpMenuItem,
             this.zUpMenuItem,
-            this.zDownMenuItem});
+            this.zDownMenuItem,
+            this.showFloorMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 23);
             this.viewToolStripMenuItem.Text = "View";
@@ -244,21 +246,28 @@ namespace Extractor
             this.yUpMenuItem.Name = "yUpMenuItem";
             this.yUpMenuItem.Size = new System.Drawing.Size(194, 22);
             this.yUpMenuItem.Text = "Y Up  (XNA Default)";
-            this.yUpMenuItem.Click += new System.EventHandler(this.yUpClicked);
+            this.yUpMenuItem.Click += new System.EventHandler(this.yUp_Click);
             // 
             // zUpMenuItem
             // 
             this.zUpMenuItem.Name = "zUpMenuItem";
             this.zUpMenuItem.Size = new System.Drawing.Size(194, 22);
             this.zUpMenuItem.Text = "Z Up  (Blender Default)";
-            this.zUpMenuItem.Click += new System.EventHandler(this.zUpClicked);
+            this.zUpMenuItem.Click += new System.EventHandler(this.zUp_Click);
             // 
             // zDownMenuItem
             // 
             this.zDownMenuItem.Name = "zDownMenuItem";
             this.zDownMenuItem.Size = new System.Drawing.Size(194, 22);
             this.zDownMenuItem.Text = "Z Down";
-            this.zDownMenuItem.Click += new System.EventHandler(this.zDownClicked);
+            this.zDownMenuItem.Click += new System.EventHandler(this.zDown_Click);
+            // 
+            // showFloorMenuItem
+            // 
+            this.showFloorMenuItem.Name = "showFloorMenuItem";
+            this.showFloorMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.showFloorMenuItem.Text = "Show Floor";
+            this.showFloorMenuItem.Click += new System.EventHandler(this.showFloor_Click);
             // 
             // ToolsMenuItem
             // 
@@ -278,7 +287,7 @@ namespace Extractor
             this.splitFBXMenuItem.Size = new System.Drawing.Size(174, 22);
             this.splitFBXMenuItem.Text = "Split FBX files...";
             this.splitFBXMenuItem.ToolTipText = "Split FBX Model files to have only one take per file";
-            this.splitFBXMenuItem.Click += new System.EventHandler(this.SplitFBXMenuClicked);
+            this.splitFBXMenuItem.Click += new System.EventHandler(this.SplitFBXMenu_Click);
             // 
             // openTakesToolStripMenuItem
             // 
@@ -289,7 +298,7 @@ namespace Extractor
             this.openTakesToolStripMenuItem.Text = "Extract FBX Takes...";
             this.openTakesToolStripMenuItem.ToolTipText = "Load a list of animation takes from an FBX file and save them in a keyframe forma" +
                 "t";
-            this.openTakesToolStripMenuItem.Click += new System.EventHandler(this.OpenTakesMenuClicked);
+            this.openTakesToolStripMenuItem.Click += new System.EventHandler(this.OpenTakesMenu_Click);
             // 
             // toolStripSeparator5
             // 
@@ -303,7 +312,7 @@ namespace Extractor
             this.SaveBoneMapMenu.Size = new System.Drawing.Size(174, 22);
             this.SaveBoneMapMenu.Text = "Save Bone Map...";
             this.SaveBoneMapMenu.ToolTipText = "Save a list of bone names with their numeric index and thier parent bone";
-            this.SaveBoneMapMenu.Click += new System.EventHandler(this.SaveBoneMapMenuClicked);
+            this.SaveBoneMapMenu.Click += new System.EventHandler(this.SaveBoneMapMenu_Click);
             // 
             // SaveBindPoseMenuItem
             // 
@@ -312,7 +321,7 @@ namespace Extractor
             this.SaveBindPoseMenuItem.Size = new System.Drawing.Size(174, 22);
             this.SaveBindPoseMenuItem.Text = "Save Bind Pose...";
             this.SaveBindPoseMenuItem.ToolTipText = "Save the matrix of each bone while it is at rest";
-            this.SaveBindPoseMenuItem.Click += new System.EventHandler(this.SaveBindPoseMenuClicked);
+            this.SaveBindPoseMenuItem.Click += new System.EventHandler(this.SaveBindPoseMenu_Click);
             // 
             // PoseHeading
             // 
@@ -406,6 +415,7 @@ namespace Extractor
         private System.Windows.Forms.ToolStripMenuItem LoadFBXAnimationMenu;
         private System.Windows.Forms.ToolStripMenuItem PresetZUpToYUpMenu;
         private System.Windows.Forms.ToolStripMenuItem PresetNoRotationMenu;
+        private System.Windows.Forms.ToolStripMenuItem showFloorMenuItem;
 
     }
 }

@@ -123,7 +123,7 @@ namespace Extractor
             if (string.IsNullOrEmpty(beginDrawError))
             {
                 // Simulate the update loop in an XNA game
-                GameUpdate();
+                UpdateGameLoop();
                 // Draw the control using the GraphicsDevice.
                 Draw();
                 EndDraw();
@@ -298,7 +298,7 @@ namespace Extractor
         /// <summary>
         /// Derived classes override this to simulate the Update loop in a Game.
         /// </summary>
-        protected abstract void GameUpdate();
+        protected abstract void UpdateGameLoop();
 
         /// <summary>
         /// Derived classes override this to draw themselves using the GraphicsDevice.

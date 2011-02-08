@@ -48,7 +48,12 @@ namespace Extractor
             this.yUpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.zUpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.zDownMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.showFloorMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.ArrowHeading = new System.Windows.Forms.ToolStripTextBox();
+            this.resetViewingPointMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitFBXMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openTakesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -116,14 +121,14 @@ namespace Extractor
             this.PresetNoRotationMenu.Name = "PresetNoRotationMenu";
             this.PresetNoRotationMenu.Size = new System.Drawing.Size(201, 22);
             this.PresetNoRotationMenu.Text = "> Preset: No Rotation <";
-            this.PresetNoRotationMenu.Click += new System.EventHandler(this.PresetNoRotationMenuClicked);
+            this.PresetNoRotationMenu.Click += new System.EventHandler(this.PresetNoRotation_Click);
             // 
             // PresetZUpToYUpMenu
             // 
             this.PresetZUpToYUpMenu.Name = "PresetZUpToYUpMenu";
             this.PresetZUpToYUpMenu.Size = new System.Drawing.Size(201, 22);
             this.PresetZUpToYUpMenu.Text = "> Preset: Z Up to Y Up <";
-            this.PresetZUpToYUpMenu.Click += new System.EventHandler(this.PresetZUpToYUpClicked);
+            this.PresetZUpToYUpMenu.Click += new System.EventHandler(this.PresetZUpToYUp_Click);
             // 
             // XComboBox
             // 
@@ -139,7 +144,7 @@ namespace Extractor
             this.XComboBox.Tag = "";
             this.XComboBox.Text = "X 0";
             this.XComboBox.ToolTipText = "Rotate model while loading";
-            this.XComboBox.TextChanged += new System.EventHandler(this.XComboBoxChanged);
+            this.XComboBox.TextChanged += new System.EventHandler(this.XComboBox_Changed);
             // 
             // YComboBox
             // 
@@ -152,7 +157,7 @@ namespace Extractor
             this.YComboBox.Size = new System.Drawing.Size(121, 23);
             this.YComboBox.Text = "Y 0";
             this.YComboBox.ToolTipText = "Rotate model while loading";
-            this.YComboBox.TextChanged += new System.EventHandler(this.YComboBoxChanged);
+            this.YComboBox.TextChanged += new System.EventHandler(this.YComboBox_Changed);
             // 
             // ZComboBox
             // 
@@ -165,7 +170,7 @@ namespace Extractor
             this.ZComboBox.Size = new System.Drawing.Size(121, 23);
             this.ZComboBox.Text = "Z 0";
             this.ZComboBox.ToolTipText = "Rotate model while loading";
-            this.ZComboBox.TextChanged += new System.EventHandler(this.ZComboBoxChanged);
+            this.ZComboBox.TextChanged += new System.EventHandler(this.ZComboBox_Changed);
             // 
             // LoadRigidModelMenu
             // 
@@ -234,7 +239,12 @@ namespace Extractor
             this.yUpMenuItem,
             this.zUpMenuItem,
             this.zDownMenuItem,
-            this.showFloorMenuItem});
+            this.toolStripSeparator1,
+            this.showFloorMenuItem,
+            this.toolStripSeparator3,
+            this.toolStripSeparator6,
+            this.ArrowHeading,
+            this.resetViewingPointMenu});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 23);
             this.viewToolStripMenuItem.Text = "View";
@@ -244,30 +254,60 @@ namespace Extractor
             this.yUpMenuItem.Checked = true;
             this.yUpMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.yUpMenuItem.Name = "yUpMenuItem";
-            this.yUpMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.yUpMenuItem.Size = new System.Drawing.Size(210, 22);
             this.yUpMenuItem.Text = "Y Up  (XNA Default)";
             this.yUpMenuItem.Click += new System.EventHandler(this.yUp_Click);
             // 
             // zUpMenuItem
             // 
             this.zUpMenuItem.Name = "zUpMenuItem";
-            this.zUpMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.zUpMenuItem.Size = new System.Drawing.Size(210, 22);
             this.zUpMenuItem.Text = "Z Up  (Blender Default)";
             this.zUpMenuItem.Click += new System.EventHandler(this.zUp_Click);
             // 
             // zDownMenuItem
             // 
             this.zDownMenuItem.Name = "zDownMenuItem";
-            this.zDownMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.zDownMenuItem.Size = new System.Drawing.Size(210, 22);
             this.zDownMenuItem.Text = "Z Down";
             this.zDownMenuItem.Click += new System.EventHandler(this.zDown_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(207, 6);
             // 
             // showFloorMenuItem
             // 
             this.showFloorMenuItem.Name = "showFloorMenuItem";
-            this.showFloorMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.showFloorMenuItem.Size = new System.Drawing.Size(210, 22);
             this.showFloorMenuItem.Text = "Show Floor";
             this.showFloorMenuItem.Click += new System.EventHandler(this.showFloor_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(207, 6);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(207, 6);
+            // 
+            // ArrowHeading
+            // 
+            this.ArrowHeading.BackColor = System.Drawing.SystemColors.Control;
+            this.ArrowHeading.Name = "ArrowHeading";
+            this.ArrowHeading.ReadOnly = true;
+            this.ArrowHeading.Size = new System.Drawing.Size(150, 23);
+            this.ArrowHeading.Text = "Arrows Rotate and Zoom";
+            // 
+            // resetViewingPointMenu
+            // 
+            this.resetViewingPointMenu.Name = "resetViewingPointMenu";
+            this.resetViewingPointMenu.Size = new System.Drawing.Size(210, 22);
+            this.resetViewingPointMenu.Text = "Reset Viewing Point";
+            this.resetViewingPointMenu.Click += new System.EventHandler(this.resetViewingPoint_Click);
             // 
             // ToolsMenuItem
             // 
@@ -337,7 +377,7 @@ namespace Extractor
             this.ClipNamesComboBox.Size = new System.Drawing.Size(221, 23);
             this.ClipNamesComboBox.Text = "Pose";
             this.ClipNamesComboBox.Visible = false;
-            this.ClipNamesComboBox.TextChanged += new System.EventHandler(this.ClipNamesComboBoxChanged);
+            this.ClipNamesComboBox.TextChanged += new System.EventHandler(this.ClipNamesComboBox_Changed);
             // 
             // messageBox
             // 
@@ -416,6 +456,11 @@ namespace Extractor
         private System.Windows.Forms.ToolStripMenuItem PresetZUpToYUpMenu;
         private System.Windows.Forms.ToolStripMenuItem PresetNoRotationMenu;
         private System.Windows.Forms.ToolStripMenuItem showFloorMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripMenuItem resetViewingPointMenu;
+        private System.Windows.Forms.ToolStripTextBox ArrowHeading;
 
     }
 }
